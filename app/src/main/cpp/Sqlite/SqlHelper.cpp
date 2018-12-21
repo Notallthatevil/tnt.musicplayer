@@ -1,7 +1,3 @@
-//
-// Created by natet on 4/7/2018.
-//
-
 #include "SqlHelper.h"
 
 inline bool file_exists(const std::string &name) {

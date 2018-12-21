@@ -2,8 +2,8 @@
 // Created by Nate on 5/21/2018.
 //
 
-#ifndef TAGGER_FILEV2_H
-#define TAGGER_FILEV2_H
+#ifndef TAGGER_FILE_H
+#define TAGGER_FILE_H
 
 #include <string>
 #include <fstream>
@@ -12,81 +12,61 @@
 
 using namespace std;
 
-struct fileAccessException : public exception {
-
-    const char *what() const throw() {
-        return "Unable to access files. i.e. Permission not granted";
-    }
-};
-
-struct invalidAudioDataSize : public exception {
-
-    const char *what() const throw() {
-        return "mAudioData.size() < 1; unable to copy bytes";
-    }
-};
-
 class AudioFile {
 private:
-    int mSqlID = -1;
-    string mFilePath = "";
-
 protected:
-	int mBitrate = -1;
-	int mSamplerate = -1;
+    AudioFile() = default;
 
-	bool mIsOpen = false;
-
-
-
-
+    int mBitrate = 0;
+    int mSampleRate = 0;
+    long mDuration = 0;  // milliseconds
+    long mSqlID = -1;
+    bool mIsOpen = false;
+    unsigned long mFileSize = 0;
+    unsigned long mAudioSize = 0;
+    unsigned char *mFileData = nullptr;
+    string mFilePath;
     ifstream *mStream = nullptr;
-	//virtual void setAudio();
-	int mSampleRate = 0;
-	long mDuration = 0; //milliseconds
-	
-	unsigned long mFileSize = 0;
-	unsigned long mAudioSize = 0;
-	unsigned char * mFileData = nullptr;
-
-
 
 
 public:
-    AudioFile() {}
-
-    AudioFile(string *filePath);
-
-	bool open();
-
-    //AudioFile(vector<char> deserialize) {};
+    /*
+     * Basic constructor. Identifies the file to be opened.
+     */
+    explicit AudioFile(string *filePath);
 
     virtual ~AudioFile();
 
-    string getFilePath() const;
+    /*
+     * Attempts to open the file.
+     *
+     * Returns true if successful or if the file is already opened.
+     * Otherwise returns false.
+     */
+    bool open();
 
-    void setFilePath(const string &filePath);
+    /*
+     * Abstract method.
+     * Returns the associated tag
+     */
+    virtual Tag *getTag() = 0;
+
+    /*
+     * Abstract method.
+     * Creates and attaches the new tag to the AudioFile.
+     * Open must be called prior
+     */
+    virtual int saveNewTag(Tag *newTag) = 0;
 
     unsigned long getFileSize() const;
 
-    //unsigned char* getAudio();
+    long getDuration() const;
 
-	unsigned long getDuration() const;
+    long getID() const;
 
-    /*
-     * Before calling setAudio this method must be overridden and mStream.n_pos
-     * must be set to the start of the audio data and mAudioData size must be set prior
-     */
-    
-    virtual Tag* getTag() = 0;
+    void setID(long ID);
 
-    int getID() const;
-
-    void setID(int ID);
-
-	virtual int saveNewTag(Tag *newTag) = 0;
-
+    string getFilePath() const;
 };
 
-
-#endif //TAGGER_FILEV2_H
+#endif  // TAGGER_FILE_H

@@ -1,7 +1,3 @@
-//
-// Created by natet on 4/7/2018.
-//
-
 #ifndef TAGGER_SQLHELPER_H
 #define TAGGER_SQLHELPER_H
 

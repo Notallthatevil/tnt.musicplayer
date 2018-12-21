@@ -17,7 +17,12 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        src/main/cpp/native-lib.cpp)
+        src/main/cpp/Files/AudioFile.cpp
+        src/main/cpp/Files/Mp3File.cpp
+        src/main/cpp/Sqlite/SqlHelper.cpp
+        src/main/cpp/Sqlite/sqlite3.c
+        src/main/cpp/Tags/Tag.cpp
+        src/main/cpp/Tags/ID3Tag.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

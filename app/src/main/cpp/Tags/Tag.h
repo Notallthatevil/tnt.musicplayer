@@ -11,6 +11,11 @@
 
 using namespace std;
 
+
+/*
+ * Abstract class for Tag. Contains basic getters and setters. Should not
+ * and can not be instantiated.
+ */
 class Tag {
 
 protected: //NOTE:Tag data
@@ -22,8 +27,7 @@ protected: //NOTE:Tag data
     unsigned char *mCover = nullptr;
     int mCoverSize = 0;
     int mTagSize = 0;
-	//unsigned char *mGeneratedTag = nullptr;
-	Tag();
+	Tag() = default;
 
 public:
 

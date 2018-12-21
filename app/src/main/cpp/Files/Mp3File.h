@@ -2,74 +2,95 @@
 // Created by Nate on 5/21/2018.
 //
 
-#ifndef TAGGER_MP3FILEV2_H
-#define TAGGER_MP3FILEV2_H
+#ifndef TAGGER_Mp3File_H
+#define TAGGER_Mp3File_H
 
 
 #include "AudioFile.h"
-#include "../Tags/ID3TagV2.h"
+#include "../Tags/ID3Tag.h"
 
-class Mp3FileV2 : public AudioFile {
+class Mp3File : public AudioFile {
 
 private:
-	enum Constants {
-		VERSION_1 = 0x03,
-		VERSION_2 = 0x02,
-		VERSION_2_5 = 0x00,
-		LAYER_I = 0x03,
-		LAYER_II = 0x02,
-		LAYER_III = 0x01
-	};
+    enum Constants {
+        VERSION_1 = 0x03,
+        VERSION_2 = 0x02,
+        VERSION_2_5 = 0x00,
+        LAYER_I = 0x03,
+        LAYER_II = 0x02,
+        LAYER_III = 0x01
+    };
 
-	inline int calculateFrameSize(float samplesPerFrame, float frameBitrate, float samplerate, float padding);
-	inline int calculateDuration(float fileSizeInBytes, float bitrate);
-	inline int calculateDuration(float totalNumOfFrames, float samplesPerFrame, float samplerate);
-	inline int calculateBitrate(float fileSizeInBytes, float durationInMilli);
+    inline int calculateFrameSize(float samplesPerFrame, float frameBitrate, float sampleRate, float padding);
 
+    inline int calculateDuration(float fileSizeInBytes, float bitrate);
+
+    inline int calculateDuration(float totalNumOfFrames, float samplesPerFrame, float sampleRate);
+
+    inline int calculateBitrate(float fileSizeInBytes, float durationInMilli);
 
 
 protected:
-
-	char MP3_VERSION = -1;
-	char MP3_LAYER = -1;
-
-	unsigned int MP3_NUM_OF_FRAMES = -1;
-	unsigned int MP3_NUM_OF_BYTES = -1;
+    char mMp3Version = -1;
+    char mMp3Layer = -1;
+    unsigned int mNumOfFrames = 0;
+    ID3Tag *mId3Tag = nullptr;
 
 
-	Mp3FileV2() {}
-	int parseMp3Data();
-	int findBitrate(char bitrateChar);
-	int findSampleRate(char sampleRateChar); // in Hz
-	int getSamples();
-	int checkForVBRHeader();
-	int parseXingHeader(char *xingBuffer);
-	void parseVBRIHeader(char *vbriBuffer);
-	int getAverageBitrate();
-	int hasHeader();
-	int attachNewTag(Tag *tagnewTag);
+    Mp3File():AudioFile() {}
 
-	ID3TagV2 *mId3Tag = nullptr;
+    int parseMp3Data();
+
+    int findBitrate(char bitrateChar);
+
+    int findSampleRate(char sampleRateChar); // in Hz
+
+    int getSamples();
+
+    int checkForVBRHeader();
+
+    int parseXingHeader(char *xingBuffer);
+
+    void parseVBRIHeader(char *vbriBuffer);
+
+    int getAverageBitrate();
+
+    int hasHeader();
+
+    int attachNewTag(Tag *newTag);
+
 
 public:
-	Mp3FileV2(string *filePath) :AudioFile(filePath) {}
 
-    Mp3FileV2(string *filePath, bool findTags);
+    explicit Mp3File(string *filePath) : AudioFile(filePath){}
 
-    //Mp3FileV2(vector<char> deserialize);
+    virtual ~Mp3File();
 
+    /*
+     * Parses the Mp3File for relevant data.
+     * If findTags is set then the file will try and parse an ID3 tag if it exists.
+     * Otherwise mp3 file information is parsed and that's it.
+     *
+     * Returns
+     * -2 if the file is not open yet. open() must be called before an operations can be done.
+     * -1 if there was no file to parse
+     * 0 if successful
+     * 1 if the file is not a valid Mp3File
+     */
+    int parse(bool findTags);
 
-    virtual ~Mp3FileV2();
-
-    //void setAudio() override;
-
-	int parse(bool findTags);
+    /*
+     * Adds the new ID3Tag to the file and replaces the old one if it existed
+     * Returns
+     * -2 if an output stream couldn't be opened
+     * 0 if successful
+     */
+    int saveNewTag(Tag *newTag) override;
 
     Tag *getTag() override;
 
-	int saveNewTag(Tag * newTag) override;
 
 };
 
 
-#endif //TAGGER_MP3FILEV2_H
+#endif //TAGGER_Mp3File_H
