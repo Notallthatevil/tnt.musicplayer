@@ -1,7 +1,8 @@
-package com.trippntechnology.tntmusicplayer
+package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.trippntechnology.tntmusicplayer.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -11,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Example of a call to a native method
-        sample_text.text = stringFromJNI()
+        sample_text.text = "Hello world"
     }
 
     /**
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         // Used to load the 'native-lib' library on application startup.
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary("tagger-lib")
         }
     }
 }
