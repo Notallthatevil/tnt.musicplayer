@@ -11,18 +11,18 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-        native-lib
+        tagger-lib
 
         # Sets the library as a shared library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        src/main/cpp/Files/AudioFile.cpp
-        src/main/cpp/Files/Mp3File.cpp
+        src/main/cpp/tagger/files/AudioFile.cpp
+        src/main/cpp/tagger/files/Mp3File.cpp
         src/main/cpp/Sqlite/SqlHelper.cpp
         src/main/cpp/Sqlite/sqlite3.c
-        src/main/cpp/Tags/Tag.cpp
-        src/main/cpp/Tags/ID3Tag.cpp)
+        src/main/cpp/tagger/tags/Tag.cpp
+        src/main/cpp/tagger/tags/ID3Tag.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

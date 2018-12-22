@@ -7,7 +7,7 @@
 
 
 #include "AudioFile.h"
-#include "../Tags/ID3Tag.h"
+#include "../tags/ID3Tag.h"
 
 class Mp3File : public AudioFile {
 

@@ -7,7 +7,7 @@
 #include <jni.h>
 #include <sys/stat.h>
 #include <sstream>
-#include "../Files/AudioFile.h"
+#include "../tagger/files/AudioFile.h"
 #include <vector>
 
 using namespace std;

@@ -8,7 +8,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include "../Tags/Tag.h"
+#include "../tags/Tag.h"
 
 using namespace std;
 
