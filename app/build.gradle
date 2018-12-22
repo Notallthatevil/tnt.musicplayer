@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -30,6 +29,9 @@ android {
             path "CMakeLists.txt"
         }
     }
+    dataBinding{
+        enabled = true
+    }
 }
 
 dependencies {
@@ -40,4 +42,21 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //RecycleView
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    //Data binding
+    kapt "com.android.databinding:compiler:3.1.4"
+
+    // View model
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+
+    //Dagger
+    implementation "com.google.dagger:dagger:2.17"
+    kapt "com.google.dagger:dagger-compiler:2.19"
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
+
 }
