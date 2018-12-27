@@ -5,15 +5,33 @@
 #include <dirent.h>
 #include <algorithm>
 #include <exception>
-#include "Sqlite/SqlHelper.h"
-#include "Files/AudioFile.h"
-#include "Files/Mp3FileV2.h"
-#include <errno.h>
+#include "../database/SqlHelper.h"
+#include "files/AudioFile.h"
+#include "files/Mp3File.h"
 #include <iostream>
 #include <ctime>
 #include <ratio>
 #include <chrono>
 #include <cstdio>
+
+
+struct FileAccessException : public exception {
+    const char *what() const throw() {
+        return "Unable to access storage. Were permissions requested?";
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*  Time method execution
 #include <iostream>
@@ -26,6 +44,7 @@ auto end = std::chrono::high_resolution_clock::now();
 std::chrono::duration<double> time_span = (end - start);
 __android_log_print(ANDROID_LOG_DEBUG,"TIME","Time Retrieving file paths = %f", time_span.count());
 */
+/*
 using namespace std;
 
 typedef vector<vector<string>> VectorList;
@@ -34,27 +53,27 @@ typedef vector<vector<string>> VectorList;
 //TODO create UTF8 string for c++ to be able to write utf8 strings and retrieve them. Especially helpful for database stuff
 
 
-/*
+*
  * Returns a list of all audio files given in the @param directory
  * directory - The directory to be searched for audio files. Must be an absolute file path
- */
-vector<string> get_audio_files(string directory) {
+ *
+vector<string> get_audio_files(const string directory) {
     DIR *d;
     VectorList vectorList;
     vector<string> stringList;
     d = opendir(directory.c_str());
     if (d) {
         struct dirent *dir;
-        while ((dir = readdir(d)) != NULL) {
+        while ((dir = readdir(d)) != nullptr) {
             string dirName(dir->d_name);
             if (dirName != "." && dirName != "..") {
                 string newDir = directory + dirName + "/";
 
                 //If it is a directory search it
-                if (opendir(newDir.c_str()) != NULL) {
+                if (opendir(newDir.c_str()) != nullptr) {
                     vectorList.push_back(get_audio_files(newDir));
                 } else {
-                    string sub = dirName.substr(dirName.find_last_of(".") + 1);
+                    string sub = dirName.substr(dirName.find_last_of('.') + 1);
                     if (sub == "mp3") {
                         stringList.push_back(directory + dirName);
                     }
@@ -62,7 +81,7 @@ vector<string> get_audio_files(string directory) {
             }
         }
     } else {
-        throw fileAccessException();
+//        throw fileAccessException();
     }
     closedir(d);
     unsigned long wholeSize = 0;
@@ -83,17 +102,17 @@ void delete_pointed_to(T *const ptr) {
     delete ptr;
 }
 
-/**
+**
  * Returns an int based on the success of creating a database
  *
  * 0  = all operations were successful
  * -1 = unable to access files i.e. user has not granted permission
  * -2 = unable to creating database file
- */
+ *
 extern "C"
 JNIEXPORT jint
 JNICALL
-Java_com_trippntechnology_tagger_NativeWrapper_generateDatabase(JNIEnv *env, jobject /* this */) {
+Java_com_trippntechnology_tagger_NativeWrapper_generateDatabase(JNIEnv *env, jobject) {
     string str = "/storage/emulated/0/Music/Approaching Nirvana/Notes/Approaching Nirvana - Notes - 01 August.mp3";
     Mp3FileV2 mp3FileV2(&str,true);
 
@@ -139,9 +158,9 @@ Java_com_trippntechnology_tagger_NativeWrapper_generateDatabase(JNIEnv *env, job
 }
 
 
-/*
+*
  * Returns all songs from the database
- */
+ *
 extern "C"
 JNIEXPORT jobjectArray
 JNICALL Java_com_trippntechnology_tagger_NativeWrapper_retrieveSongs(JNIEnv *env, jobject) {
@@ -178,3 +197,115 @@ JNICALL Java_com_trippntechnology_tagger_NativeWrapper_saveNewTag(JNIEnv *env, j
 
     return 1;
 }
+
+*/
+
+
+vector<string> scanDirectoryForAudio(const string directory) {
+    try {
+        DIR *d = opendir(directory.c_str());
+        vector<string> dirFileList;
+
+        if (d) {
+            struct dirent *dir;
+            while ((dir = readdir(d)) != nullptr) {
+                string dirName(dir->d_name);
+                if (dirName != "." && dirName != "..") {
+                    string newDir = directory + dirName;
+
+                    //Check to see if opendir() returns a file or directory
+                    ///Directory
+                    if (opendir(newDir.c_str()) != nullptr) {
+
+                        auto subDirList = scanDirectoryForAudio(newDir + "/");
+                        dirFileList.insert(dirFileList.end(), subDirList.begin(), subDirList.end());
+
+                        ///File
+                    } else {
+                        string extension = dirName.substr(dirName.find_last_of('.') + 1);
+                        if (extension == "mp3") {
+                            dirFileList.resize(dirFileList.size() + 1);
+                            dirFileList.back() = directory + dirName;
+                        }
+                    }
+                }
+            }
+            return dirFileList;
+        } else {
+            throw FileAccessException();
+        }
+    } catch (FileAccessException e) {
+        __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
+    }
+}
+
+extern "C"
+JNIEXPORT jobjectArray
+JNICALL
+Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainActivity_scanDirectory(JNIEnv *env, jobject obj,
+                                                                                           jstring directory) {
+    auto directoryList = scanDirectoryForAudio(string(env->GetStringUTFChars(directory, nullptr)));
+    jobjectArray jDirList = env->NewObjectArray(directoryList.size(), env->FindClass("java/lang/String"), 0);
+
+    for (int i = 0; i < directoryList.size(); i++) {
+        env->SetObjectArrayElement(jDirList, i, env->NewStringUTF(directoryList[i].c_str()));
+    }
+    return jDirList;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

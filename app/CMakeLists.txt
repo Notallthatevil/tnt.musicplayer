@@ -22,7 +22,8 @@ add_library( # Sets the name of the library.
         src/main/cpp/database/SqlHelper.cpp
         src/main/cpp/database/sqlite3.c
         src/main/cpp/tagger/tags/Tag.cpp
-        src/main/cpp/tagger/tags/ID3Tag.cpp)
+        src/main/cpp/tagger/tags/ID3Tag.cpp
+        src/main/cpp/tagger/tagger.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
