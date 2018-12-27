@@ -19,8 +19,8 @@ add_library( # Sets the name of the library.
         # Provides a relative path to your source file(s).
         src/main/cpp/tagger/files/AudioFile.cpp
         src/main/cpp/tagger/files/Mp3File.cpp
-        src/main/cpp/Sqlite/SqlHelper.cpp
-        src/main/cpp/Sqlite/sqlite3.c
+        src/main/cpp/database/SqlHelper.cpp
+        src/main/cpp/database/sqlite3.c
         src/main/cpp/tagger/tags/Tag.cpp
         src/main/cpp/tagger/tags/ID3Tag.cpp)
 
@@ -42,7 +42,7 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        native-lib
+        tagger-lib
 
         # Links the target library to the log library
         # included in the NDK.
