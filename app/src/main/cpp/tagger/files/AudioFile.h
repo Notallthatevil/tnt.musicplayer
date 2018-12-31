@@ -5,12 +5,9 @@
 #ifndef TAGGER_FILE_H
 #define TAGGER_FILE_H
 
-#include <string>
 #include <fstream>
-#include <vector>
 #include "../tags/Tag.h"
 
-using namespace std;
 
 class AudioFile {
 private:
@@ -25,15 +22,15 @@ protected:
     unsigned long mFileSize = 0;
     unsigned long mAudioSize = 0;
     unsigned char *mFileData = nullptr;
-    string mFilePath;
-    ifstream *mStream = nullptr;
+    std::string mFilePath;
+    std::ifstream *mStream = nullptr;
 
 
 public:
     /*
      * Basic constructor. Identifies the file to be opened.
      */
-    explicit AudioFile(string *filePath);
+    explicit AudioFile(std::string *filePath);
 
     virtual ~AudioFile();
 
@@ -66,7 +63,7 @@ public:
 
     void setID(long ID);
 
-    string getFilePath() const;
+    std::string getFilePath() const;
 };
 
 #endif  // TAGGER_FILE_H

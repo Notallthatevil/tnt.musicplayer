@@ -58,7 +58,7 @@ void ID3Tag::readFlags(char flagByte) {
 int ID3Tag::readTags(unsigned char *tagBuffer) {
     unsigned int pos = 0;
     unsigned int frameSize = 0;
-    string frameHeader;
+    std::string frameHeader;
 
     if (tagBuffer == nullptr) {
         return -1;
@@ -111,11 +111,11 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
 }
 
 
-/*Returns string from the passed in frame. Will always return some type of string
+/*Returns std::string from the passed in frame. Will always return some type of std::string
 within the given frame size
 */
-string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSize) {
-    string frameData;
+std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSize) {
+    std::string frameData;
     int i;
 
     switch (buffer[offset]) {
@@ -198,7 +198,7 @@ int ID3Tag::findCover(unsigned char *buffer, int offset, int frameSize) {
     int apicFrameOffset = offset;
     int frameSizeOffset = frameSize;
     unsigned char encoding = buffer[apicFrameOffset++];
-    string mimeType;
+    std::string mimeType;
     while (buffer[apicFrameOffset] != 0x00) {
         mimeType += buffer[apicFrameOffset++];
     }
@@ -326,7 +326,7 @@ int ID3Tag::insertExtendedHeader(int extendedHeaderSize, bool flag) {
 }
 
 
-int ID3Tag::createTextFrame(unsigned char *dest, int offset, string frameID, string data) {
+int ID3Tag::createTextFrame(unsigned char *dest, int offset, std::string frameID, std::string data) {
 
     //FrameID
     for (int i = 0; i < 4; i++) {

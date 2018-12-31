@@ -1,14 +1,14 @@
-#include "SqlHelper.h"
+#include "SqlWrapper.h"
 
 inline bool file_exists(const std::string &name) {
-    struct stat buffer;
+    struct stat buffer{};
     return (stat(name.c_str(), &buffer) == 0);
 }
 
 /*
  * Creates database directory if it doesn't exist then opens the database connection.
  */
-SqlHelper::SqlHelper() {
+SqlWrapper::SqlWrapper() {
     if (!file_exists(DATABASE_DIRECTORY)) {
         mkdir(DATABASE_DIRECTORY.c_str(), S_IRWXU | S_IRWXG | S_IXOTH);
     }
@@ -23,7 +23,7 @@ SqlHelper::SqlHelper() {
  * Basic destructor
  * Closes the database connection
  */
-SqlHelper::~SqlHelper() {
+SqlWrapper::~SqlWrapper() {
     sqlite3_finalize(stmt);
     sqlite3_close_v2(mDb);
 }
@@ -33,9 +33,9 @@ SqlHelper::~SqlHelper() {
  *
  * @param tableName - The name of the database table
  */
-int SqlHelper::createTable(string tableName) {
+int SqlWrapper::createTable(std::string tableName) {
     if (tableName == SONG_TABLE) {
-        string sql = "CREATE TABLE " + SONG_TABLE + "(" +
+        std::string sql = "CREATE TABLE " + SONG_TABLE + "(" +
                      SONG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                      SONG_TITLE + " TEXT, " +
                      SONG_ARTIST + " TEXT, " +
@@ -56,8 +56,8 @@ int SqlHelper::createTable(string tableName) {
  *
  * @param tableName - The name of the table to be deleted
  */
-int SqlHelper::dropTable(string tableName) {
-    string sql = "DROP TABLE IF EXISTS " + tableName;
+int SqlWrapper::deleteTable(std::string tableName) {
+    std::string sql = "DROP TABLE IF EXISTS " + tableName;
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
     int rc = sqlite3_step(stmt);
     return rc;
@@ -70,8 +70,8 @@ int SqlHelper::dropTable(string tableName) {
  *
  * @param audioFile - Pointer to the audio file to be added
  */
-int SqlHelper::insertSong(AudioFile *audioFile) {
-    string sql = "INSERT INTO " + SONG_TABLE +
+int SqlWrapper::insertSong(AudioFile *audioFile) {
+    std::string sql = "INSERT INTO " + SONG_TABLE +
                  "(TITLE,ARTIST,ALBUM,TRACK,YEAR,FILEPATH,ARTWORK) " +
                  "VALUES(:TIT,:ART,:ALB,:TRA,:YEA,:FIL,?);";
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
@@ -100,13 +100,13 @@ int SqlHelper::insertSong(AudioFile *audioFile) {
 }
 
 
-jobjectArray SqlHelper::retrieveAllSongs(JNIEnv *env) {
-    string sql = "SELECT * FROM " + SONG_TABLE;
+jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
+    std::string sql = "SELECT * FROM " + SONG_TABLE;
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
     jclass jSongClass = env->FindClass("com/trippntechnology/tagger/Song");
     jmethodID jSongConstructor = env->GetMethodID(jSongClass, "<init>",
                                                   "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[B)V");
-    vector<jobject> songList;
+    std::vector<jobject> songList;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         jint jID = sqlite3_column_int(stmt, SONG_ID_COLUMN);
         jstring jTitle = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_TITLE_COLUMN));
@@ -134,15 +134,15 @@ jobjectArray SqlHelper::retrieveAllSongs(JNIEnv *env) {
 
 //RETURNS the filepath of the song with the corresponding ID
 
-string SqlHelper::selectSong(AudioFile *audioFile) {
-    stringstream ss;
+std::string SqlWrapper::selectSong(AudioFile *audioFile) {
+    std::stringstream ss;
     ss << audioFile->getID();
-    string sql =
+    std::string sql =
             "SELECT " + SONG_FILEPATH + " FROM " + SONG_TABLE + " WHERE " + SONG_ID +
             " = " + ss.str();
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
     sqlite3_step(stmt);
-    return string((char *) sqlite3_column_text(stmt, 0));
+    return std::string((char *) sqlite3_column_text(stmt, 0));
 }
 
 /*
@@ -151,16 +151,16 @@ string SqlHelper::selectSong(AudioFile *audioFile) {
  * @param audioFile - The new audio file to be updated
  * @param ID - The ID of the database entry to be updated
  */
-int SqlHelper::updateSong(AudioFile *audioFile, int ID) {
+int SqlWrapper::updateSong(AudioFile *audioFile, int ID) {
     Tag *tag = audioFile->getTag();
-    string sql = "UPDATE " + SONG_TABLE + " SET " +
+    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
                  SONG_TITLE + " = :TIT, " +
                  SONG_ARTIST + " = :ART, " +
                  SONG_ALBUM + " = :ALB, " +
                  SONG_TRACK + " = :TRA, " +
                  SONG_YEAR + " = :YEA, " +
                  SONG_COVER + " = ? WHERE " +
-                 SONG_ID + " = " + to_string(ID) + ";";
+                 SONG_ID + " = " + std::to_string(ID) + ";";
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
 

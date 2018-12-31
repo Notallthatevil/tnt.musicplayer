@@ -11,23 +11,23 @@ Tag::~Tag() {
     }
 }
 
-const string &Tag::getTitle() const {
+const std::string &Tag::getTitle() const {
     return mTitle;
 }
 
-const string &Tag::getArtist() const {
+const std::string &Tag::getArtist() const {
     return mArtist;
 }
 
-const string &Tag::getAlbum() const {
+const std::string &Tag::getAlbum() const {
     return mAlbum;
 }
 
-const string &Tag::getTrack() const {
+const std::string &Tag::getTrack() const {
     return mTrack;
 }
 
-const string &Tag::getYear() const {
+const std::string &Tag::getYear() const {
     return mYear;
 }
 
@@ -35,23 +35,23 @@ unsigned char *Tag::getCover() const {
     return mCover;
 }
 
-void Tag::setTitle(const string &Title) {
+void Tag::setTitle(const std::string &Title) {
     mTitle = Title;
 }
 
-void Tag::setArtist(const string &Artist) {
+void Tag::setArtist(const std::string &Artist) {
     mArtist = Artist;
 }
 
-void Tag::setAlbum(const string &Album) {
+void Tag::setAlbum(const std::string &Album) {
     mAlbum = Album;
 }
 
-void Tag::setTrack(const string &Track) {
+void Tag::setTrack(const std::string &Track) {
     mTrack = Track;
 }
 
-void Tag::setYear(const string &Year) {
+void Tag::setYear(const std::string &Year) {
     mYear = Year;
 }
 

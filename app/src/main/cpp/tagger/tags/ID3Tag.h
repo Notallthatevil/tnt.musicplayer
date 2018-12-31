@@ -7,9 +7,7 @@
 
 
 #include "Tag.h"
-#include <string>
 
-using namespace std;
 
 class ID3Tag : public Tag {
 private:
@@ -25,12 +23,12 @@ private:
 
         APIC_HEADER_SIZE = 19
     };
-    const string TITLE_TAG = "TIT2";
-    const string ALBUM_TAG = "TALB";
-    const string ARTIST_TAG = "TPE1";
-    const string TRACK_TAG = "TRCK";
-    const string YEAR_TAG = "TYER";
-    const string COVER_TAG = "APIC";
+    const std::string TITLE_TAG = "TIT2";
+    const std::string ALBUM_TAG = "TALB";
+    const std::string ARTIST_TAG = "TPE1";
+    const std::string TRACK_TAG = "TRCK";
+    const std::string YEAR_TAG = "TYER";
+    const std::string COVER_TAG = "APIC";
 
 
     char mMajorVersion = 0xFF;
@@ -50,11 +48,11 @@ protected:
 
     void readFlags(char flagByte);
 
-    int createTextFrame(unsigned char *dest, int offset, string frameID, string data);
+    int createTextFrame(unsigned char *dest, int offset, std::string frameID, std::string data);
 
     int findCover(unsigned char *buffer, int offset, int frameSize);
 
-    string getTextFrame(unsigned char *buffer, int offset, int frameSize);
+    std::string getTextFrame(unsigned char *buffer, int offset, int frameSize);
 
     int calculateTagSize(bool footerPresent, int extendedHeaderSize);
 

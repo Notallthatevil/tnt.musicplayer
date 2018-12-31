@@ -62,7 +62,7 @@ protected:
 
 public:
 
-    explicit Mp3File(string *filePath) : AudioFile(filePath){}
+    explicit Mp3File(std::string *filePath) : AudioFile(filePath){}
 
     virtual ~Mp3File();
 

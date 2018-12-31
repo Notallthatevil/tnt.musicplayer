@@ -4,7 +4,7 @@
 
 #include "AudioFile.h"
 
-AudioFile::AudioFile(string *filePath) {
+AudioFile::AudioFile(std::string *filePath) {
     mFilePath = *filePath;
 }
 
@@ -12,13 +12,13 @@ bool AudioFile::open() {
 	if(mIsOpen) {
 		return true;
 	}
-	mStream = new ifstream(getFilePath().c_str(), ios::ate|ios::binary);
+	mStream = new std::ifstream(getFilePath().c_str(), std::ios::ate|std::ios::binary);
 	mIsOpen = mStream->is_open();
 	if (!mIsOpen) {
 		return false;
 	}
 	mFileSize = (unsigned long) mStream->tellg();
-	mStream->seekg(0,ios::beg);
+	mStream->seekg(0,std::ios::beg);
 	mIsOpen = true;
 	return mIsOpen;
 }
@@ -35,7 +35,7 @@ AudioFile::~AudioFile() {
 	}
 }
 
-string AudioFile::getFilePath() const {
+std::string AudioFile::getFilePath() const {
     return mFilePath;
 }
 
