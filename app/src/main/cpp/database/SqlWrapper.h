@@ -13,7 +13,7 @@
 
 class SqlWrapper {
 private:
-    const std::string DATABASE_DIRECTORY = "/data/data/com.trippntechnology.tagger/databases";
+    const std::string DATABASE_DIRECTORY = "/data/data/com.trippntechnology.tntmusicplayer/databases";
     const std::string DATABASE_NAME = DATABASE_DIRECTORY+"/TNT.db";
 
     const std::string SONG_ID = "ID";
@@ -60,7 +60,7 @@ public:
 
 struct databaseCreationError : public std::exception {
 
-    const char *what() const throw() override {
+    const char *what() const noexcept override {
         return "Unable to create database ";
     }
 };

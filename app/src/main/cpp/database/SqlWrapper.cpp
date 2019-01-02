@@ -13,8 +13,9 @@ SqlWrapper::SqlWrapper() {
         mkdir(DATABASE_DIRECTORY.c_str(), S_IRWXU | S_IRWXG | S_IXOTH);
     }
     int rc = sqlite3_open_v2(DATABASE_NAME.c_str(), &mDb, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE,
-                             NULL);
+                             nullptr);
     if (rc) {
+
         throw databaseCreationError();
     }
 }
@@ -44,7 +45,7 @@ int SqlWrapper::createTable(std::string tableName) {
                      SONG_YEAR + " TEXT, " +
                      SONG_FILEPATH + " TEXT NOT NULL, " +
                      SONG_COVER + " BLOB);";
-        sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+        sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
         int rc = sqlite3_step(stmt);
         return rc;
     }
@@ -58,7 +59,7 @@ int SqlWrapper::createTable(std::string tableName) {
  */
 int SqlWrapper::deleteTable(std::string tableName) {
     std::string sql = "DROP TABLE IF EXISTS " + tableName;
-    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
     int rc = sqlite3_step(stmt);
     return rc;
 }
@@ -74,7 +75,7 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
     std::string sql = "INSERT INTO " + SONG_TABLE +
                  "(TITLE,ARTIST,ALBUM,TRACK,YEAR,FILEPATH,ARTWORK) " +
                  "VALUES(:TIT,:ART,:ALB,:TRA,:YEA,:FIL,?);";
-    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",
@@ -102,7 +103,7 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
 
 jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
     std::string sql = "SELECT * FROM " + SONG_TABLE;
-    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
     jclass jSongClass = env->FindClass("com/trippntechnology/tagger/Song");
     jmethodID jSongConstructor = env->GetMethodID(jSongClass, "<init>",
                                                   "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[B)V");
@@ -125,7 +126,7 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
                                        jTrack, jYear, jFilepath, jCover);
         songList.push_back(jSong);
     }
-    jobjectArray jSongList = env->NewObjectArray((jint) songList.size(), jSongClass, NULL);
+    jobjectArray jSongList = env->NewObjectArray((jint) songList.size(), jSongClass, nullptr);
     for (int i = 0; i < songList.size(); i++) {
         env->SetObjectArrayElement(jSongList, i, songList[i]);
     }
@@ -140,7 +141,7 @@ std::string SqlWrapper::selectSong(AudioFile *audioFile) {
     std::string sql =
             "SELECT " + SONG_FILEPATH + " FROM " + SONG_TABLE + " WHERE " + SONG_ID +
             " = " + ss.str();
-    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_step(stmt);
     return std::string((char *) sqlite3_column_text(stmt, 0));
 }
@@ -162,7 +163,7 @@ int SqlWrapper::updateSong(AudioFile *audioFile, int ID) {
                  SONG_COVER + " = ? WHERE " +
                  SONG_ID + " = " + std::to_string(ID) + ";";
 
-    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, NULL);
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",

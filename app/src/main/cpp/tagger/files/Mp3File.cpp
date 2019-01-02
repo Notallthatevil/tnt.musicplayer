@@ -68,7 +68,7 @@ int Mp3File::parseMp3Data() {
 
     //Seek to audio
     if (mId3Tag != nullptr) {
-        mStream->seekg(mId3Tag->getTagSize()/*Default is 0*/, ios::beg);
+        mStream->seekg(mId3Tag->getTagSize()/*Default is 0*/, std::ios::beg);
         mAudioSize = mFileSize - mId3Tag->getTagSize();
     } else {
         mStream->seekg(0);
@@ -881,7 +881,7 @@ int Mp3File::saveNewTag(Tag *newTag) {
 
     if (attachNewTag(newTag) == 0) {
         mStream->close();
-        ofstream outStream(getFilePath(), ios::trunc | ios::beg | ios::binary);
+        std::ofstream outStream(getFilePath(), std::ios::trunc | std::ios::beg | std::ios::binary);
         if (outStream.is_open()) {
             outStream.write((char *) mFileData, mFileSize);
         } else {
