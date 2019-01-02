@@ -25,7 +25,7 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
 
     if (d) {
 
-        __android_log_print(ANDROID_LOG_INFO, "scanDirectoryForAudio", "%s", directory.c_str());
+//        __android_log_print(ANDROID_LOG_INFO, "scanDirectoryForAudio", "%s", directory.c_str());
 
         struct dirent *dir;
         while ((dir = readdir(d)) != nullptr) {
@@ -57,6 +57,8 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
 
 }
 
+//#define javaString "Ljava/lang/String"
+
 extern "C"
 JNIEXPORT jobjectArray
 JNICALL
@@ -69,6 +71,30 @@ Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_sc
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
     }
+
+
+
+    //Setup Kotlin Integer wrapper so that we can return an int
+    jclass jIntegerWrapper = env->FindClass("com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$IntegerWrapper");
+    jmethodID integerWrapperConstructor = env->GetMethodID(jIntegerWrapper,"<init>","(I)V");
+    jobject jIntegerWrapperObject = env->NewObject(jIntegerWrapper,integerWrapperConstructor,directoryList.size());
+    //Setup Kotlin progress bar wrapper
+    jclass jProgressWrapper = env->FindClass("com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$CurrentProgressWrapper");
+    jmethodID progressWrapperConstructor = env->GetMethodID(jProgressWrapper,"<init>","(ILjava/lang/String;)V");
+
+
+
+
+
+    //Setup MutableLiveData
+    jclass jMutableCurrentSong = env->GetObjectClass(currentSong);
+    jmethodID postCurrentSong = env->GetMethodID(jMutableCurrentSong,"postValue","(Ljava/lang/Object;)V");
+    //Setup SingleLiveEvent
+    jclass jMutableMaxSongs = env->GetObjectClass(numOfSongs);
+    jmethodID setMaxNumberOfSongs = env->GetMethodID(jMutableMaxSongs,"postValue","(Ljava/lang/Object;)V");
+    env->CallVoidMethod(numOfSongs,setMaxNumberOfSongs,jIntegerWrapperObject);
+
+
 
 
 
@@ -91,6 +117,11 @@ Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_sc
     for (int i = 0; i < directoryList.size(); i++) {
 
         if (directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
+            jstring directoryItem = env->NewStringUTF(directoryList[i].c_str());
+            jobject jProgressWrapperObject = env->NewObject(jProgressWrapper,progressWrapperConstructor,i,directoryItem);
+
+            env->CallVoidMethod(currentSong,postCurrentSong,jProgressWrapperObject);
+
             auto *mp3 = new Mp3File(&directoryList[i]);
             mp3->parse(true);
             audioFiles[i] = mp3;

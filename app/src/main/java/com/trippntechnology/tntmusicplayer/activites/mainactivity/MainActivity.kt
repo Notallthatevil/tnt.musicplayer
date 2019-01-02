@@ -1,18 +1,14 @@
 package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Debug
-import android.util.Log
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.*
-import com.trippntechnology.tntmusicplayer.BuildConfig
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
@@ -43,6 +39,7 @@ class MainActivity : LiveDataObserverActivity() {
         super.onCreate(savedInstanceState)
 
         dialog = ScanningDialog(this)
+        dialog.show()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = viewModel
@@ -52,7 +49,6 @@ class MainActivity : LiveDataObserverActivity() {
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),PERMISSION_TO_WRITE_EXTERNAL_STORAGE)
         }
 
-        dialog.show()
         viewModel.fullSongList.observe {
             Toast.makeText(this,"Songs read",Toast.LENGTH_LONG).show()
             if(dialog.isShowing){
@@ -61,11 +57,13 @@ class MainActivity : LiveDataObserverActivity() {
         }
 
         viewModel.parsingCurrentSong.observe{
-//            dialog.setBody(it!!)
-//            dialog.increaseCurrentProgress()
+            dialog.increaseCurrentProgress(it!!)
         }
         viewModel.numberOfSongs.observe{
-            dialog.setMaxProgress(it!!)
+            dialog.setMaxProgress(it!!.int)
+            if (!dialog.isShowing){
+                dialog.show()
+            }
         }
     }
 

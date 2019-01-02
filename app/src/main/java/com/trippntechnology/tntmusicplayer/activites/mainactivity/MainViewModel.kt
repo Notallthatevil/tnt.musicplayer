@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
 import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
+import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,8 +13,8 @@ class MainViewModel
 @Inject constructor(cc: CoroutineContextProvider) : BaseViewModel(cc) {
 
     val fullSongList = MutableLiveData<Array<String>>()
-    val parsingCurrentSong = MutableLiveData<String>()
-    val numberOfSongs = SingleLiveEvent<Int>()
+    val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
+    val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
     init {
         scanDirectory()
@@ -28,8 +29,8 @@ class MainViewModel
 
     private external fun scanDirectory(
         directory: String,
-        parsingCurrentSong: MutableLiveData<String>,
-        numberOfSongs: SingleLiveEvent<Int>
+        parsingCurrentSong: MutableLiveData<ScanningDialog.CurrentProgressWrapper>,
+        numberOfSongs: SingleLiveEvent<ScanningDialog.IntegerWrapper>
     ): Array<String>?
 
     companion object {
