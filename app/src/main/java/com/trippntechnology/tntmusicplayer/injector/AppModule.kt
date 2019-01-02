@@ -1,6 +1,8 @@
 package com.trippntechnology.tntmusicplayer.injector
 
 import android.app.Application
+import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
+import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -13,4 +15,11 @@ class AppModule(private val application: Application) {
     internal fun provideApplication(): Application {
         return application
     }
+
+    @Provides
+    @Singleton
+    fun provideCoroutineContextProvider(): CoroutineContextProvider {
+        return CoroutineContextProvider.MainCoroutineContextProvider
+    }
+
 }

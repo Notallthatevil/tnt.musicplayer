@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="alert_dialog_width">380dp</dimen>
+    <dimen name="alert_dialog_height">140dp</dimen>
+    <dimen name="alert_dialog_title">21sp</dimen>
+    <dimen name="alert_dialog_body">16sp</dimen>
+    <dimen name="dialog_elevation">24dp</dimen>
+
+</resources>

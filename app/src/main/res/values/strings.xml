@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">tnt.musicplayer</string>
+    <string name="scanning_for_music">Scanning for music files</string>
+    <string name="placeholder">placeholder</string>
 </resources>
