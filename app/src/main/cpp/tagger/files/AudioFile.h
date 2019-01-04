@@ -63,6 +63,9 @@ public:
 
     void setID(long ID);
 
+    int getBitrate();
+    int getSampleRate();
+
     std::string getFilePath() const;
 };
 

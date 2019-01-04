@@ -1,3 +1,4 @@
+#pragma ide diagnostic ignored "hicpp-signed-bitwise"
 //
 // Created by Nate on 5/21/2018.
 //
@@ -46,7 +47,7 @@ int Mp3File::parse(bool findTags) {
 
         mStream->read((char *) tagBuffer, bufferSize);
         //parse tags
-        rc = mId3Tag->readTags(tagBuffer);
+        mId3Tag->readTags(tagBuffer);
 
         delete[] tagBuffer;
         tagBuffer = nullptr;
@@ -884,6 +885,7 @@ int Mp3File::saveNewTag(Tag *newTag) {
         std::ofstream outStream(getFilePath(), std::ios::trunc | std::ios::beg | std::ios::binary);
         if (outStream.is_open()) {
             outStream.write((char *) mFileData, mFileSize);
+            outStream.close();
         } else {
             return -2;
         }
@@ -904,3 +906,5 @@ Tag *Mp3File::getTag() {
     return mId3Tag;
 }
 
+
+#pragma clang diagnostic pop

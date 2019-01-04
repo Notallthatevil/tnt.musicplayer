@@ -9,30 +9,30 @@ AudioFile::AudioFile(std::string *filePath) {
 }
 
 bool AudioFile::open() {
-	if(mIsOpen) {
-		return true;
-	}
-	mStream = new std::ifstream(getFilePath().c_str(), std::ios::ate|std::ios::binary);
-	mIsOpen = mStream->is_open();
-	if (!mIsOpen) {
-		return false;
-	}
-	mFileSize = (unsigned long) mStream->tellg();
-	mStream->seekg(0,std::ios::beg);
-	mIsOpen = true;
-	return mIsOpen;
+    if (mIsOpen) {
+        return true;
+    }
+    mStream = new std::ifstream(getFilePath().c_str(), std::ios::ate | std::ios::binary);
+    mIsOpen = mStream->is_open();
+    if (!mIsOpen) {
+        return false;
+    }
+    mFileSize = (unsigned long) mStream->tellg();
+    mStream->seekg(0, std::ios::beg);
+    mIsOpen = true;
+    return mIsOpen;
 }
 
 AudioFile::~AudioFile() {
-	mIsOpen = false;
+    mIsOpen = false;
     if (mStream != nullptr) {
         delete mStream;
         mStream = nullptr;
     }
-	if (mFileData != nullptr) {
-		delete[] mFileData;
-		mFileData = nullptr;
-	}
+    if (mFileData != nullptr) {
+        delete[] mFileData;
+        mFileData = nullptr;
+    }
 }
 
 std::string AudioFile::getFilePath() const {
@@ -51,7 +51,15 @@ void AudioFile::setID(long ID) {
     mSqlID = ID;
 }
 
-long AudioFile::getDuration() const{
-	return mDuration;
+long AudioFile::getDuration() const {
+    return mDuration;
+}
+
+int AudioFile::getBitrate() {
+    return mBitrate;
+}
+
+int AudioFile::getSampleRate() {
+    return mSampleRate;
 }
 
