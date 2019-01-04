@@ -1,6 +1,7 @@
 package com.trippntechnology.tntmusicplayer.injector
 
 import android.app.Application
+import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import dagger.Module
@@ -20,6 +21,12 @@ class AppModule(private val application: Application) {
     @Singleton
     fun provideCoroutineContextProvider(): CoroutineContextProvider {
         return CoroutineContextProvider.MainCoroutineContextProvider
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaggerLib():TaggerLib{
+        return TaggerLib
     }
 
 }
