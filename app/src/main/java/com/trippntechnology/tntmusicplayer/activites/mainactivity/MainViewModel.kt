@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
+import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
 import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ class MainViewModel
     val taggerLib: TaggerLib
 ) : BaseViewModel(cc) {
 
-    val fullSongList = MutableLiveData<Array<String>>()
+    val fullSongList = MutableLiveData<List<AudioFile>>()
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
@@ -26,8 +27,9 @@ class MainViewModel
 
     fun scanDirectory() {
         launch(Dispatchers.IO) {
-            val songs = taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
-            fullSongList.postValue(songs)
+            taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
+            val songs = taggerLib.getAllAudioFiles()
+            fullSongList.postValue(songs!!.asList())
         }
     }
 

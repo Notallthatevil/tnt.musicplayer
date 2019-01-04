@@ -22,8 +22,6 @@ SqlWrapper::SqlWrapper() {
     if (rc) {
         throw databaseCreationError();
     }
-
-
 }
 
 /*
@@ -128,10 +126,9 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     for (int i = 0; i < numberOfItems; i++) {
-        int rc = sqlite3_step(stmt);
-        if (rc != SQLITE_ROW) {
-            int err = sqlite3_extended_errcode(mDb);
-            __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Reached last row before number of items was read");
+        if (sqlite3_step(stmt) != SQLITE_ROW) {
+            __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Reached last row before number of items was read: Error code %d",
+                    sqlite3_extended_errcode(mDb));
             return nullptr;
         }
 
@@ -159,35 +156,6 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
 
         env->SetObjectArrayElement(jAudioArray, i, jSong);
     }
-
-
-//    std::string sql = "SELECT * FROM " + SONG_TABLE;
-//    jclass jSongClass = env->FindClass("com/trippntechnology/tagger/Song");
-//    jmethodID jSongConstructor = env->GetMethodID(jSongClass, "<init>",
-//    );
-//    std::vector<jobject> songList;
-//    while (sqlite3_step(stmt) == SQLITE_ROW) {
-//        jint jID = sqlite3_column_int(stmt, SONG_ID_COLUMN);
-//        jstring jTitle = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_TITLE_COLUMN));
-//        jstring jArtist = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_ARTIST_COLUMN));
-//        jstring jAlbum = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_ALBUM_COLUMN));
-//        jstring jTrack = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_TRACK_COLUMN));
-//        jstring jYear = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_YEAR_COLUMN));
-//        jstring jFilepath = env->NewStringUTF(
-//                (char *) sqlite3_column_text(stmt, SONG_FILEPATH_COLUMN));
-//
-//        int length = sqlite3_column_bytes(stmt, SONG_COVER_COLUMN);
-//        char *blob = (char *) sqlite3_column_blob(stmt, SONG_COVER_COLUMN);
-//        jbyteArray jCover = env->NewByteArray(length);
-//        env->SetByteArrayRegion(jCover, 0, length, (jbyte *) blob);
-//        jobject jSong = env->NewObject(jSongClass, jSongConstructor, jID, jTitle, jArtist, jAlbum,
-//                                       jTrack, jYear, jFilepath, jCover);
-//        songList.push_back(jSong);
-//    }
-//    jobjectArray jSongList = env->NewObjectArray((jint) songList.size(), jSongClass, nullptr);
-//    for (int i = 0; i < songList.size(); i++) {
-//        env->SetObjectArrayElement(jSongList, i, songList[i]);
-//    }
     return jAudioArray;
 }
 
