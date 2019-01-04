@@ -1,20 +1,22 @@
 package com.trippntechnology.tntmusicplayer.objects
 
-data class AudioFile(val id:Int,
+data class AudioFile(
+    val id: Int,
 
-                     //Tags
-                     val title:String,
-                     val album:String,
-                     val artist:String,
-                     val year:String,
-                     val track:String,
-                     val cover:ByteArray,
+    //Tags
+    val title: String = "<unknown>",
+    val album: String = "<unknown>",
+    val artist: String = "<unknown>",
+    val year: String = "<unknown>",
+    val track: String = "<unknown>",
+    val cover: ByteArray?,
 
-                     //Audio data
-                     val filePath:String,
-                     val duration:Long,
-                     val sampleRate:Int,
-                     val bitRate:Int){
+    //Audio data
+    val filePath: String,
+    val duration: Long = 0,
+    val sampleRate: Int=0,
+    val bitRate: Int=0
+) {
 
 
     override fun equals(other: Any?): Boolean {
@@ -29,7 +31,10 @@ data class AudioFile(val id:Int,
         if (artist != other.artist) return false
         if (year != other.year) return false
         if (track != other.track) return false
-        if (!cover.contentEquals(other.cover)) return false
+        if (cover != null) {
+            if (other.cover == null) return false
+            if (!cover.contentEquals(other.cover)) return false
+        } else if (other.cover != null) return false
         if (filePath != other.filePath) return false
         if (duration != other.duration) return false
         if (sampleRate != other.sampleRate) return false
@@ -45,12 +50,13 @@ data class AudioFile(val id:Int,
         result = 31 * result + artist.hashCode()
         result = 31 * result + year.hashCode()
         result = 31 * result + track.hashCode()
-        result = 31 * result + cover.contentHashCode()
+        result = 31 * result + (cover?.contentHashCode() ?: 0)
         result = 31 * result + filePath.hashCode()
         result = 31 * result + duration.hashCode()
         result = 31 * result + sampleRate
         result = 31 * result + bitRate
         return result
     }
+
 
 }
