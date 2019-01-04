@@ -14,8 +14,6 @@ struct FileAccessException : public std::exception {
 };
 
 
-
-
 /*
  * directory must look like /storage/emulated/0/Music/
  */
@@ -57,13 +55,13 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
 
 }
 
-//#define javaString "Ljava/lang/String"
-
+#define javaString "java/lang/String"
 extern "C"
 JNIEXPORT jobjectArray
 JNICALL
-Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_scanDirectory(JNIEnv *env, jobject obj,
-                                                                                            jstring directory,jobject currentSong,jobject numOfSongs) {
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(JNIEnv *env, jobject /*this*/,
+                                                                                jstring directory, jobject currentSong,
+                                                                                jobject numOfSongs) {
     std::vector<std::string> directoryList;
     try {
         directoryList = scanDirectoryForAudio(std::string(env->GetStringUTFChars(directory, nullptr)));
@@ -74,31 +72,28 @@ Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_sc
 
 
 
-    //Setup Kotlin Integer wrapper so that we can return an int
-    jclass jIntegerWrapper = env->FindClass("com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$IntegerWrapper");
-    jmethodID integerWrapperConstructor = env->GetMethodID(jIntegerWrapper,"<init>","(I)V");
-    jobject jIntegerWrapperObject = env->NewObject(jIntegerWrapper,integerWrapperConstructor,directoryList.size());
-    //Setup Kotlin progress bar wrapper
-    jclass jProgressWrapper = env->FindClass("com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$CurrentProgressWrapper");
-    jmethodID progressWrapperConstructor = env->GetMethodID(jProgressWrapper,"<init>","(ILjava/lang/String;)V");
+    ///Setup Kotlin Integer wrapper so that we can return an int
+    jclass jIntegerWrapper = env->FindClass(
+            "com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$IntegerWrapper");
+    jmethodID integerWrapperConstructor = env->GetMethodID(jIntegerWrapper, "<init>", "(I)V");
+    jobject jIntegerWrapperObject = env->NewObject(jIntegerWrapper, integerWrapperConstructor, directoryList.size());
+
+    ///Setup Kotlin progress bar wrapper
+    jclass jProgressWrapper = env->FindClass(
+            "com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$CurrentProgressWrapper");
+    jmethodID progressWrapperConstructor = env->GetMethodID(jProgressWrapper, "<init>", "(ILjava/lang/String;)V");
 
 
-
-
-
-    //Setup MutableLiveData
+    ///Setup MutableLiveData
     jclass jMutableCurrentSong = env->GetObjectClass(currentSong);
-    jmethodID postCurrentSong = env->GetMethodID(jMutableCurrentSong,"postValue","(Ljava/lang/Object;)V");
-    //Setup SingleLiveEvent
+    jmethodID postCurrentSong = env->GetMethodID(jMutableCurrentSong, "postValue", "(Ljava/lang/Object;)V");
+    ///Setup SingleLiveEvent
     jclass jMutableMaxSongs = env->GetObjectClass(numOfSongs);
-    jmethodID setMaxNumberOfSongs = env->GetMethodID(jMutableMaxSongs,"postValue","(Ljava/lang/Object;)V");
-    env->CallVoidMethod(numOfSongs,setMaxNumberOfSongs,jIntegerWrapperObject);
+    jmethodID setMaxNumberOfSongs = env->GetMethodID(jMutableMaxSongs, "postValue", "(Ljava/lang/Object;)V");
+    env->CallVoidMethod(numOfSongs, setMaxNumberOfSongs, jIntegerWrapperObject);
 
 
-
-
-
-    jobjectArray jDirList = env->NewObjectArray((jint) directoryList.size(), env->FindClass("java/lang/String"),
+    jobjectArray jDirList = env->NewObjectArray((jint) directoryList.size(), env->FindClass(javaString),
                                                 nullptr);
 
     for (int i = 0; i < directoryList.size(); i++) {
@@ -114,14 +109,14 @@ Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_sc
     ///
 
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
+
     for (int i = 0; i < directoryList.size(); i++) {
 
+        jstring directoryItem = env->NewStringUTF(directoryList[i].c_str());
+        jobject jProgressWrapperObject = env->NewObject(jProgressWrapper, progressWrapperConstructor, i, directoryItem);
+        env->CallVoidMethod(currentSong, postCurrentSong, jProgressWrapperObject);
+
         if (directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
-            jstring directoryItem = env->NewStringUTF(directoryList[i].c_str());
-            jobject jProgressWrapperObject = env->NewObject(jProgressWrapper,progressWrapperConstructor,i,directoryItem);
-
-            env->CallVoidMethod(currentSong,postCurrentSong,jProgressWrapperObject);
-
             auto *mp3 = new Mp3File(&directoryList[i]);
             mp3->parse(true);
             audioFiles[i] = mp3;
@@ -138,9 +133,17 @@ Java_com_trippntechnology_tntmusicplayer_activites_mainactivity_MainViewModel_sc
     }
     delete[]audioFiles;
 
-    __android_log_print(ANDROID_LOG_INFO,"SCANNING","Finished");
+    __android_log_print(ANDROID_LOG_INFO, "SCANNING", "Finished");
 
     return jDirList;
+}
+
+extern "C"
+JNIEXPORT jobjectArray //java audio file
+JNICALL
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
+    SqlWrapper sqlWrapper;
+    return sqlWrapper.retrieveAllSongs(env);
 }
 
 
