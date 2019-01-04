@@ -12,15 +12,18 @@ inline bool file_exists(const std::string &name) {
  * Creates database directory if it doesn't exist then opens the database connection.
  */
 SqlWrapper::SqlWrapper() {
+    //Warning setting this is deprecated but have no choice as no TMPDIR global variable available for android
+    sqlite3_temp_directory = (char*)"/data/user/0/com.trippntechnology.tntmusicplayer/cache";
     if (!file_exists(DATABASE_DIRECTORY)) {
         mkdir(DATABASE_DIRECTORY.c_str(), S_IRWXU | S_IRWXG | S_IXOTH);
     }
     int rc = sqlite3_open_v2(DATABASE_NAME.c_str(), &mDb, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE,
                              nullptr);
     if (rc) {
-
         throw databaseCreationError();
     }
+
+
 }
 
 /*
@@ -41,19 +44,19 @@ int SqlWrapper::createTable(std::string tableName) {
     if (tableName == SONG_TABLE) {
 
         std::string sql = "CREATE TABLE " + SONG_TABLE + "(" +
-        SONG_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                          SONG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
-        SONG_TITLE+" TEXT, " +
-        SONG_ALBUM+" TEXT, " +
-        SONG_ARTIST+" TEXT, " +
-        SONG_YEAR+" TEXT, " +
-        SONG_TRACK+" TEXT, " +
-        SONG_COVER+" BLOB, " +
+                          SONG_TITLE + " TEXT, " +
+                          SONG_ALBUM + " TEXT, " +
+                          SONG_ARTIST + " TEXT, " +
+                          SONG_YEAR + " TEXT, " +
+                          SONG_TRACK + " TEXT, " +
+                          SONG_COVER + " BLOB, " +
 
-        SONG_FILEPATH+" TEXT NOT NULL, " +
-        SONG_DURATION+" BIGINT, " +
-        SONG_SAMPLERATE+" INT, " +
-        SONG_BITRATE+" INT);";
+                          SONG_FILEPATH + " TEXT NOT NULL, " +
+                          SONG_DURATION + " BIGINT, " +
+                          SONG_SAMPLERATE + " INT, " +
+                          SONG_BITRATE + " INT);";
         sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
         int rc = sqlite3_step(stmt);
         return rc;
@@ -114,9 +117,6 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
     std::string sql = "SELECT count(id) FROM " + SONG_TABLE;
     sqlite3_exec(mDb, sql.c_str(), callback, &numberOfItems, &error);
 
-    sql = "SELECT * FROM " + SONG_TABLE;
-    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-
     std::string constructorParameters = "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[BLjava/lang/String;JII)V";
 
     jclass jAudioFile = env->FindClass("com/trippntechnology/tntmusicplayer/objects/AudioFile");
@@ -124,13 +124,15 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
 
     jobjectArray jAudioArray = env->NewObjectArray(numberOfItems, jAudioFile, nullptr);
 
-    sql = "SELECT * FROM " + SONG_TABLE;
+    sql = "SELECT * FROM " + SONG_TABLE + " ORDER BY "+SONG_TITLE+" ASC";
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     for (int i = 0; i < numberOfItems; i++) {
-        if (sqlite3_step(stmt) != SQLITE_ROW) {
-            __android_log_print(ANDROID_LOG_DEBUG,"SQLITE","Reached last row before number of items was read");
-            break;
+        int rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW) {
+            int err = sqlite3_extended_errcode(mDb);
+            __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Reached last row before number of items was read");
+            return nullptr;
         }
 
         jint jid = sqlite3_column_int(stmt, SONG_ID_COLUMN);
@@ -151,10 +153,11 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
         jint jSampleRate = sqlite3_column_int(stmt, SONG_SAMPLERATE_COLUMN);
         jint jBitrate = sqlite3_column_int(stmt, SONG_BITRATE_COLUMN);
 
-        jobject jSong = env->NewObject(jAudioFile,jConstructor,
-                jid,jTitle,jAlbum,jArtist,jYear,jTrack,jCover,jFilepath,jDuration,jSampleRate,jBitrate);
+        jobject jSong = env->NewObject(jAudioFile, jConstructor,
+                                       jid, jTitle, jAlbum, jArtist, jYear, jTrack, jCover, jFilepath, jDuration,
+                                       jSampleRate, jBitrate);
 
-        env->SetObjectArrayElement(jAudioArray,i,jSong);
+        env->SetObjectArrayElement(jAudioArray, i, jSong);
     }
 
 
@@ -195,8 +198,8 @@ std::string SqlWrapper::selectSong(AudioFile *audioFile) {
     ss << audioFile->getID();
     std::string sql =
             "SELECT " + SONG_FILEPATH
-    +" FROM " + SONG_TABLE + " WHERE " + SONG_ID
-    +
+            + " FROM " + SONG_TABLE + " WHERE " + SONG_ID
+            +
             " = " + ss.str();
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_step(stmt);
@@ -212,20 +215,20 @@ std::string SqlWrapper::selectSong(AudioFile *audioFile) {
 int SqlWrapper::updateSong(AudioFile *audioFile, int ID) {
     Tag *tag = audioFile->getTag();
     std::string sql = "UPDATE " + SONG_TABLE + " SET " +
-    SONG_TITLE
-    +" = :TIT, " +
-    SONG_ARTIST
-    +" = :ART, " +
-    SONG_ALBUM
-    +" = :ALB, " +
-    SONG_TRACK
-    +" = :TRA, " +
-    SONG_YEAR
-    +" = :YEA, " +
-    SONG_COVER
-    +" = ? WHERE " +
-    SONG_ID
-    +" = " + std::to_string(ID) + ";";
+                      SONG_TITLE
+                      + " = :TIT, " +
+                      SONG_ARTIST
+                      + " = :ART, " +
+                      SONG_ALBUM
+                      + " = :ALB, " +
+                      SONG_TRACK
+                      + " = :TRA, " +
+                      SONG_YEAR
+                      + " = :YEA, " +
+                      SONG_COVER
+                      + " = ? WHERE " +
+                      SONG_ID
+                      + " = " + std::to_string(ID) + ";";
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
