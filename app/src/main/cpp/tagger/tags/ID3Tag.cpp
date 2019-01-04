@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "hicpp-signed-bitwise"
 //
 // Created by Nate on 5/21/2018.
 //
@@ -95,7 +97,7 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
             } else if (frameHeader == YEAR_TAG) {
                 setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
             } else if (frameHeader == COVER_TAG) {
-                int imageOffset = findCover(tagBuffer, pos + 10, frameSize);
+                int imageOffset = findCover(tagBuffer, pos + 10);
                 setCover(tagBuffer, frameSize - imageOffset, imageOffset);
             }
 
@@ -134,14 +136,14 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
                 for (i; i < frameSize; i += 2) {
                     //FIXME Fix to work with utf-16 characters
 
-                    unsigned int charSize = buffer[i + 1] << 8u | buffer[i];
+                    unsigned int charSize = buffer[i + offset + 1] << 8u | buffer[i + offset];
                     if (charSize > UCHAR_MAX) {
                         //Inserts placeholder currently
                         frameData += (char) 0x1F;
                     } else if (charSize == 0) {
                         break;
                     } else {
-                        frameData += buffer[i];
+                        frameData += buffer[i + offset];
                     }
                 }
                 break;
@@ -160,14 +162,14 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
 
                 //FIXME Fix to work with utf-16 characters
 
-                unsigned int charSize = buffer[i] << 8u | buffer[i + 1];
+                unsigned int charSize = buffer[i + offset] << 8u | buffer[i + offset + 1];
                 if (charSize > UCHAR_MAX) {
                     //Inserts placeholder currently
                     frameData += (char) 0x1F;
                 } else if (charSize == 0) {
                     break;
                 } else {
-                    frameData += buffer[i + 1];
+                    frameData += buffer[i + offset + 1];
                 }
 
             }
@@ -191,19 +193,17 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
 
 /* Returns an int that indicates where the binary image data actually starts in the frame
 */
-int ID3Tag::findCover(unsigned char *buffer, int offset, int frameSize) {
+int ID3Tag::findCover(unsigned char *buffer, int offset) {
     if (buffer == nullptr) {
         return -1;
     }
     int apicFrameOffset = offset;
-    int frameSizeOffset = frameSize;
     unsigned char encoding = buffer[apicFrameOffset++];
     std::string mimeType;
     while (buffer[apicFrameOffset] != 0x00) {
         mimeType += buffer[apicFrameOffset++];
     }
-    char pictureType = buffer[++apicFrameOffset];
-    apicFrameOffset++;
+    apicFrameOffset += 2;
     if (encoding == 0x01 || encoding == 0x02 /*UTF-16*/) {
         while (buffer[apicFrameOffset] != 0x00 ||
                buffer[apicFrameOffset + 1] != 0x00) {
@@ -259,7 +259,7 @@ unsigned char *ID3Tag::generateTags(long padding) {
             offset = createTextFrame(mGeneratedTag, offset, YEAR_TAG, mYear);
         }
         if (mCover != nullptr) {
-            offset = createAPICFrame(mGeneratedTag, offset);
+            /*offset =*/ createAPICFrame(mGeneratedTag, offset);
         }
     }
     return mGeneratedTag;
@@ -297,16 +297,16 @@ int ID3Tag::createID3Header(unsigned char *dest, bool unsynch, int extendedHeade
 
     //set flags
     if (mFlagUnsynchronisation) {
-        dest[offset] = dest[offset] | 0x80u;
+        dest[offset] = dest[offset] | 0x80;
     }
     if (mFlagExtendedHeader) {
-        dest[offset] = dest[offset] | 0x40u;
+        dest[offset] = dest[offset] | 0x40;
     }
     if (mFlagExperimental) {
-        dest[offset] = dest[offset] | 0x20u;
+        dest[offset] = dest[offset] | 0x20;
     }
     if (mFlagFooter) {
-        dest[offset] = dest[offset] | 0x10u;
+        dest[offset] = dest[offset] | 0x10;
         footerPresent = 10;
     }
     //Insert tag size (Whole tag - tag header - footer (if present))
@@ -368,7 +368,7 @@ int ID3Tag::createAPICFrame(unsigned char *dest, int offset) {
         dest[offset++] = (unsigned char) COVER_TAG[i];
     }
 
-    unsigned int dataSize = (unsigned int)(mCoverSize + APIC_HEADER_SIZE);
+    auto dataSize = (unsigned int) (mCoverSize + APIC_HEADER_SIZE);
     for (int i = 0; i < 4; i++) {
         if (mFlagUnsynchronisation) {
             dest[offset++] = (unsigned char) ((dataSize >> (21 - (7 * i))) & 0x7f);
@@ -435,6 +435,4 @@ int ID3Tag::getHeaderSize() const {
 }
 
 
-
-
-
+#pragma clang diagnostic pop

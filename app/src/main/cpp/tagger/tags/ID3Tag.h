@@ -50,7 +50,7 @@ protected:
 
     int createTextFrame(unsigned char *dest, int offset, std::string frameID, std::string data);
 
-    int findCover(unsigned char *buffer, int offset, int frameSize);
+    int findCover(unsigned char *buffer, int offset);
 
     std::string getTextFrame(unsigned char *buffer, int offset, int frameSize);
 
