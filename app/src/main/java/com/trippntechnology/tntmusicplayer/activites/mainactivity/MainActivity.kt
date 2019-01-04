@@ -3,19 +3,18 @@ package com.trippntechnology.tntmusicplayer.activites.mainactivity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.activites.mainactivity.adapter.AudioFileAdapter
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
-import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.util.LiveDataObserverActivity
 import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import javax.inject.Inject
@@ -50,12 +49,21 @@ class MainActivity : LiveDataObserverActivity() {
 
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
+        binding.mainRecyclerView.addItemDecoration(object:DividerItemDecoration(this, VERTICAL){})
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),PERMISSION_TO_WRITE_EXTERNAL_STORAGE)
         }
 
+        setupProgressBarObservers()
+
+
+        viewModel.selectedSong.observe{
+            Toast.makeText(this,it.toString(),Toast.LENGTH_LONG).show()
+        }
+
+        //On initial scan only
         viewModel.fullSongList.observe {
             adapter.submitList(it!!)
             if(dialog.isShowing){
@@ -63,6 +71,16 @@ class MainActivity : LiveDataObserverActivity() {
             }
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (dialog.isShowing){
+            dialog.dismiss()
+        }
+    }
+
+    private fun setupProgressBarObservers(){
         viewModel.parsingCurrentSong.observe{
             dialog.increaseCurrentProgress(it!!)
         }
@@ -74,12 +92,8 @@ class MainActivity : LiveDataObserverActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (dialog.isShowing){
-            dialog.dismiss()
-        }
-    }
+
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode){

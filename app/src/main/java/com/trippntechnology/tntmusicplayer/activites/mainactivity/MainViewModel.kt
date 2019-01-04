@@ -21,16 +21,23 @@ class MainViewModel
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
+    val selectedSong = SingleLiveEvent<Int>()
+
     init {
-        scanDirectory()
+        performInitialScan()
     }
 
-    fun scanDirectory() {
+    private fun performInitialScan() {
         launch(Dispatchers.IO) {
             taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
             val songs = taggerLib.getAllAudioFiles()
             fullSongList.postValue(songs!!.asList())
         }
     }
+
+    fun audioFileSelected(audioFile:AudioFile){
+        selectedSong.value = audioFile.id
+    }
+
 
 }
