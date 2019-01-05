@@ -122,7 +122,7 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
 
     jobjectArray jAudioArray = env->NewObjectArray(numberOfItems, jAudioFile, nullptr);
 
-    sql = "SELECT * FROM " + SONG_TABLE + " ORDER BY "+SONG_TITLE+" ASC";
+    sql = "SELECT * FROM " + SONG_TABLE + " ORDER BY "+SONG_TITLE+" COLLATE NOCASE ASC";
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     for (int i = 0; i < numberOfItems; i++) {
@@ -142,8 +142,13 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
         //Cover
         int length = sqlite3_column_bytes(stmt, SONG_COVER_COLUMN);
         char *blob = (char *) sqlite3_column_blob(stmt, SONG_COVER_COLUMN);
-        jbyteArray jCover = env->NewByteArray(length);
-        env->SetByteArrayRegion(jCover, 0, length, (jbyte *) blob);
+        jbyteArray jCover;
+        if(blob!= nullptr) {
+            jCover = env->NewByteArray(length);
+            env->SetByteArrayRegion(jCover, 0, length, (jbyte *) blob);
+        }else{
+            jCover = nullptr;
+        }
         //Audio data
         jstring jFilepath = env->NewStringUTF((char *) sqlite3_column_text(stmt, SONG_FILEPATH_COLUMN));
         jlong jDuration = sqlite3_column_int64(stmt, SONG_DURATION_COLUMN);
