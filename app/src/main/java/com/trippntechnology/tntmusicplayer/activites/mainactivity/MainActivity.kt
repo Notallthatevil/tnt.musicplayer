@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.activites.mainactivity.adapter.AudioFileAdapter
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainBinding
+import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.LiveDataObserverActivity
-import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
+import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import javax.inject.Inject
 
 class MainActivity : LiveDataObserverActivity() {
@@ -27,7 +28,7 @@ class MainActivity : LiveDataObserverActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var dialog :ScanningDialog
+    private lateinit var scanningDialog : ScanningDialog
 
     private val viewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
@@ -41,8 +42,9 @@ class MainActivity : LiveDataObserverActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dialog = ScanningDialog(this)
-        dialog.show()
+        scanningDialog = ScanningDialog(this)
+        scanningDialog.show()
+
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = viewModel
@@ -60,14 +62,14 @@ class MainActivity : LiveDataObserverActivity() {
 
 
         viewModel.selectedSong.observe{
-            Toast.makeText(this,it.toString(),Toast.LENGTH_LONG).show()
+            EditTagDialog(this,it!!).show()
         }
 
         //On initial scan only
         viewModel.fullSongList.observe {
             adapter.submitList(it!!)
-            if(dialog.isShowing){
-                dialog.dismiss()
+            if(scanningDialog.isShowing){
+                scanningDialog.dismiss()
             }
         }
 
@@ -75,19 +77,19 @@ class MainActivity : LiveDataObserverActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (dialog.isShowing){
-            dialog.dismiss()
+        if (scanningDialog.isShowing){
+            scanningDialog.dismiss()
         }
     }
 
     private fun setupProgressBarObservers(){
         viewModel.parsingCurrentSong.observe{
-            dialog.increaseCurrentProgress(it!!)
+            scanningDialog.increaseCurrentProgress(it!!)
         }
         viewModel.numberOfSongs.observe{
-            dialog.setMaxProgress(it!!.int)
-            if (!dialog.isShowing){
-                dialog.show()
+            scanningDialog.setMaxProgress(it!!.int)
+            if (!scanningDialog.isShowing){
+                scanningDialog.show()
             }
         }
     }

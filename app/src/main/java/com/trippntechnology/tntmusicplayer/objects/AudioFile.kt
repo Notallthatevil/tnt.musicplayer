@@ -57,6 +57,4 @@ data class AudioFile(
         result = 31 * result + bitRate
         return result
     }
-
-
 }

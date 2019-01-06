@@ -62,6 +62,18 @@ JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(JNIEnv *env, jobject /*this*/,
                                                                                 jstring directory, jobject currentSong,
                                                                                 jobject numOfSongs) {
+
+
+
+    SqlWrapper sqlWrapper;
+
+    ///TEMP
+    sqlWrapper.deleteTable(sqlWrapper.SONG_TABLE);
+    ///
+
+
+
+
     std::vector<std::string> directoryList;
     try {
         directoryList = scanDirectoryForAudio(std::string(env->GetStringUTFChars(directory, nullptr)));
@@ -74,13 +86,13 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 
     ///Setup Kotlin Integer wrapper so that we can return an int
     jclass jIntegerWrapper = env->FindClass(
-            "com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$IntegerWrapper");
+            "com/trippntechnology/tntmusicplayer/dialogs/scanningdialog/ScanningDialog$IntegerWrapper");
     jmethodID integerWrapperConstructor = env->GetMethodID(jIntegerWrapper, "<init>", "(I)V");
     jobject jIntegerWrapperObject = env->NewObject(jIntegerWrapper, integerWrapperConstructor, directoryList.size());
 
     ///Setup Kotlin progress bar wrapper
     jclass jProgressWrapper = env->FindClass(
-            "com/trippntechnology/tntmusicplayer/widgets/ScanningDialog$CurrentProgressWrapper");
+            "com/trippntechnology/tntmusicplayer/dialogs/scanningdialog/ScanningDialog$CurrentProgressWrapper");
     jmethodID progressWrapperConstructor = env->GetMethodID(jProgressWrapper, "<init>", "(ILjava/lang/String;)V");
 
 
@@ -102,11 +114,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 
 
     auto audioFiles = new AudioFile *[directoryList.size()];
-    SqlWrapper sqlWrapper;
 
-    ///TEMP
-    sqlWrapper.deleteTable(sqlWrapper.SONG_TABLE);
-    ///
 
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
 

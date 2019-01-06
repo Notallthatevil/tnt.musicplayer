@@ -2,6 +2,7 @@ package com.trippntechnology.tntmusicplayer.injector
 
 import android.app.Application
 import com.trippntechnology.tntmusicplayer.activites.mainactivity.MainActivity
+import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import dagger.Component
 import javax.inject.Singleton
 
@@ -11,9 +12,11 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(app:Application)
 
-    //UI
+    //Activity
     fun inject(target:MainActivity)
 
+    //Dialog
+    fun inject(target:EditTagDialog)
 
     fun application():Application
 }

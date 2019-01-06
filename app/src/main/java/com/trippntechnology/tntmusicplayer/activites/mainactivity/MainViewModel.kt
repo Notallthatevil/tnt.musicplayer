@@ -6,7 +6,7 @@ import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
-import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
+import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class MainViewModel
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
-    val selectedSong = SingleLiveEvent<Int>()
+    val selectedSong = SingleLiveEvent<AudioFile>()
 
     init {
         performInitialScan()
@@ -36,7 +36,7 @@ class MainViewModel
     }
 
     fun audioFileSelected(audioFile:AudioFile){
-        selectedSong.value = audioFile.id
+        selectedSong.value = audioFile
     }
 
 

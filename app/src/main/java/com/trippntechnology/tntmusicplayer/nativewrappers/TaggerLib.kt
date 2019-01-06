@@ -3,7 +3,7 @@ package com.trippntechnology.tntmusicplayer.nativewrappers
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
-import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
+import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 
 object TaggerLib {
 

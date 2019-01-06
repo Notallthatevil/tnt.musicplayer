@@ -3,7 +3,6 @@ package com.trippntechnology.tntmusicplayer.injector
 import android.app.Application
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
-import com.trippntechnology.tntmusicplayer.widgets.ScanningDialog
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

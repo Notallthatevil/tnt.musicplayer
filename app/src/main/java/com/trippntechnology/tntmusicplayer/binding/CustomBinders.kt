@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.binding
 
+import android.graphics.BitmapFactory
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -13,8 +14,8 @@ import java.util.concurrent.TimeUnit
 object CustomBinders {
 
     @JvmStatic
-    @BindingAdapter("setImage")
-    fun setImage(imageView: ImageView, image: ByteArray?) {
+    @BindingAdapter("setImageLoader")
+    fun setImageLoader(imageView: ImageView, image: ByteArray?) {
         val requestOptions = RequestOptions()
             .placeholder(R.drawable.ic_launcher_background)
             .transforms(RoundedCorners(12))
@@ -24,6 +25,19 @@ object CustomBinders {
             .transition(withCrossFade())
             .into(imageView)
     }
+
+    @JvmStatic
+    @BindingAdapter("setImage")
+    fun setImage(imageView: ImageView, image: ByteArray?) {
+        if (image==null){
+            imageView.setImageResource(R.mipmap.ic_launcher)
+        }else{
+            val bitmap = BitmapFactory.decodeByteArray(image,0,image.size)
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+
 
     @JvmStatic
     @BindingAdapter("setDuration")
