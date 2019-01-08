@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.DialogEditTagBinding
-import com.trippntechnology.tntmusicplayer.dialogs.LiveDataObserverDialog
+import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.LiveDataObserverDialog
+import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.WideDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import javax.inject.Inject
@@ -56,5 +58,11 @@ class EditTagDialog(val context: FragmentActivity, private val audioFile: AudioF
         viewModel.newStuff.observe{
             Toast.makeText(context,"Tags discovered new data",Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.cancel.removeObservers(context)
+        viewModel.newStuff.removeObservers(context)
     }
 }
