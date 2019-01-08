@@ -37,8 +37,6 @@ object CustomBinders {
         }
     }
 
-
-
     @JvmStatic
     @BindingAdapter("setDuration")
     fun setDuration(textView: TextView, duration: Long) {

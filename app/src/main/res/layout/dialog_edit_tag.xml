@@ -13,13 +13,18 @@
             name="audioFile"
             type="com.trippntechnology.tntmusicplayer.objects.AudioFile" />
     </data>
+<FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="16dp"
+    android:elevation="@dimen/dialog_elevation"
+    android:background="@drawable/dialog_shape">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/dialog_shape"
-        android:elevation="24dp">
+        android:layout_width="@dimen/alert_dialog_width"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/editTagDialogTitle"
@@ -34,196 +39,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <ImageView
             android:id="@+id/editTagCover"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:contentDescription="@string/albumcover"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTagFilePath"
             app:setImage="@{audioFile.cover}" />
 
-        <TextView
-            android:id="@+id/editTagFilePath"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@{audioFile.filePath}"
-            android:textColor="@color/disabledTextDark"
-            app:layout_constraintStart_toEndOf="@+id/editTagFilePathLabel"
-            app:layout_constraintTop_toBottomOf="@+id/editTagDialogTitle" />
-
-        <TextView
-            android:id="@+id/editTagFilePathLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/filepathLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagDialogTitle" />
-
-        <TextView
-            android:id="@+id/editTagTitleLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/titleLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagCover" />
-
-        <EditText
-            android:id="@+id/editTagTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/title"
-            android:inputType="textPersonName"
-            android:text="@{audioFile.title}"
-            android:textColor="@color/helperTextDark"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagTitleLabel"
-            app:layout_constraintStart_toEndOf="@+id/editTagTitleLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagTitleLabel"
-            tools:ignore="Autofill,LabelFor" />
-
-        <TextView
-            android:id="@+id/editTagAlbumLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/albumLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagTitleLabel" />
-
-        <EditText
-            android:id="@+id/editTagAlbum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/album"
-            android:inputType="textPersonName"
-            android:text="@{audioFile.album}"
-            android:textColor="@color/helperTextDark"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagAlbumLabel"
-            app:layout_constraintStart_toEndOf="@+id/editTagAlbumLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagAlbumLabel"
-            tools:ignore="Autofill,LabelFor" />
-
-        <TextView
-            android:id="@+id/editTagArtistLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/artistLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagAlbumLabel" />
-
-        <EditText
-            android:id="@+id/editTagArtist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/artist"
-            android:inputType="textPersonName"
-            android:text="@{audioFile.artist}"
-            android:textColor="@color/helperTextDark"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagArtistLabel"
-            app:layout_constraintStart_toEndOf="@+id/editTagArtistLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagArtistLabel"
-            tools:ignore="Autofill,LabelFor" />
-
-        <TextView
-            android:id="@+id/editTagYearLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/yearLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagArtistLabel" />
-
-        <EditText
-            android:id="@+id/editTagYear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/year"
-            android:inputType="textPersonName"
-            android:text="@{audioFile.year}"
-            android:textColor="@color/helperTextDark"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagYearLabel"
-            app:layout_constraintStart_toEndOf="@+id/editTagYearLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagYearLabel"
-            tools:ignore="Autofill,LabelFor" />
-
-        <TextView
-            android:id="@+id/editTagTrackLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/track"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagYearLabel" />
-
-        <EditText
-            android:id="@+id/editTagTrack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/track"
-            android:inputType="textPersonName"
-            android:text="@{audioFile.track}"
-            android:textColor="@color/helperTextDark"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagTrackLabel"
-            app:layout_constraintStart_toEndOf="@+id/editTagTrackLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagTrackLabel"
-            tools:ignore="Autofill,LabelFor" />
 
         <Button
             android:id="@+id/button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
             android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),editTagCover,audioFile)}"
             android:text="@string/save_tags"
             android:textColor="@color/colorAccent"
@@ -232,10 +69,10 @@
 
         <Button
             android:id="@+id/button2"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
             android:onClick="@{()->viewModel.cancel()}"
             android:text="@string/cancel"
             android:textColor="@color/colorAccent"
@@ -243,5 +80,163 @@
             app:layout_constraintEnd_toStartOf="@+id/button"
             app:layout_constraintTop_toTopOf="@+id/button" />
 
+        <TextView
+            android:id="@+id/editTagFilePathLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/filepathLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTagDialogTitle" />
+
+        <TextView
+            android:id="@+id/editTagFilePath"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:singleLine="true"
+            android:text="@{audioFile.filePath}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagFilePathLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/editTagFilePathLabel"
+            app:layout_constraintTop_toTopOf="@+id/editTagFilePathLabel" />
+
+        <TextView
+            android:id="@+id/editTagTitleLable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titleLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagTitle"
+            app:layout_constraintStart_toStartOf="@+id/editTagFilePathLabel"
+            app:layout_constraintTop_toTopOf="@+id/editTagTitle" />
+
+        <EditText
+            android:id="@+id/editTagTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:inputType="text"
+            android:text="@{audioFile.title}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/editTagFilePath"
+            app:layout_constraintTop_toBottomOf="@+id/editTagCover"
+            tools:ignore="Autofill,LabelFor" />
+
+        <EditText
+            android:id="@+id/editTagAlbum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="@{audioFile.Album}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/editTagTitle"
+            app:layout_constraintTop_toBottomOf="@+id/editTagTitle"
+            tools:ignore="Autofill,LabelFor" />
+
+        <TextView
+            android:id="@+id/editTagAlbumLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/albumLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagAlbum"
+            app:layout_constraintStart_toStartOf="@+id/editTagTitleLable"
+            app:layout_constraintTop_toTopOf="@+id/editTagAlbum" />
+
+        <EditText
+            android:id="@+id/editTagArtist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="@{audioFile.Artist}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/editTagAlbum"
+            app:layout_constraintTop_toBottomOf="@+id/editTagAlbum"
+            tools:ignore="Autofill,LabelFor" />
+
+        <TextView
+            android:id="@+id/editTagArtistLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artistLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagArtist"
+            app:layout_constraintStart_toStartOf="@+id/editTagAlbumLabel"
+            app:layout_constraintTop_toTopOf="@+id/editTagArtist" />
+
+        <TextView
+            android:id="@+id/editTagYearLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/yearLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagYear"
+            app:layout_constraintStart_toStartOf="@+id/editTagArtistLabel"
+            app:layout_constraintTop_toTopOf="@+id/editTagYear" />
+
+        <EditText
+            android:id="@+id/editTagYear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="@{audioFile.Year}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/editTagArtist"
+            app:layout_constraintTop_toBottomOf="@+id/editTagArtist"
+            tools:ignore="Autofill,LabelFor" />
+
+        <EditText
+            android:id="@+id/editTagTrack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="@{audioFile.Track}"
+            android:textColor="@color/primaryTextDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/editTagYear"
+            app:layout_constraintTop_toBottomOf="@+id/editTagYear"
+            tools:ignore="Autofill,LabelFor" />
+
+        <TextView
+            android:id="@+id/editTagTrackLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trackLabel"
+            android:textColor="@color/primaryTextDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/editTagTrack"
+            app:layout_constraintStart_toStartOf="@+id/editTagYearLabel"
+            app:layout_constraintTop_toTopOf="@+id/editTagTrack" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+
 </layout>

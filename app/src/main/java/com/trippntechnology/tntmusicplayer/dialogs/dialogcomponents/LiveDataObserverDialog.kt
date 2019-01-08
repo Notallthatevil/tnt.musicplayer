@@ -1,4 +1,4 @@
-package com.trippntechnology.tntmusicplayer.dialogs
+package com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents
 
 import android.app.Dialog
 import androidx.fragment.app.FragmentActivity

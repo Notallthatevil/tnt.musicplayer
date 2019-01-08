@@ -63,6 +63,7 @@ class MainActivity : LiveDataObserverActivity() {
 
         viewModel.selectedSong.observe{
             EditTagDialog(this,it!!).show()
+//            Toast.makeText(this,it!!.id.toString(),Toast.LENGTH_SHORT).show()
         }
 
         //On initial scan only
@@ -93,9 +94,6 @@ class MainActivity : LiveDataObserverActivity() {
             }
         }
     }
-
-
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode){

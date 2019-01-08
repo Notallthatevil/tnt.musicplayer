@@ -9,7 +9,7 @@
     android:elevation="@dimen/dialog_elevation"
     android:background="@drawable/dialog_shape"
     android:paddingEnd="8dp"
-    android:paddingStart="0dp">
+    android:paddingStart="8dp">
 
     <TextView
         android:id="@+id/alertTitle"
@@ -61,4 +61,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
 
-</androidx.constraintlayout.widget.ConstraintLayout><!--</layout>-->
+</androidx.constraintlayout.widget.ConstraintLayout>

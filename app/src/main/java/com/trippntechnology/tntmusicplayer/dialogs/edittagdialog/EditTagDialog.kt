@@ -6,13 +6,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.DialogEditTagBinding
 import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.LiveDataObserverDialog
-import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.WideDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import javax.inject.Inject
@@ -41,7 +39,6 @@ class EditTagDialog(val context: FragmentActivity, private val audioFile: AudioF
         setContentView(binding.root)
         binding.viewModel = viewModel
         binding.audioFile = audioFile
-
 
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
