@@ -5,15 +5,10 @@
     <string name="unknown">&lt;unknown&gt;</string>
     <string name="albumcover">albumCover</string>
     <string name="filepathLabel">Filepath:</string>
-    <string name="titleLabel">Title:</string>
     <string name="title">Title</string>
-    <string name="albumLabel">Album:</string>
     <string name="album">Album</string>
-    <string name="artistLabel">Artist:</string>
     <string name="artist">Artist</string>
-    <string name="yearLabel">Year:</string>
     <string name="year">Year</string>
-    <string name="trackLabel">Track:</string>
     <string name="track">Track</string>
     <string name="save_tags">Save tags</string>
     <string name="cancel">Cancel</string>
