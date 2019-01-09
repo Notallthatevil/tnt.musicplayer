@@ -1,5 +1,9 @@
 package com.trippntechnology.tntmusicplayer.objects
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class AudioFile(
     val id: Int,
 
@@ -14,10 +18,9 @@ data class AudioFile(
     //Audio data
     val filePath: String,
     val duration: Long = 0,
-    val sampleRate: Int=0,
-    val bitRate: Int=0
-) {
-
+    val sampleRate: Int = 0,
+    val bitRate: Int = 0
+) : Parcelable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
