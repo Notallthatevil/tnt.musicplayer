@@ -1,18 +1,14 @@
 package com.trippntechnology.tntmusicplayer.objects
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
 data class AudioFile(
     val id: Int,
 
     //Tags
-    val title: String = "<unknown>",
-    val album: String = "<unknown>",
-    val artist: String = "<unknown>",
-    val year: String = "<unknown>",
-    val track: String = "<unknown>",
+    val title: String,
+    val album: String,
+    val artist: String,
+    val year: String,
+    val track: String,
     val cover: ByteArray?,
 
     //Audio data
@@ -20,7 +16,21 @@ data class AudioFile(
     val duration: Long = 0,
     val sampleRate: Int = 0,
     val bitRate: Int = 0
-) : Parcelable {
+) {
+
+    fun tagsEqual(title: String,album: String,artist: String,year: String,track: String,cover: ByteArray?):Boolean{
+        if (title!= this.title)return false
+        if (album!= this.album)return false
+        if (artist!=this.artist) return false
+        if (year != this.year) return false
+        if (track!=this.track)return false
+        if (cover != null) {
+            if (this.cover == null) return false
+            return cover.contentEquals(this.cover)
+        }
+        return true
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

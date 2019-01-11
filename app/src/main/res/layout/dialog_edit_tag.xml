@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialogViewModel" />
+            type="com.trippntechnology.tntmusicplayer.activites.mainactivity.MainViewModel" />
 
         <variable
             name="audioFile"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
-                android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),editTagCover,audioFile)}"
+                android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
                 android:text="@string/save_tags"
                 android:textColor="@color/colorAccent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -119,12 +119,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTagCover">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTagTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/title"
                     android:inputType="text"
+                    android:maxLength="127"
                     android:text="@{audioFile.title}"
                     android:textColor="@color/primaryTextDark"
                     tools:ignore="Autofill,LabelFor" />
@@ -140,11 +141,12 @@
                 app:layout_constraintStart_toStartOf="@+id/editTagTitleLayout"
                 app:layout_constraintTop_toBottomOf="@+id/editTagTitleLayout">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTagAlbum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/album"
+                    android:maxLength="127"
                     android:inputType="text"
                     android:text="@{audioFile.Album}"
                     android:textColor="@color/primaryTextDark"
@@ -162,12 +164,13 @@
                 app:layout_constraintStart_toStartOf="@+id/editTagAlbumLayout"
                 app:layout_constraintTop_toBottomOf="@+id/editTagAlbumLayout">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTagArtist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/artist"
                     android:inputType="text"
+                    android:maxLength="127"
                     android:text="@{audioFile.Artist}"
                     android:textColor="@color/primaryTextDark"
                     tools:ignore="Autofill,LabelFor" />
@@ -185,7 +188,7 @@
                 app:layout_constraintStart_toStartOf="@+id/editTagArtistLayout"
                 app:layout_constraintTop_toBottomOf="@+id/editTagArtistLayout">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTagYear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -208,7 +211,7 @@
                 app:layout_constraintStart_toStartOf="@+id/editTagYearLayout"
                 app:layout_constraintTop_toBottomOf="@+id/editTagYearLayout">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTagTrack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

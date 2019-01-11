@@ -13,7 +13,18 @@ object TaggerLib {
         numberOfSongs: SingleLiveEvent<ScanningDialog.IntegerWrapper>
     ): Array<String>?
 
-    external fun getAllAudioFiles():Array<AudioFile>?
+    external fun getAllAudioFiles(): Array<AudioFile>?
+
+    external fun updateNewTags(
+        id: Int,
+        title: String,
+        album: String,
+        artist: String,
+        year: String,
+        track: String,
+        filepath: String,
+        cover: ByteArray?
+    ): Int?
 
     init {
         System.loadLibrary("tagger-lib")

@@ -23,6 +23,7 @@ class AudioFileAdapter(private val viewModel: MainViewModel) :
 
     override fun onBindViewHolder(holder: AudioFileAdapter.ViewHolder, position: Int) {
         holder.binding.audioFile = getItem(position)
+        holder.binding.position = position
     }
 
 

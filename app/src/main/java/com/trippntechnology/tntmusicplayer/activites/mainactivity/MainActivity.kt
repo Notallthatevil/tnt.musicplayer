@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,11 +19,14 @@ import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.LiveDataObserverActivity
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
+import com.trippntechnology.tntmusicplayer.objects.AudioFile
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : LiveDataObserverActivity() {
 
     private val PERMISSION_TO_WRITE_EXTERNAL_STORAGE = 1122
+    private val DIALOG_TAG = "dialog"
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -62,7 +66,7 @@ class MainActivity : LiveDataObserverActivity() {
 
 
         viewModel.selectedSong.observe{
-            EditTagDialog(this,it!!).show()
+            showEditTagDialog(it)
 //            Toast.makeText(this,it!!.id.toString(),Toast.LENGTH_SHORT).show()
         }
 
@@ -81,6 +85,20 @@ class MainActivity : LiveDataObserverActivity() {
         if (scanningDialog.isShowing){
             scanningDialog.dismiss()
         }
+    }
+
+
+    private fun showEditTagDialog(listPosition: Int?){
+        listPosition ?:return
+        val ft = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag(DIALOG_TAG)
+
+        if (prev != null){
+            ft.remove(prev)
+        }
+        ft.addToBackStack(null)
+        val editTagDialog = EditTagDialog.newInstance(listPosition)
+        editTagDialog.show(ft,DIALOG_TAG)
     }
 
     private fun setupProgressBarObservers(){

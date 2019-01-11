@@ -11,13 +11,17 @@
         <variable
             name="audioFile"
             type="com.trippntechnology.tntmusicplayer.objects.AudioFile" />
+
+        <variable
+            name="position"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
-        android:onClick="@{()-> viewModel.audioFileSelected(audioFile)}">
+        android:onClick="@{()-> viewModel.audioFileSelected(position)}">
 
         <ImageView
             android:id="@+id/imageView"
@@ -27,6 +31,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/albumcover"
+            android:background="#00000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
