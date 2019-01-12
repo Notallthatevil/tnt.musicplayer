@@ -9,7 +9,6 @@ import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.FieldPosition
 import javax.inject.Inject
 
 class MainViewModel
@@ -18,15 +17,19 @@ class MainViewModel
     val taggerLib: TaggerLib
 ) : BaseViewModel(cc) {
 
+    //Scanning data
     val fullSongList = MutableLiveData<List<AudioFile>>()
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
+    //Updates when song is selected
     val selectedSong = SingleLiveEvent<Int>()
 
+    //Dialog stuff
     val cancel = SingleLiveEvent<Void>()
-    val newStuff = SingleLiveEvent<Int>()
+    val saveTags = SingleLiveEvent<Int>()
     val selectNewCover = SingleLiveEvent<Void>()
+    val savingInProcess = SingleLiveEvent<Void>()
 
     var newCover: ByteArray? = null
 
@@ -42,7 +45,7 @@ class MainViewModel
         }
     }
 
-    fun audioFileSelected(position: Int){
+    fun audioFileSelected(position: Int) {
         selectedSong.value = position
     }
 
@@ -59,26 +62,27 @@ class MainViewModel
         track: String,
         oldAudioFile: AudioFile
     ) {
-//        if (!oldAudioFile.tagsEqual(title, album, artist, year, track, newCover)) {
-//            val success = taggerLib.updateNewTags(
-//                oldAudioFile.id,
-//                title,
-//                album,
-//                artist,
-//                year,
-//                track,
-//                oldAudioFile.filePath,
-//                newCover
-//            )
-//
-//            newStuff.postValue(success)
-//        }
+        if (!oldAudioFile.tagsEqual(title, album, artist, year, track, newCover)) {
+            savingInProcess.call()
+            launch {
+                val success = taggerLib.updateNewTags(
+                    oldAudioFile.id,
+                    title,
+                    album,
+                    artist,
+                    year,
+                    track,
+                    oldAudioFile.filePath,
+                    newCover
+                )
+                saveTags.postValue(success)
+            }
+        }
     }
 
     fun cancel() {
         cancel.call()
     }
-
 
 
 }

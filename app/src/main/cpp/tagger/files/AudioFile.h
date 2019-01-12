@@ -30,7 +30,9 @@ public:
     /*
      * Basic constructor. Identifies the file to be opened.
      */
-    explicit AudioFile(std::string *filePath);
+    explicit AudioFile(std::string *filePath){
+            mFilePath = *filePath;
+    }
 
     virtual ~AudioFile();
 
@@ -63,8 +65,8 @@ public:
 
     void setID(long ID);
 
-    int getBitrate();
-    int getSampleRate();
+    int getBitrate() const;
+    int getSampleRate()const;
 
     std::string getFilePath() const;
 };

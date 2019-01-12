@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.binding
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,11 +28,9 @@ object CustomBinders {
             .into(imageView)
     }
 
-    @JvmStatic
-    @BindingAdapter("setImage")
-    fun setImage(imageView: ImageView, image: ByteArray?) {
+    fun setImage(imageView: ImageView, bitmap: Bitmap) {
         Glide.with(imageView)
-            .load(image)
+            .load(bitmap)
             .apply(requestOptions)
             .transition(withCrossFade())
             .into(imageView)

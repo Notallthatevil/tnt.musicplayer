@@ -64,11 +64,11 @@ public:
 
     int insertSong(AudioFile *audioFile);
 
-    int updateSong(AudioFile *audioFile, int ID);
+    jobjectArray retrieveAllSongs(JNIEnv *env);
+
+    int updateSong(Tag *tag, int ID);
 
     std::string selectSong(AudioFile *audioFile);
-
-    jobjectArray retrieveAllSongs(JNIEnv *env);
 
 };
 

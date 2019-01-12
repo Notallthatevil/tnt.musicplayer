@@ -10,17 +10,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.activites.mainactivity.MainViewModel
+import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.DialogEditTagBinding
 import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.LiveDataObserverDialogFragment
 import com.trippntechnology.tntmusicplayer.injector.Injector
-import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import kotlinx.android.synthetic.main.dialog_edit_tag.*
-import kotlinx.android.synthetic.main.list_item_audio_file.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
@@ -52,6 +53,7 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
 
     init {
         Injector.get().inject(this)
+
     }
 
 
@@ -75,24 +77,32 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
         viewModel.cancel.observe{
             dismiss()
         }
-        viewModel.newStuff.observe{
-            if (it!! == 0){
+
+        viewModel.saveTags.observe{
+            if (it==0){
                 dismiss()
+                Toast.makeText(context,"Tags saved",Toast.LENGTH_SHORT).show()
             }else{
                 Toast.makeText(context,"Error saving tags",Toast.LENGTH_LONG).show()
             }
         }
+
         viewModel.selectNewCover.observe{
             val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
+        }
+
+        viewModel.savingInProcess.observe{
+            Toast.makeText(context,"Saving new tags . . .",Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.cancel.removeObservers(requireActivity())
-        viewModel.newStuff.removeObservers(requireActivity())
+        viewModel.saveTags.removeObservers(requireActivity())
         viewModel.selectNewCover.removeObservers(requireActivity())
+        viewModel.savingInProcess.removeObservers(requireActivity())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -108,9 +118,8 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
                     val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver,contentUri)
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
-                    editTagCover.setImageBitmap(bitmap)
+                    CustomBinders.setImage(editTagCover,bitmap)
                     viewModel.newCover = stream.toByteArray()
-                    editTagCover.setImageBitmap(bitmap)
                 }catch (e:IOException){
                     e.printStackTrace()
                 }

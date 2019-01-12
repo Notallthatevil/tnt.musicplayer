@@ -52,7 +52,13 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
     } else {
         throw FileAccessException();
     }
+}
 
+std::string jstringToString(JNIEnv *env, jstring *jstr) {
+    int length = env->GetStringLength(*jstr);
+    char str[255];
+    env->GetStringUTFRegion(*jstr, 0, length, str);
+    return std::string(str, length);
 }
 
 #define javaString "java/lang/String"
@@ -62,7 +68,6 @@ JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(JNIEnv *env, jobject /*this*/,
                                                                                 jstring directory, jobject currentSong,
                                                                                 jobject numOfSongs) {
-
 
 
     SqlWrapper sqlWrapper;
@@ -157,6 +162,68 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFil
 
 
 
+extern "C"
+JNIEXPORT jint
+JNICALL
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(JNIEnv *env, jobject /*this*/, jint jid,
+                                                                                jstring jtitle, jstring jalbum,
+                                                                                jstring jartist, jstring jyear,
+                                                                                jstring jtrack, jstring jfilePath,
+                                                                                jbyteArray jcover) {
+    int id = jid;
+    std::string title = jstringToString(env, &jtitle);
+    std::string album = jstringToString(env, &jalbum);
+    std::string artist = jstringToString(env, &jartist);
+    std::string year = jstringToString(env, &jyear);
+    std::string track = jstringToString(env, &jtrack);
+    std::string filePath = jstringToString(env, &jfilePath);
+
+    unsigned char *cover;
+    int length = 0;
+    if (jcover != nullptr) {
+        length = env->GetArrayLength(jcover);
+        cover = new unsigned char[length];
+        env->GetByteArrayRegion(jcover, 0, length, (jbyte *) cover);
+    } else {
+        cover = nullptr;
+    }
+
+    Tag *tag = nullptr;
+    AudioFile *audioFile = nullptr;
+
+    if (filePath.substr(filePath.find_last_of('.') + 1) == "mp3") {
+        tag = new ID3Tag();
+        audioFile = new Mp3File(&filePath);
+    }
+
+    jint jsuccess = 0;
+
+    if (tag != nullptr) {
+        tag->setTitle(title);
+        tag->setAlbum(album);
+        tag->setArtist(artist);
+        tag->setYear(year);
+        tag->setTrack(track);
+        tag->setCover(cover, length, 0);
+
+
+        int rc = audioFile->saveNewTag(tag);
+
+        if (rc == 0) {
+            SqlWrapper sqlWrapper;
+            sqlWrapper.updateSong(tag, id);
+        } else {
+            jsuccess = rc;
+        }
+
+        delete[] cover;
+        cover = nullptr;
+        delete tag;
+        delete audioFile;
+    }
+
+    return jsuccess;
+}
 
 
 

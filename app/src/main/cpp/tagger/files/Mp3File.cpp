@@ -12,8 +12,12 @@
 0 = Header exists
 -1 = Header was null
 1 = No header found
+-2 = unable to open file
 */
 int Mp3File::hasHeader() {
+    if (!open()) {
+        return -2;
+    }
     unsigned char header[ID3Tag::HEADER_SIZE];
     mStream->read((char *) &header, ID3Tag::HEADER_SIZE);
 
@@ -153,7 +157,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 32;
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -166,10 +171,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 8;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
         case (char) 0x02:
             switch (mMp3Version) {
@@ -185,7 +192,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 40;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -199,10 +207,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 16;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x03:
@@ -219,7 +229,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 48;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -233,10 +244,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 24;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x04:
@@ -253,7 +266,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 56;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -267,10 +281,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 32;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x05:
@@ -287,7 +303,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 64;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -301,10 +318,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 40;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x06:
@@ -321,7 +340,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 80;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -335,10 +355,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 48;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x07:
@@ -355,7 +377,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 96;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -369,10 +392,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 56;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x08:
@@ -389,7 +414,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 112;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -403,10 +429,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 64;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x09:
@@ -423,7 +451,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 128;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -437,10 +466,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 80;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x0A:
@@ -457,7 +488,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 160;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -471,10 +503,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 96;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x0B:
@@ -491,7 +525,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 192;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -505,10 +540,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 112;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x0C:
@@ -525,7 +562,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 224;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -539,10 +577,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 128;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x0D:
@@ -559,7 +599,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 256;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -573,10 +614,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 144;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
 
         case (char) 0x0E:
@@ -593,7 +636,8 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_III:
                             return 320;
 
-                        default:break;
+                        default:
+                            break;
                     }
 
                 case Mp3File::VERSION_2:
@@ -607,10 +651,12 @@ int Mp3File::findBitrate(char c) {
                         case Mp3File::LAYER_II:
                         case Mp3File::LAYER_III:
                             return 160;
-                        default:break;
+                        default:
+                            break;
                     }
 
-                default:break;
+                default:
+                    break;
             }
         case (char) 0x0F:
             return 0;
@@ -631,7 +677,8 @@ int Mp3File::findSampleRate(char c) {
                     return 22050;
                 case VERSION_2_5:
                     return 11025;
-                default:break;
+                default:
+                    break;
             }
         case (char) 0x01:
             switch (mMp3Version) {
@@ -641,7 +688,8 @@ int Mp3File::findSampleRate(char c) {
                     return 24000;
                 case VERSION_2_5:
                     return 12000;
-                default:break;
+                default:
+                    break;
             }
         case (char) 0x02:
             switch (mMp3Version) {
@@ -651,7 +699,8 @@ int Mp3File::findSampleRate(char c) {
                     return 16000;
                 case VERSION_2_5:
                     return 8000;
-                default:break;
+                default:
+                    break;
             }
         default:
             return -2;
@@ -667,7 +716,8 @@ int Mp3File::getSamples() {
                 case Mp3File::LAYER_II:
                 case Mp3File::LAYER_III:
                     return 1152;
-                default:break;
+                default:
+                    break;
             }
         case Mp3File::VERSION_2:
             switch (mMp3Layer) {
@@ -677,7 +727,8 @@ int Mp3File::getSamples() {
                     return 1152;
                 case Mp3File::LAYER_III:
                     return 576;
-                default:break;
+                default:
+                    break;
             }
         case Mp3File::VERSION_2_5:
             switch (mMp3Layer) {
@@ -687,7 +738,8 @@ int Mp3File::getSamples() {
                     return 1152;
                 case Mp3File::LAYER_III:
                     return 576;
-                default:break;
+                default:
+                    break;
             }
 
         default:
@@ -710,7 +762,7 @@ int Mp3File::checkForVBRHeader() {
     int tempPos = 0;
     while (mStream->get(VBRHeader[0])) {
         if (VBRHeader[0] == 'X' || VBRHeader[0] == 'I') {
-            tempPos = (int)mStream->tellg();
+            tempPos = (int) mStream->tellg();
             mStream->read(&VBRHeader[1], 3);
             if ((VBRHeader[1] == 'i' && VBRHeader[2] == 'n' & VBRHeader[3] == 'g') ||
                 (VBRHeader[1] == 'n' && VBRHeader[2] == 'f' & VBRHeader[3] == 'o')) {
@@ -720,7 +772,7 @@ int Mp3File::checkForVBRHeader() {
                 mStream->seekg(tempPos);
             }
         } else if (VBRHeader[0] == 'V') {
-            tempPos = (int)mStream->tellg();
+            tempPos = (int) mStream->tellg();
             mStream->read(&VBRHeader[1], 3);
             if (VBRHeader[1] == 'B' && VBRHeader[2] == 'R' & VBRHeader[3] == 'I') {
                 mStream->seekg(tempPos - 1);
@@ -753,7 +805,7 @@ int Mp3File::parseXingHeader(char *xingBuffer) {
 
     if (xingBuffer[7] & (char) 0x01) {
         mNumOfFrames = (unsigned int) (xingBuffer[8] << 24 | xingBuffer[9] << 16 | xingBuffer[10] << 8 |
-                                                xingBuffer[11]);
+                                       xingBuffer[11]);
         return 0;
     }
     return 2;
@@ -765,7 +817,7 @@ Sets the number of frames field
 */
 void Mp3File::parseVBRIHeader(char *vbriBuffer) {
     mNumOfFrames = (unsigned int) (vbriBuffer[14] << 24 | vbriBuffer[15] << 16 | vbriBuffer[16] << 8 |
-                                            vbriBuffer[17]);
+                                   vbriBuffer[17]);
 }
 
 
@@ -774,7 +826,7 @@ Determines the bitrate of file that doesn't contain a bitrate related frame. Ret
 or -1 if file is invalid
 */
 int Mp3File::getAverageBitrate() {
-    int tempPos = (int)mStream->tellg();
+    int tempPos = (int) mStream->tellg();
     mStream->seekg(mFileSize / 3);
     int bitrate1 = -1;
     int bitrate2 = -1;
@@ -812,7 +864,7 @@ int Mp3File::getAverageBitrate() {
                     totalBitrate += frameBitrate;
                     frames++;
                     int frameSize = calculateFrameSize(getSamples(), frameBitrate, findSampleRate(c), (c & 0x02));
-                    int currentOffset = (int)mStream->tellg();
+                    int currentOffset = (int) mStream->tellg();
                     if (frameSize < 0) {
                         return -1;
                     }
@@ -839,19 +891,19 @@ DURATION IN MS = (Total frame count * Samples per frame / Sample Rate)*1000
 FRAME SIZE IN BYTES = (((Samples Per Frame / 8 * Bitrate) / Sampling Rate) + Padding Size) * 1000
 */
 inline int Mp3File::calculateFrameSize(float samplesPerFrame, float frameBitrate, float sampleRate, float padding) {
-    return (int)(samplesPerFrame / 8 * frameBitrate * 1000 / sampleRate + padding);
+    return (int) (samplesPerFrame / 8 * frameBitrate * 1000 / sampleRate + padding);
 }
 
 inline int Mp3File::calculateDuration(float fileSizeInBytes, float bitrate) {
-    return (int)(((fileSizeInBytes * 8) / (bitrate * 1000)) * 1000);
+    return (int) (((fileSizeInBytes * 8) / (bitrate * 1000)) * 1000);
 }
 
 inline int Mp3File::calculateDuration(float totalNumOfFrames, float samplesPerFrame, float sampleRate) {
-    return (int)(totalNumOfFrames * samplesPerFrame / sampleRate * 1000);
+    return (int) (totalNumOfFrames * samplesPerFrame / sampleRate * 1000);
 }
 
 inline int Mp3File::calculateBitrate(float fileSizeInBytes, float durationInMilli) {
-    return (int)((fileSizeInBytes * 8 / (durationInMilli * 1000)) * 1000);
+    return (int) ((fileSizeInBytes * 8 / (durationInMilli * 1000)) * 1000);
 }
 
 
@@ -896,7 +948,7 @@ int Mp3File::saveNewTag(Tag *newTag) {
 }
 
 Mp3File::~Mp3File() {
-    if (mId3Tag!= nullptr){
+    if (mId3Tag != nullptr) {
         delete mId3Tag;
         mId3Tag = nullptr;
     }

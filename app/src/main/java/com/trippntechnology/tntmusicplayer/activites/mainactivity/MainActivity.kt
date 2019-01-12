@@ -67,7 +67,6 @@ class MainActivity : LiveDataObserverActivity() {
 
         viewModel.selectedSong.observe{
             showEditTagDialog(it)
-//            Toast.makeText(this,it!!.id.toString(),Toast.LENGTH_SHORT).show()
         }
 
         //On initial scan only

@@ -4,9 +4,7 @@
 
 #include "AudioFile.h"
 
-AudioFile::AudioFile(std::string *filePath) {
-    mFilePath = *filePath;
-}
+
 
 bool AudioFile::open() {
     if (mIsOpen) {
@@ -55,11 +53,11 @@ long AudioFile::getDuration() const {
     return mDuration;
 }
 
-int AudioFile::getBitrate() {
+int AudioFile::getBitrate() const {
     return mBitrate;
 }
 
-int AudioFile::getSampleRate() {
+int AudioFile::getSampleRate() const {
     return mSampleRate;
 }
 

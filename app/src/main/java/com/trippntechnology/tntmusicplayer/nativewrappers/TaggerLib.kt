@@ -24,7 +24,7 @@ object TaggerLib {
         track: String,
         filepath: String,
         cover: ByteArray?
-    ): Int?
+    ): Int
 
     init {
         System.loadLibrary("tagger-lib")
