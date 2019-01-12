@@ -40,9 +40,13 @@ class MainViewModel
     private fun performInitialScan() {
         launch(Dispatchers.IO) {
             taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
-            val songs = taggerLib.getAllAudioFiles()
-            fullSongList.postValue(songs!!.asList())
+            getAllAudioFiles()
         }
+    }
+
+    private fun getAllAudioFiles() {
+        val songs = taggerLib.getAllAudioFiles()
+        fullSongList.postValue(songs!!.asList())
     }
 
     fun audioFileSelected(position: Int) {
@@ -75,6 +79,7 @@ class MainViewModel
                     oldAudioFile.filePath,
                     newCover
                 )
+                getAllAudioFiles()
                 saveTags.postValue(success)
             }
         }
