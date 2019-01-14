@@ -71,15 +71,16 @@ class MainViewModel
             launch {
                 val success = taggerLib.updateNewTags(
                     oldAudioFile.id,
-                    title,
-                    album,
-                    artist,
-                    year,
-                    track,
+                    title.trim(),
+                    album.trim(),
+                    artist.trim(),
+                    year.trim(),
+                    track.trim(),
                     oldAudioFile.filePath,
                     newCover
                 )
                 getAllAudioFiles()
+                newCover = null
                 saveTags.postValue(success)
             }
         }

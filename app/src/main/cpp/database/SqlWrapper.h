@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 
+#pragma TNT.auto_vacuum = 1
 class SqlWrapper {
 private:
     const std::string DATABASE_DIRECTORY = "/data/data/com.trippntechnology.tntmusicplayer/databases";
