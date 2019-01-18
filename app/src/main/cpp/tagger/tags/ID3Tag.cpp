@@ -73,57 +73,43 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
         frameHeader += tagBuffer[pos + 1];
         frameHeader += tagBuffer[pos + 2];
         frameHeader += tagBuffer[pos + 3];
+        if (mFlagUnsynchronisation) {
+            frameSize =
+                    tagBuffer[pos + 4] << 21 | tagBuffer[pos + 5] << 14 |
+                    tagBuffer[pos + 6] << 7 | tagBuffer[pos + 7];
+        } else {
+            frameSize =
+                    tagBuffer[pos + 4] << 24 | tagBuffer[pos + 5] << 16 |
+                    tagBuffer[pos + 6] << 8 | tagBuffer[pos + 7];
+        }
 
-		//Invalid tag, flag not set correctly. Need to recheck it to be safe
-		if (islower(frameHeader[0]) || islower(frameHeader[1]) || islower(frameHeader[2]) || islower(frameHeader[3])) {
-			if (mFlagUnsynchronisation){
-				mFlagUnsynchronisation = false;
-			}
-			else {
-				mFlagUnsynchronisation = true;
-			}
-			pos = 0;
-		}
-		else {
-			if (mFlagUnsynchronisation) {
-				frameSize =
-					tagBuffer[pos + 4] << 21 | tagBuffer[pos + 5] << 14 |
-					tagBuffer[pos + 6] << 7 | tagBuffer[pos + 7];
-			}
-			else {
-				frameSize =
-					tagBuffer[pos + 4] << 24 | tagBuffer[pos + 5] << 16 |
-					tagBuffer[pos + 6] << 8 | tagBuffer[pos + 7];
-			}
+        if (frameSize == 0) {
+            pos += 4;
+        } else {
+            if (frameHeader == TITLE_TAG) {
+                setTitle(getTextFrame(tagBuffer, pos + 10, frameSize));
+            } else if (frameHeader == ARTIST_TAG) {
+                setArtist(getTextFrame(tagBuffer, pos + 10, frameSize));
+            } else if (frameHeader == ALBUM_TAG) {
+                setAlbum(getTextFrame(tagBuffer, pos + 10, frameSize));
+            } else if (frameHeader == TRACK_TAG) {
+                setTrack(getTextFrame(tagBuffer, pos + 10, frameSize));
+            } else if (frameHeader == YEAR_TAG) {
+                setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
+            } else if (frameHeader == COVER_TAG) {
+                int imageOffset = findCover(tagBuffer, pos + 10);
+                setCover(tagBuffer, frameSize - imageOffset, imageOffset);
+            }
 
-			if (frameSize == 0) {
-				pos += 4;
-			}
-			else {
-				if (frameHeader == TITLE_TAG) {
-					setTitle(getTextFrame(tagBuffer, pos + 10, frameSize));
-				}
-				else if (frameHeader == ARTIST_TAG) {
-					setArtist(getTextFrame(tagBuffer, pos + 10, frameSize));
-				}
-				else if (frameHeader == ALBUM_TAG) {
-					setAlbum(getTextFrame(tagBuffer, pos + 10, frameSize));
-				}
-				else if (frameHeader == TRACK_TAG) {
-					setTrack(getTextFrame(tagBuffer, pos + 10, frameSize));
-				}
-				else if (frameHeader == YEAR_TAG) {
-					setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
-				}
-				else if (frameHeader == COVER_TAG) {
-					int imageOffset = findCover(tagBuffer, pos + 10);
-					setCover(tagBuffer, frameSize - imageOffset, imageOffset);
-				}
-
-				pos += frameSize + 10;
-				frameHeader = "";
-			}
-		}
+            //Resolves problem that causes invalid reading of tags due to tags being created wrong.
+            //Only checks the first 3 since some tag frames have numbers in the 4th slot
+            if (!isupper(frameHeader[0]) || !isupper(frameHeader[1]) || !isupper(frameHeader[2])) {
+                pos += 4;
+            } else {
+                pos += frameSize + 10;
+            }
+            frameHeader = "";
+        }
 
     }
     if (pos > mTagSize - mHeaderSize) {
