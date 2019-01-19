@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
-        android:onClick="@{()-> viewModel.audioFileSelected(position)}">
+        android:onLongClick="@{(view)-> viewModel.audioFileSelected(view,position)}">
 
         <ImageView
             android:id="@+id/imageView"
