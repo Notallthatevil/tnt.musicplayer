@@ -117,10 +117,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         env->SetObjectArrayElement(jDirList, i, env->NewStringUTF(directoryList[i].c_str()));
     }
 
-
-    auto audioFiles = new AudioFile *[directoryList.size()];
-
-
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
 
     for (int i = 0; i < directoryList.size(); i++) {
@@ -130,31 +126,21 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         env->CallVoidMethod(currentSong, postCurrentSong, jProgressWrapperObject);
 
         if (directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
-            auto *mp3 = new Mp3File(&directoryList[i]);
-            mp3->parse(true);
-            audioFiles[i] = mp3;
+            Mp3File mp3(&directoryList[i]);
+            mp3.parse(true);
+            sqlWrapper.insertSong(&mp3);
+
         }
-
-        __android_log_print(ANDROID_LOG_INFO, "DATABASE", "Inserting %s into database",
-                            audioFiles[i]->getFilePath().c_str());
-
-        sqlWrapper.insertSong(audioFiles[i]);
     }
-
-    for (int i = 0; i < directoryList.size(); i++) {
-        delete audioFiles[i];
-    }
-    delete[]audioFiles;
-
     __android_log_print(ANDROID_LOG_INFO, "SCANNING", "Finished");
-
     return jDirList;
 }
 
 extern "C"
 JNIEXPORT jobjectArray //java audio file
 JNICALL
-Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env,
+                                                                                   jobject /*this*/) {
     SqlWrapper sqlWrapper;
     return sqlWrapper.retrieveAllSongs(env);
 }
@@ -165,10 +151,12 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFil
 extern "C"
 JNIEXPORT jint
 JNICALL
-Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(JNIEnv *env, jobject /*this*/, jint jid,
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(JNIEnv *env, jobject /*this*/,
+                                                                                jint jid,
                                                                                 jstring jtitle, jstring jalbum,
                                                                                 jstring jartist, jstring jyear,
-                                                                                jstring jtrack, jstring jfilePath,
+                                                                                jstring jtrack,
+                                                                                jstring jfilePath,
                                                                                 jbyteArray jcover) {
     int id = jid;
     std::string title = jstringToString(env, &jtitle);
