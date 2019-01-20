@@ -40,7 +40,7 @@ SqlWrapper::~SqlWrapper() {
  */
 int SqlWrapper::createTable(std::string tableName) {
     if (tableName == SONG_TABLE) {
-
+        deleteTable(tableName);
         std::string sql = "CREATE TABLE " + SONG_TABLE + "(" +
                           SONG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
@@ -74,6 +74,24 @@ int SqlWrapper::deleteTable(std::string tableName) {
     return rc;
 }
 
+bool SqlWrapper::tableExist(std::string tableName) {
+    std::string sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=\'" + tableName + "\'";
+
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, 0);
+
+    if ((rc == SQLITE_OK)) {
+        rc = sqlite3_step(stmt);
+
+        //was found?
+        if (rc == SQLITE_ROW) {
+            sqlite3_clear_bindings(stmt);
+            sqlite3_reset(stmt);
+            return true;
+        }
+    }
+    return false;
+}
+
 /*
  * Adds a song to the database while also making sure the contents in the file
  * are ready to be inserted.
@@ -105,6 +123,8 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
 
         rc = sqlite3_step(stmt);
     }
+    sqlite3_clear_bindings(stmt);
+    sqlite3_reset(stmt);
     return rc;
 }
 
@@ -290,8 +310,6 @@ std::string SqlWrapper::selectSong(AudioFile *audioFile) {
     sqlite3_step(stmt);
     return std::string((char *) sqlite3_column_text(stmt, 0));
 }
-
-
 
 
 #pragma clang diagnostic pop

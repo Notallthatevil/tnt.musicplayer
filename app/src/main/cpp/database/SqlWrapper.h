@@ -71,6 +71,8 @@ public:
 
     std::string selectSong(AudioFile *audioFile);
 
+    bool tableExist(std::string tableName);
+
 };
 
 struct databaseCreationError : public std::exception {

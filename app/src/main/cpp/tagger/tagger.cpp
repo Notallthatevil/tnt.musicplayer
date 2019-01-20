@@ -70,15 +70,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
                                                                                 jobject numOfSongs) {
 
 
-    SqlWrapper sqlWrapper;
-
-    ///TEMP
-    sqlWrapper.deleteTable(sqlWrapper.SONG_TABLE);
-    ///
-
-
-
-
     std::vector<std::string> directoryList;
     try {
         directoryList = scanDirectoryForAudio(std::string(env->GetStringUTFChars(directory, nullptr)));
@@ -117,6 +108,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         env->SetObjectArrayElement(jDirList, i, env->NewStringUTF(directoryList[i].c_str()));
     }
 
+    SqlWrapper sqlWrapper;
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
 
     for (int i = 0; i < directoryList.size(); i++) {
@@ -145,7 +137,15 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFil
     return sqlWrapper.retrieveAllSongs(env);
 }
 
-
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist(JNIEnv *env,
+                                                                                 jobject /*this*/) {
+    SqlWrapper sqlWrapper;
+    jboolean jbool = sqlWrapper.tableExist(sqlWrapper.SONG_TABLE) ? JNI_TRUE : JNI_FALSE;
+    return jbool;
+}
 
 
 extern "C"

@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
@@ -34,7 +35,11 @@ class MainViewModel
     var newCover: ByteArray? = null
 
     init {
-        performInitialScan()
+        if (taggerLib.songTableExist()){
+            getAllAudioFiles()
+        }else{
+            performInitialScan()
+        }
     }
 
     private fun performInitialScan() {
@@ -46,11 +51,12 @@ class MainViewModel
 
     private fun getAllAudioFiles() {
         val songs = taggerLib.getAllAudioFiles()
-        fullSongList.postValue(songs!!.asList())
+        fullSongList.postValue(songs.asList())
     }
 
-    fun audioFileSelected(position: Int) {
+    fun audioFileSelected(view: View, position: Int): Boolean {
         selectedSong.value = position
+        return true
     }
 
     fun selectAlbumArt() {
