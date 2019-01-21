@@ -4,11 +4,11 @@ data class AudioFile(
     val id: Int,
 
     //Tags
-    val title: String,
-    val album: String,
-    val artist: String,
-    val year: String,
-    val track: String,
+    val title: String?,
+    val album: String?,
+    val artist: String?,
+    val year: String?,
+    val track: String?,
     val cover: ByteArray?,
 
     //Audio data
@@ -30,7 +30,6 @@ data class AudioFile(
         }
         return true
     }
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -58,11 +57,11 @@ data class AudioFile(
 
     override fun hashCode(): Int {
         var result = id
-        result = 31 * result + title.hashCode()
-        result = 31 * result + album.hashCode()
-        result = 31 * result + artist.hashCode()
-        result = 31 * result + year.hashCode()
-        result = 31 * result + track.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
+        result = 31 * result + (album?.hashCode() ?: 0)
+        result = 31 * result + (artist?.hashCode() ?: 0)
+        result = 31 * result + (year?.hashCode() ?: 0)
+        result = 31 * result + (track?.hashCode() ?: 0)
         result = 31 * result + (cover?.contentHashCode() ?: 0)
         result = 31 * result + filePath.hashCode()
         result = 31 * result + duration.hashCode()
@@ -70,4 +69,6 @@ data class AudioFile(
         result = 31 * result + bitRate
         return result
     }
+
+
 }

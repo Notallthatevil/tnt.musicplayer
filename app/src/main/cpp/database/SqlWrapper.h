@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <sstream>
 #include "../tagger/files/AudioFile.h"
-#include <vector>
 #include <string>
 
 #pragma TNT.auto_vacuum = 1
@@ -36,11 +35,12 @@ private:
         SONG_ARTIST_COLUMN = 3,
         SONG_YEAR_COLUMN = 4,
         SONG_TRACK_COLUMN = 5,
-        SONG_COVER_COLUMN = 6,
-        SONG_FILEPATH_COLUMN = 7,
-        SONG_DURATION_COLUMN = 8,
-        SONG_SAMPLERATE_COLUMN = 9,
-        SONG_BITRATE_COLUMN = 10
+        SONG_FILEPATH_COLUMN = 6,
+        SONG_DURATION_COLUMN = 7,
+        SONG_SAMPLERATE_COLUMN = 8,
+        SONG_BITRATE_COLUMN = 9,
+        SONG_COVER_COLUMN = 10,
+
     };
 
     sqlite3 *mDb;
@@ -68,8 +68,6 @@ public:
     jobjectArray retrieveAllSongs(JNIEnv *env);
 
     int updateSong(Tag *tag, int ID);
-
-    std::string selectSong(AudioFile *audioFile);
 
     bool tableExist(std::string tableName);
 
