@@ -15,7 +15,7 @@ import javax.inject.Inject
 class MainViewModel
 @Inject constructor(
     cc: CoroutineContextProvider,
-    val taggerLib: TaggerLib
+    private val taggerLib: TaggerLib
 ) : BaseViewModel(cc) {
 
     //Scanning data
@@ -35,23 +35,21 @@ class MainViewModel
     var newCover: ByteArray? = null
 
     init {
-        if (taggerLib.songTableExist()){
-            getAllAudioFiles()
-        }else{
-            performInitialScan()
+        if (taggerLib.songTableExist()) {
+            fullSongList.value = taggerLib.getAllAudioFiles().asList()
+            syncAudioFiles()
+        } else {
+            launch(Dispatchers.IO) {
+                taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
+                updateFullSongList(taggerLib.getAllAudioFiles().asList())
+            }
         }
     }
 
-    private fun performInitialScan() {
-        launch(Dispatchers.IO) {
-            taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
-            getAllAudioFiles()
-        }
-    }
-
-    private fun getAllAudioFiles() {
-        val songs = taggerLib.getAllAudioFiles()
-        fullSongList.postValue(songs.asList())
+    //Background thread
+    private fun updateFullSongList(audioFileList: List<AudioFile>?) {
+        audioFileList ?: return
+        fullSongList.postValue(audioFileList)
     }
 
     fun audioFileSelected(view: View, position: Int): Boolean {
@@ -59,19 +57,19 @@ class MainViewModel
         return true
     }
 
+    fun syncAudioFiles() {
+        launch (Dispatchers.IO) {
+            updateFullSongList(taggerLib.backgroundScan("/storage/emulated/0/Music/")?.asList())
+        }
+    }
+
+
+    //DIALOG============================================================================================================
     fun selectAlbumArt() {
         selectNewCover.call()
     }
 
-
-    fun saveTags(
-        title: String,
-        album: String,
-        artist: String,
-        year: String,
-        track: String,
-        oldAudioFile: AudioFile
-    ) {
+    fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {
         if (!oldAudioFile.tagsEqual(title, album, artist, year, track, newCover)) {
             savingInProcess.call()
             launch {
@@ -85,7 +83,7 @@ class MainViewModel
                     oldAudioFile.filePath,
                     newCover
                 )
-                getAllAudioFiles()
+                updateFullSongList(taggerLib.getAllAudioFiles().asList())
                 newCover = null
                 saveTags.postValue(success)
             }

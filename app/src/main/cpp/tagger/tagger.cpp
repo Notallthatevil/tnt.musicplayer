@@ -67,17 +67,13 @@ JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(JNIEnv *env, jobject /*this*/,
                                                                                 jstring directory, jobject currentSong,
                                                                                 jobject numOfSongs) {
-
-
     std::vector<std::string> directoryList;
     try {
-        directoryList = scanDirectoryForAudio(std::string(env->GetStringUTFChars(directory, nullptr)));
+        directoryList = scanDirectoryForAudio(jstringToString(env,&directory));
     } catch (FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
     }
-
-
 
     ///Setup Kotlin Integer wrapper so that we can return an int
     jclass jIntegerWrapper = env->FindClass(
@@ -130,8 +126,53 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 extern "C"
 JNIEXPORT jobjectArray //java audio file
 JNICALL
-Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env,
-                                                                                   jobject /*this*/) {
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan(JNIEnv *env, jobject /*this*/,
+                                                                                 jstring directory) {
+
+    std::vector<std::string> newList;
+    try {
+        newList = scanDirectoryForAudio(jstringToString(env,&directory));
+    } catch (FileAccessException &e) {
+        __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
+        return nullptr;
+    }
+
+    SqlWrapper sqlWrapper;
+    auto oldList = sqlWrapper.retrieveAllFilePaths();
+
+    map::iterator it;
+    auto limit = newList.size();
+    for (int i = 0; i < limit;) {
+        it = oldList.find(newList[i]);
+        if (it != oldList.end()) {
+            oldList.erase(it);
+            newList.erase(newList.begin()+i);
+            limit = newList.size();
+        }else{
+            i++;
+        }
+    }
+
+    for (auto const &oldFilePath:oldList) {
+        sqlWrapper.deleteAudioFileByFilePath(oldFilePath.first);
+    }
+    for (std::string newAudioFile:newList){
+        if (newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
+            Mp3File mp3(&newAudioFile);
+            mp3.parse(true);
+            sqlWrapper.insertSong(&mp3);
+        }
+    }
+
+
+    return sqlWrapper.retrieveAllSongs(env);
+}
+
+
+extern "C"
+JNIEXPORT jobjectArray //java audio file
+JNICALL
+Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
     SqlWrapper sqlWrapper;
     return sqlWrapper.retrieveAllSongs(env);
 }

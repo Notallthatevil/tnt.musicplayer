@@ -81,7 +81,7 @@ bool SqlWrapper::tableExist(std::string tableName) {
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    if ((rc == SQLITE_OK)) {
+    if (rc == SQLITE_OK) {
         rc = sqlite3_step(stmt);
 
         //was found?
@@ -144,6 +144,14 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
     sqlite3_reset(stmt);
     return rc;
 }
+
+int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
+    std::string sql = "DELETE FROM " + SONG_TABLE + " WHERE " + SONG_FILEPATH + " = \"" + filePath + "\";";
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) return rc;
+    return sqlite3_step(stmt);
+}
+
 
 jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
     int numberOfItems = 0;
@@ -235,97 +243,34 @@ int SqlWrapper::updateSong(Tag *tag, int ID) {
     return rc;
 }
 
-//AudioFile *SqlWrapper::getAudioFileById(int id) {
-//    std::string sql = "SELECT * FROM "+SONG_TABLE+" WHERE "+SONG_ID+" = "+std::to_string(id);
-//    sqlite3_prepare_v2(mDb,sql.c_str(),-1,&stmt, nullptr);
-//    sqlite3_step(stmt);
-//
-//
-//    int id = sqlite3_column_int(stmt,SONG_ID_COLUMN);
-//    std::string title((char*)sqlite3_column_text(stmt,SONG_TITLE_COLUMN));
-//    std::string album((char*)sqlite3_column_text(stmt,SONG_ALBUM_COLUMN));
-//    std::string artist((char*)sqlite3_column_text(stmt,SONG_ARTIST_COLUMN));
-//    std::string year((char*)sqlite3_column_text(stmt,SONG_YEAR_COLUMN));
-//    std::string track((char*)sqlite3_column_text(stmt,SONG_TRACK_COLUMN));
-//    std::string filePath = (char*)sqlite3_column_text(stmt,SONG_FILEPATH_COLUMN);
-//    long duration = sqlite3_column_int64(stmt,SONG_DURATION_COLUMN);
-//    int sampleRate = sqlite3_column_int(stmt,SONG_SAMPLERATE_COLUMN);
-//    int bitrate = sqlite3_column_int(stmt,SONG_BITRATE_COLUMN);
-//
-//    Tag *tag = nullptr;
-//    AudioFile *audioFile = nullptr;
-//    //Filepath is set here
-//    if  (filePath.substr(filePath.find_last_of('.') + 1) == "mp3") {
-//        tag = new ID3Tag();
-//        audioFile = new Mp3File(&filePath);
-//    }
-//
-//
-//}
-//
-//
-//jobject SqlWrapper::getJAudioFileById(int id) {
-//    return nullptr;
-//}
+map SqlWrapper::retrieveAllFilePaths() {
+    int numberOfItems = 0;
+    char *error = nullptr;
 
+    std::string sql = "SELECT count(id) FROM " + SONG_TABLE;
+    sqlite3_exec(mDb, sql.c_str(), callback, &numberOfItems, &error);
 
+    map filePaths;
 
+    sql = "SELECT " + SONG_FILEPATH + " FROM " + SONG_TABLE;
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
+    if (rc == SQLITE_OK) {
+        for (int i = 0; i < numberOfItems; i++) {
+            if (sqlite3_step(stmt) != SQLITE_ROW) {
+                __android_log_print(ANDROID_LOG_ERROR, "SQLITE",
+                                    "Reached last row before number of items was read: Error code %d",
+                                    sqlite3_extended_errcode(mDb));
+                filePaths.clear();
+                return filePaths;
+            }
+            char *path = (char *) sqlite3_column_text(stmt, 0);
+//            std::string path = std::string((char *) sqlite3_column_text(stmt, 1));
+            filePaths[path] = i;
 
-//AudioFile *SqlWrapper::getAudioFileById(int id) {
-//    AudioFile *audioFile;
-//
-//    std::string sql = "SELECT * FROM " + SONG_TABLE + " WHERE " + SONG_ID + " = " + std::to_string(id);
-//    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-//
-//    sqlite3_step(stmt);
-//
-//    ///audioFile's filepath is set here. No need to set later
-//    std::string filePath((const char *) sqlite3_column_text(stmt, SONG_FILEPATH_COLUMN));
-//    if (filePath.substr(filePath.find_last_of('.') + 1) == "mp3") {
-//        audioFile = Mp3File(filePath);
-//    }
-//
-//    audioFile->setID(sqlite3_column_int(stmt, SONG_ID_COLUMN));
-//
-//
-//    return audioFile;
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//RETURNS the filepath of the song with the corresponding ID
-
-std::string SqlWrapper::selectSong(AudioFile *audioFile) {
-    std::stringstream ss;
-    ss << audioFile->getID();
-    std::string sql =
-            "SELECT " + SONG_FILEPATH
-            + " FROM " + SONG_TABLE + " WHERE " + SONG_ID
-            +
-            " = " + ss.str();
-    sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-    sqlite3_step(stmt);
-    return std::string((char *) sqlite3_column_text(stmt, 0));
+        }
+    }
+    return filePaths;
 }
 
 

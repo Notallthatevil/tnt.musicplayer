@@ -8,8 +8,12 @@
 #include <sstream>
 #include "../tagger/files/AudioFile.h"
 #include <string>
+#include <map>
 
 #pragma TNT.auto_vacuum = 1
+
+typedef std::map<std::string, int> map;
+
 class SqlWrapper {
 private:
     const std::string DATABASE_DIRECTORY = "/data/data/com.trippntechnology.tntmusicplayer/databases";
@@ -65,11 +69,16 @@ public:
 
     int insertSong(AudioFile *audioFile);
 
+    int deleteAudioFileByFilePath(std::string filePath);
+
     jobjectArray retrieveAllSongs(JNIEnv *env);
 
     int updateSong(Tag *tag, int ID);
 
     bool tableExist(std::string tableName);
+
+    map retrieveAllFilePaths();
+
 
 };
 
