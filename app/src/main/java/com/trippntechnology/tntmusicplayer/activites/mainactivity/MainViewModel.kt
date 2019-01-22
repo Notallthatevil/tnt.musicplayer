@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
@@ -34,14 +35,17 @@ class MainViewModel
 
     var newCover: ByteArray? = null
 
+    private var syncing = false
     init {
         if (taggerLib.songTableExist()) {
             fullSongList.value = taggerLib.getAllAudioFiles().asList()
             syncAudioFiles()
         } else {
             launch(Dispatchers.IO) {
+                syncing = true
                 taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
                 updateFullSongList(taggerLib.getAllAudioFiles().asList())
+                syncing = false
             }
         }
     }
@@ -58,8 +62,12 @@ class MainViewModel
     }
 
     fun syncAudioFiles() {
-        launch (Dispatchers.IO) {
-            updateFullSongList(taggerLib.backgroundScan("/storage/emulated/0/Music/")?.asList())
+        if (!syncing) {
+            launch(Dispatchers.IO) {
+                syncing = true
+                updateFullSongList(taggerLib.backgroundScan("/storage/emulated/0/Music/")?.asList())
+                syncing = false
+            }
         }
     }
 

@@ -29,7 +29,6 @@ SqlWrapper::SqlWrapper() {
  * Closes the database connection
  */
 SqlWrapper::~SqlWrapper() {
-    sqlite3_finalize(stmt);
     sqlite3_close_v2(mDb);
 }
 
@@ -58,8 +57,8 @@ int SqlWrapper::createTable(std::string tableName) {
                           SONG_COVER + " BLOB);";
 
         sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-        int rc = sqlite3_step(stmt);
-        return rc;
+        sqlite3_step(stmt);
+        return sqlite3_finalize(stmt);
     }
     return -1;
 }
@@ -72,8 +71,9 @@ int SqlWrapper::createTable(std::string tableName) {
 int SqlWrapper::deleteTable(std::string tableName) {
     std::string sql = "DROP TABLE IF EXISTS " + tableName;
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-    int rc = sqlite3_step(stmt);
-    return rc;
+    sqlite3_step(stmt);
+    return sqlite3_finalize(stmt);
+
 }
 
 bool SqlWrapper::tableExist(std::string tableName) {
@@ -88,9 +88,11 @@ bool SqlWrapper::tableExist(std::string tableName) {
         if (rc == SQLITE_ROW) {
             sqlite3_clear_bindings(stmt);
             sqlite3_reset(stmt);
+            sqlite3_finalize(stmt);
             return true;
         }
     }
+    sqlite3_finalize(stmt);
     return false;
 }
 
@@ -108,7 +110,7 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",
+        __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "prepare failed: %s",
                             sqlite3_errmsg(mDb));
     } else {
         const char *title =
@@ -139,17 +141,32 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
                           SQLITE_TRANSIENT);
 
         rc = sqlite3_step(stmt);
+        if (rc!=SQLITE_DONE) {
+            __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error inserting into database %d:    %s",
+                                sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
+        }
     }
     sqlite3_clear_bindings(stmt);
     sqlite3_reset(stmt);
+    sqlite3_finalize(stmt);
     return rc;
 }
 
 int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
     std::string sql = "DELETE FROM " + SONG_TABLE + " WHERE " + SONG_FILEPATH + " = \"" + filePath + "\";";
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) return rc;
-    return sqlite3_step(stmt);
+    if (rc != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error deleting from database %d:     %s",
+                            sqlite3_extended_errcode(mDb),sqlite3_errmsg(mDb));
+        return rc;
+    }
+    rc = sqlite3_step(stmt);
+    if(rc!=SQLITE_DONE){
+        __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error deleting from database %d:     %s",
+                            sqlite3_extended_errcode(mDb),sqlite3_errmsg(mDb));
+    }
+    sqlite3_step(stmt);
+    return sqlite3_finalize(stmt);
 }
 
 
@@ -207,6 +224,7 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
 
         env->SetObjectArrayElement(jAudioArray, i, jSong);
     }
+    sqlite3_finalize(stmt);
     return jAudioArray;
 }
 
@@ -239,8 +257,8 @@ int SqlWrapper::updateSong(Tag *tag, int ID) {
         sqlite3_bind_text(stmt, 5, tag->getTrack().c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_blob(stmt, 6, tag->getCover(), tag->getCoverSize(), SQLITE_STATIC);
     }
-    rc = sqlite3_step(stmt);
-    return rc;
+    sqlite3_step(stmt);
+    return sqlite3_finalize(stmt);
 }
 
 map SqlWrapper::retrieveAllFilePaths() {
@@ -270,6 +288,7 @@ map SqlWrapper::retrieveAllFilePaths() {
 
         }
     }
+    sqlite3_finalize(stmt);
     return filePaths;
 }
 

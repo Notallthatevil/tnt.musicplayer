@@ -69,7 +69,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
                                                                                 jobject numOfSongs) {
     std::vector<std::string> directoryList;
     try {
-        directoryList = scanDirectoryForAudio(jstringToString(env,&directory));
+        directoryList = scanDirectoryForAudio(jstringToString(env, &directory));
     } catch (FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
@@ -131,7 +131,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
 
     std::vector<std::string> newList;
     try {
-        newList = scanDirectoryForAudio(jstringToString(env,&directory));
+        newList = scanDirectoryForAudio(jstringToString(env, &directory));
     } catch (FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
@@ -146,24 +146,27 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         it = oldList.find(newList[i]);
         if (it != oldList.end()) {
             oldList.erase(it);
-            newList.erase(newList.begin()+i);
+            newList.erase(newList.begin() + i);
             limit = newList.size();
-        }else{
+        } else {
             i++;
         }
     }
 
+
     for (auto const &oldFilePath:oldList) {
-        sqlWrapper.deleteAudioFileByFilePath(oldFilePath.first);
+        int rc = sqlWrapper.deleteAudioFileByFilePath(oldFilePath.first);
+        __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Deleted %s with code %d", oldFilePath.first.c_str(), rc);
     }
-    for (std::string newAudioFile:newList){
+    for (std::string newAudioFile:newList) {
         if (newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
-            sqlWrapper.insertSong(&mp3);
+            int rc = sqlWrapper.insertSong(&mp3);
+            __android_log_print(ANDROID_LOG_DEBUG, "SYNCING" ,"Added %s with code %d",newAudioFile.c_str(), rc);
+
         }
     }
-
 
     return sqlWrapper.retrieveAllSongs(env);
 }

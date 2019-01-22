@@ -3,6 +3,7 @@ package com.trippntechnology.tntmusicplayer.activites.mainactivity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -77,6 +78,11 @@ class MainActivity : LiveDataObserverActivity() {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.syncAudioFiles()
     }
 
     override fun onDestroy() {
