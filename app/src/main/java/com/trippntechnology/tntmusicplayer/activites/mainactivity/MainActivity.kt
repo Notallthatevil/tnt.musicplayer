@@ -33,7 +33,7 @@ class MainActivity : LiveDataObserverActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var scanningDialog : ScanningDialog
+    private lateinit var scanningDialog: ScanningDialog
 
     private val viewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
@@ -47,38 +47,27 @@ class MainActivity : LiveDataObserverActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        scanningDialog = ScanningDialog(this)
-        scanningDialog.show()
 
-
+        //Setup binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = viewModel
-
+        //Setup recycle view
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerView.adapter = adapter
-        binding.mainRecyclerView.addItemDecoration(object:DividerItemDecoration(this, VERTICAL){})
+        binding.mainRecyclerView.addItemDecoration(object : DividerItemDecoration(this, VERTICAL) {})
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),PERMISSION_TO_WRITE_EXTERNAL_STORAGE)
-        }
-
+        //Setup observers
         setupProgressBarObservers()
+        setUpListObservers()
 
-
-        viewModel.selectedSong.observe{
-            showEditTagDialog(it)
+        //Check for permission and start app
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_TO_WRITE_EXTERNAL_STORAGE)
+        } else {
+            viewModel.startUp()
         }
-
-        //On initial scan only
-        viewModel.fullSongList.observe {
-            adapter.submitList(it!!)
-            if(scanningDialog.isShowing){
-                scanningDialog.dismiss()
-            }
-        }
-
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -87,41 +76,56 @@ class MainActivity : LiveDataObserverActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (scanningDialog.isShowing){
+        if (scanningDialog.isShowing) {
             scanningDialog.dismiss()
         }
     }
 
 
-    private fun showEditTagDialog(listPosition: Int?){
-        listPosition ?:return
+    private fun showEditTagDialog(listPosition: Int?) {
+        listPosition ?: return
         val ft = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag(DIALOG_TAG)
 
-        if (prev != null){
+        if (prev != null) {
             ft.remove(prev)
         }
         ft.addToBackStack(null)
         val editTagDialog = EditTagDialog.newInstance(listPosition)
-        editTagDialog.show(ft,DIALOG_TAG)
+        editTagDialog.show(ft, DIALOG_TAG)
     }
 
-    private fun setupProgressBarObservers(){
-        viewModel.parsingCurrentSong.observe{
+    private fun setupProgressBarObservers() {
+        scanningDialog = ScanningDialog(this)
+
+        viewModel.parsingCurrentSong.observe {
             scanningDialog.increaseCurrentProgress(it!!)
         }
-        viewModel.numberOfSongs.observe{
+        viewModel.numberOfSongs.observe {
             scanningDialog.setMaxProgress(it!!.int)
-            if (!scanningDialog.isShowing){
-                scanningDialog.show()
+        }
+    }
+
+    private fun setUpListObservers() {
+        viewModel.selectedSong.observe {
+            showEditTagDialog(it)
+        }
+        viewModel.fullSongList.observe {
+            adapter.submitList(it!!)
+            if (scanningDialog.isShowing) {
+                scanningDialog.dismiss()
             }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode){
+        when (requestCode) {
             PERMISSION_TO_WRITE_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    viewModel.startUp()
+                } else {
+                    Toast.makeText(this, "Storage permission required to use app", Toast.LENGTH_LONG).show()
+                    finish()
                 }
             }
         }

@@ -20,16 +20,25 @@ class ScanningDialog(context: Activity) : Dialog(context, false, null) {
     }
 
     private fun setBody(bodyText: String) {
+        if(!isShowing){
+            show()
+        }
         alertBody.text = bodyText
     }
 
     fun setMaxProgress(maxProgress: Int) {
+        if(!isShowing){
+            show()
+        }
         alertProgress.max = maxProgress
         alertProgress.progress = 0
         alertProgressCounter.text = "${alertProgress.progress}/${alertProgress.max}"
     }
 
     fun increaseCurrentProgress(wrapper: CurrentProgressWrapper) {
+        if(!isShowing){
+            show()
+        }
         alertProgress.progress = wrapper.currentItemPosition
         alertProgressCounter.text = "${alertProgress.progress}/${alertProgress.max}"
         setBody(wrapper.currentItem)

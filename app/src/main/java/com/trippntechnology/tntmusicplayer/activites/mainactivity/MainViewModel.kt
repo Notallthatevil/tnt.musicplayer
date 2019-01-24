@@ -36,7 +36,8 @@ class MainViewModel
     var newCover: ByteArray? = null
 
     private var syncing = false
-    init {
+
+    fun startUp() {
         if (taggerLib.songTableExist()) {
             fullSongList.value = taggerLib.getAllAudioFiles().asList()
             syncAudioFiles()
@@ -70,6 +71,7 @@ class MainViewModel
             }
         }
     }
+
 
 
     //DIALOG============================================================================================================
