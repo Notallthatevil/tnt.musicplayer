@@ -3,12 +3,10 @@ package com.trippntechnology.tntmusicplayer.activites.mainactivity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,8 +18,6 @@ import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.LiveDataObserverActivity
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
-import com.trippntechnology.tntmusicplayer.objects.AudioFile
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : LiveDataObserverActivity() {
@@ -67,7 +63,6 @@ class MainActivity : LiveDataObserverActivity() {
             viewModel.startUp()
         }
     }
-
 
     override fun onResume() {
         super.onResume()

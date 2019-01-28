@@ -1,6 +1,5 @@
 package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
@@ -9,6 +8,7 @@ import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
+import com.trippntechnology.tntmusicplayer.network.coverartretriever.CoverArtRetriever
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -76,7 +76,10 @@ class MainViewModel
 
     //DIALOG============================================================================================================
     fun selectAlbumArt() {
-        selectNewCover.call()
+//        selectNewCover.call()
+        launch{
+           val list = CoverArtRetriever().retrieveAlbumIDs(fullSongList.value!![12])
+        }
     }
 
     fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {
