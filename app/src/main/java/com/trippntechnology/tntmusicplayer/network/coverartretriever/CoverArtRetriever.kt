@@ -11,22 +11,22 @@ class CoverArtRetriever {
 
 
     fun retrieveAlbumIDs(audioFile: AudioFile):List<XMLAlbum>?{
-//        val urlStream = URL(createSearchQuery(audioFile)).openStream()
-//        val list = CoverArtParer().parse(urlStream,audioFile)
-//        Log.d("XML","list has returned")
-//        if (list!= null){
-//           return list
-//        }
-//        val albumSearch = albumSearch(audioFile)
-//        if (albumSearch!=null){
-//            Log.d("XML","album has returned")
-//            return albumSearch
-//        }
-//        val songTitleSearch = songTitleSearch(audioFile)
-//        if (songTitleSearch!=null){
-//            Log.d("XML","title has returned")
-//            return songTitleSearch
-//        }
+        val urlStream = URL(createSearchQuery(audioFile)).openStream()
+        val list = CoverArtParer().parse(urlStream,audioFile)
+        Log.d("XML","list has returned")
+        if (list!= null){
+           return list
+        }
+        val albumSearch = albumSearch(audioFile)
+        if (albumSearch!=null){
+            Log.d("XML","album has returned")
+            return albumSearch
+        }
+        val songTitleSearch = songTitleSearch(audioFile)
+        if (songTitleSearch!=null){
+            Log.d("XML","title has returned")
+            return songTitleSearch
+        }
         val artistSearch = artistSearch(audioFile)
         if (artistSearch!=null){
             Log.d("XML","artist has returned")
@@ -113,56 +113,6 @@ class CoverArtRetriever {
             return ""
         }
     }
-
-
-//METHOD REQUIRES EXTENSIVE LOGIC
-//
-//    fun retrieveCoverArt(audioFile: AudioFile): Bitmap {
-//        if (audioFile.artist != null && audioFile.album != null) {
-//            val albumID = getAlbumID(createQuery(ALBUM_QUERY, audioFile.album, ARTIST_QUERY, audioFile.artist))[0].xmlID
-//        } else if (audioFile.title != null && audioFile.artist != null) {
-//            val artistID = getArtistID(createQuery(ARTIST_QUERY, audioFile.artist, SONG_TITLE_QUERY, audioFile.title))
-//        } else if (audioFile.title != null && audioFile.album != null) {
-//            val artistID = getArtistID(createQuery(ALBUM_QUERY, audioFile.album, SONG_TITLE_QUERY, audioFile.title))
-//        }
-//    }
-//
-//
-//    fun createQuery(type: String, search: String, extraType: String? = null, extraSearch: String? = null): String {
-//        var query = "$type\"$search\""
-//
-//        if (extraType != null && extraSearch != null) {
-//            query += " AND $extraType:\"$extraSearch\""
-//        }
-//        return query
-//    }
-//
-//    fun getArtistID(artistQuery: String): ArrayList<XMLArtist> {
-//        val url = URL(artistQuery)
-//        val parserFactory = SAXParserFactory.newInstance()
-//        val parser = parserFactory.newSAXParser()
-//        val handler = XMLContentHandler()
-//        parser.parse(url.openStream(), handler)
-//        return handler.xmlArtists
-//    }
-//
-//    fun getAlbumID(albumQuery: String): ArrayList<XMLAlbum> {
-//        val url = URL(albumQuery)
-//        val parserFactory = SAXParserFactory.newInstance()
-//        val parser = parserFactory.newSAXParser()
-//        val handler = XMLContentHandler()
-//        parser.parse(url.openStream(), handler)
-//        return handler.xmlAlbums
-//    }
-//
-//    fun getSongTitleID(songTitleQuery: String): ArrayList<XMLSongTitle> {
-//        val url = URL(songTitleQuery)
-//        val parserFactory = SAXParserFactory.newInstance()
-//        val parser = parserFactory.newSAXParser()
-//        val handler = XMLContentHandler()
-//        parser.parse(url.openStream(), handler)
-//        return handler.xmlSongTitle
-//    }
 
     companion object {
         private const val BASE_MUSIC_URL = "https://musicbrainz.org/ws/2/"
