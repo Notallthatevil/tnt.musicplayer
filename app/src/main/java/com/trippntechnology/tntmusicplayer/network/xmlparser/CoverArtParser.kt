@@ -10,7 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class CoverArtParer {
+class CoverArtParser {
 
 
     @Throws(XmlPullParserException::class, IOException::class)

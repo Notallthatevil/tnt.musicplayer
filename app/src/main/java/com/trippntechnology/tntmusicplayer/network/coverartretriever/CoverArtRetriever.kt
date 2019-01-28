@@ -1,7 +1,7 @@
 package com.trippntechnology.tntmusicplayer.network.coverartretriever
 
 import android.util.Log
-import com.trippntechnology.tntmusicplayer.network.xmlparser.CoverArtParer
+import com.trippntechnology.tntmusicplayer.network.xmlparser.CoverArtParser
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.objects.XMLAlbum
 import java.net.URL
@@ -12,7 +12,7 @@ class CoverArtRetriever {
 
     fun retrieveAlbumIDs(audioFile: AudioFile):List<XMLAlbum>?{
         val urlStream = URL(createSearchQuery(audioFile)).openStream()
-        val list = CoverArtParer().parse(urlStream,audioFile)
+        val list = CoverArtParser().parse(urlStream,audioFile)
         Log.d("XML","list has returned")
         if (list!= null){
            return list
@@ -38,17 +38,17 @@ class CoverArtRetriever {
 
     private fun albumSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createAlbumSearchQuery(audioFile.album)).openStream()
-        return CoverArtParer().parse(urlStream,audioFile)
+        return CoverArtParser().parse(urlStream,audioFile)
     }
 
     private fun songTitleSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createSongTitleSearchQuery(audioFile.title)).openStream()
-        return CoverArtParer().parse(urlStream,audioFile)
+        return CoverArtParser().parse(urlStream,audioFile)
     }
 
     private fun artistSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val artistIdStream = URL(createArtistSearchQuery(audioFile.artist)).openStream()
-        val parser = CoverArtParer()
+        val parser = CoverArtParser()
         val artistIds = parser.parse(artistIdStream,audioFile)
         return if (artistIds.isNullOrEmpty()){
             null
