@@ -112,7 +112,7 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
                 int imageOffset = findCover(tagBuffer, pos + 10);
                 setCover(tagBuffer, frameSize - imageOffset, imageOffset);
             }
-            if(pos + frameSize + 12 > mTagSize - mHeaderSize - pos) {
+            if(pos + frameSize + 12 > mTagSize - mHeaderSize) {
                 break;
             }
             //Resolves problem that causes invalid reading of tags due to tags being created wrong.
