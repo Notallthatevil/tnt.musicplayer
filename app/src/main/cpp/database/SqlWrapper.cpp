@@ -54,6 +54,8 @@ int SqlWrapper::createTable(std::string tableName) {
                           SONG_SAMPLERATE + " INT, " +
                           SONG_BITRATE + " INT, " +
 
+                          SONG_LAST_MODIFIED + " BIGINT, "+
+
                           SONG_COVER + " BLOB);";
 
         sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
@@ -105,8 +107,8 @@ bool SqlWrapper::tableExist(std::string tableName) {
 int SqlWrapper::insertSong(AudioFile *audioFile) {
 
     std::string sql = "INSERT INTO " + SONG_TABLE +
-                      "(TITLE,ALBUM,ARTIST,YEAR,TRACK,FILEPATH,DURATION,SAMPLERATE,BITRATE,ARTWORK) " +
-                      "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10);";
+                      "(TITLE,ALBUM,ARTIST,YEAR,TRACK,FILEPATH,DURATION,SAMPLERATE,BITRATE,MODIFIED_DATE,ARTWORK) " +
+                      "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11);";
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
     if (rc != SQLITE_OK) {
@@ -124,9 +126,6 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
         const char *track =
                 !audioFile->getTag()->getTrack().empty() ? audioFile->getTag()->getTrack().c_str() : nullptr;
 
-        if (audioFile->getTag()->getTitle() == "gold") {
-            int z = 0;
-        }
         ///Hardcoded numbers correspond to the position in values in above sql statement starting at 1
         sqlite3_bind_text(stmt, 1, title, -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 2, album, -1, SQLITE_TRANSIENT);
@@ -137,7 +136,8 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
         sqlite3_bind_int64(stmt, 7, audioFile->getDuration());
         sqlite3_bind_int(stmt, 8, audioFile->getSampleRate());
         sqlite3_bind_int(stmt, 9, audioFile->getBitrate());
-        sqlite3_bind_blob(stmt, 10, audioFile->getTag()->getCover(), audioFile->getTag()->getCoverSize(),
+        sqlite3_bind_int64(stmt,10,audioFile->getLastModified());
+        sqlite3_bind_blob(stmt, 11, audioFile->getTag()->getCover(), audioFile->getTag()->getCoverSize(),
                           SQLITE_TRANSIENT);
 
         rc = sqlite3_step(stmt);
@@ -234,14 +234,15 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
  * @param audioFile - The new audio file to be updated
  * @param ID - The ID of the database entry to be updated
  */
-int SqlWrapper::updateSong(Tag *tag, int ID) {
+int SqlWrapper::updateSong(Tag *tag, int ID,long lastModifiedTime) {
     std::string sql = "UPDATE " + SONG_TABLE + " SET " +
-                      SONG_TITLE + " = :TIT, " +
-                      SONG_ALBUM + " = :ALB, " +
-                      SONG_ARTIST + " = :ART, " +
-                      SONG_YEAR + " = :YEA, " +
-                      SONG_TRACK + " = :TRA, " +
-                      SONG_COVER + " = :COV WHERE " +
+                      SONG_TITLE + " = ?1, " +
+                      SONG_ALBUM + " = ?2, " +
+                      SONG_ARTIST + " = ?3, " +
+                      SONG_YEAR + " = ?4, " +
+                      SONG_TRACK + " = ?5, " +
+                      SONG_LAST_MODIFIED+ " = ?6, "+
+                      SONG_COVER + " = ?7 WHERE " +
                       SONG_ID + " = " + std::to_string(ID) + ";";
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
@@ -250,12 +251,13 @@ int SqlWrapper::updateSong(Tag *tag, int ID) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",
                             sqlite3_errmsg(mDb));
     } else {
-        sqlite3_bind_text(stmt, 1, tag->getTitle().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 2, tag->getAlbum().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 3, tag->getArtist().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 4, tag->getYear().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 5, tag->getTrack().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_blob(stmt, 6, tag->getCover(), tag->getCoverSize(), SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, tag->getTitle().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, tag->getAlbum().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, tag->getArtist().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, tag->getYear().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, tag->getTrack().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(stmt,6,lastModifiedTime);
+        sqlite3_bind_blob(stmt, 7, tag->getCover(), tag->getCoverSize(), SQLITE_TRANSIENT);
     }
     sqlite3_step(stmt);
     return sqlite3_finalize(stmt);

@@ -85,7 +85,7 @@ public:
      * -2 if an output stream couldn't be opened
      * 0 if successful
      */
-    int saveNewTag(Tag *newTag) override;
+    long saveNewTag(Tag *newTag) override;
 
     Tag *getTag() override;
 

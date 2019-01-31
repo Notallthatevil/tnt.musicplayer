@@ -32,6 +32,8 @@ private:
     const std::string SONG_DURATION = "DURATION";
     const std::string SONG_SAMPLERATE = "SAMPLERATE";
     const std::string SONG_BITRATE = "BITRATE";
+
+    const std::string SONG_LAST_MODIFIED = "MODIFIED_DATE";
     enum tableColumnNumbers {
         SONG_ID_COLUMN = 0,
         SONG_TITLE_COLUMN = 1,
@@ -43,8 +45,8 @@ private:
         SONG_DURATION_COLUMN = 7,
         SONG_SAMPLERATE_COLUMN = 8,
         SONG_BITRATE_COLUMN = 9,
-        SONG_COVER_COLUMN = 10,
-
+        SONG_LAST_MODIFIED_COLUMN = 10,
+        SONG_COVER_COLUMN = 11
     };
 
     sqlite3 *mDb;
@@ -73,7 +75,7 @@ public:
 
     jobjectArray retrieveAllSongs(JNIEnv *env);
 
-    int updateSong(Tag *tag, int ID);
+    int updateSong(Tag *tag, int ID,long lastModifiedTime);
 
     bool tableExist(std::string tableName);
 

@@ -6,7 +6,16 @@
 #define TAGGER_FILE_H
 
 #include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "../tags/Tag.h"
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
+#ifdef WIN32
+#define stat _stat
+#endif
 
 
 class AudioFile {
@@ -14,9 +23,11 @@ private:
 protected:
     AudioFile() = default;
 
+    struct stat result;
     int mBitrate = 0;
     int mSampleRate = 0;
     long mDuration = 0;  // milliseconds
+    long mLastModified = 0; // Time in seconds since Jan 1 1970
     long mSqlID = -1;
     bool mIsOpen = false;
     unsigned long mFileSize = 0;
@@ -55,7 +66,7 @@ public:
      * Creates and attaches the new tag to the AudioFile.
      * Open must be called prior
      */
-    virtual int saveNewTag(Tag *newTag) = 0;
+    virtual long saveNewTag(Tag *newTag) = 0;
 
     unsigned long getFileSize() const;
 
@@ -67,7 +78,7 @@ public:
 
     int getBitrate() const;
     int getSampleRate()const;
-
+    long getLastModified() const;
     std::string getFilePath() const;
 };
 

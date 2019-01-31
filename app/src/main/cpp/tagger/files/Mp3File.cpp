@@ -924,13 +924,11 @@ int Mp3File::attachNewTag(Tag *newTag) {
     mStream->read((char *) &mFileData[newTag->getTagSize()], mAudioSize);
     mFileSize = newTag->getTagSize() + mAudioSize;
     mStream->read((char *) &mFileData[newTag->getTagSize()], mAudioSize);
-
     return 0;
 }
 
-
 //Abstraction layer for creating the tag
-int Mp3File::saveNewTag(Tag *newTag) {
+long Mp3File::saveNewTag(Tag *newTag) {
 
     if (attachNewTag(newTag) == 0) {
         mStream->close();
@@ -938,6 +936,9 @@ int Mp3File::saveNewTag(Tag *newTag) {
         if (outStream.is_open()) {
             outStream.write((char *) mFileData, mFileSize);
             outStream.close();
+            if(stat(getFilePath().c_str(),&result) == 0){
+                mLastModified = result.st_mtime;
+            }
         } else {
             return -2;
         }

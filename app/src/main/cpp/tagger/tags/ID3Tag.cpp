@@ -121,11 +121,7 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
                tagBuffer[pos + frameSize + 11] < 0x41 || tagBuffer[pos + frameSize + 11] > 0x5A ||
                tagBuffer[pos + frameSize + 12] < 0x41 || tagBuffer[pos + frameSize + 12] > 0x5A) {
                 if(rc < 1) {
-                    if(mFlagUnsynchronisation) {
-                        mFlagUnsynchronisation = false;
-                    } else {
-                        mFlagUnsynchronisation = true;
-                    }
+                    mFlagUnsynchronisation = !mFlagUnsynchronisation;
                     rc = 1;
                 } else {
                     pos += 4;

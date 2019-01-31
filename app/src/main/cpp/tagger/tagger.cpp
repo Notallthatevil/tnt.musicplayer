@@ -238,10 +238,9 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
 
 
         int rc = audioFile->saveNewTag(tag);
-
         if (rc == 0) {
             SqlWrapper sqlWrapper;
-            sqlWrapper.updateSong(tag, id);
+            sqlWrapper.updateSong(tag, id, audioFile->getLastModified());
         } else {
             jsuccess = rc;
         }

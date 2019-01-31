@@ -5,14 +5,16 @@
 #include "AudioFile.h"
 
 
-
 bool AudioFile::open() {
-    if (mIsOpen) {
+    if(mIsOpen) {
         return true;
+    }
+    if(stat(mFilePath.c_str(), &result) ==0) {
+        mLastModified = result.st_mtime;
     }
     mStream = new std::ifstream(getFilePath().c_str(), std::ios::ate | std::ios::binary);
     mIsOpen = mStream->is_open();
-    if (!mIsOpen) {
+    if(!mIsOpen) {
         return false;
     }
     mFileSize = (unsigned long) mStream->tellg();
@@ -23,11 +25,11 @@ bool AudioFile::open() {
 
 AudioFile::~AudioFile() {
     mIsOpen = false;
-    if (mStream != nullptr) {
+    if(mStream != nullptr) {
         delete mStream;
         mStream = nullptr;
     }
-    if (mFileData != nullptr) {
+    if(mFileData != nullptr) {
         delete[] mFileData;
         mFileData = nullptr;
     }
@@ -59,5 +61,9 @@ int AudioFile::getBitrate() const {
 
 int AudioFile::getSampleRate() const {
     return mSampleRate;
+}
+
+long AudioFile::getLastModified() const {
+    return mLastModified;
 }
 
