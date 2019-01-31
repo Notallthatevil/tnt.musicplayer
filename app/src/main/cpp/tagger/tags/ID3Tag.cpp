@@ -6,20 +6,22 @@
 
 #include "ID3Tag.h"
 
-
-/*Returns value based on success
-0 = header read successfully
--1 = @param header was null
-1 = invalid id3 tag*/
+/**
+ *
+ * @param header - A 10 byte array that makes up the ID3 header
+ * @return -1 = @param header was null
+ *          0 = @param header was read successfully
+ *          1 = @param header represented something other then an ID3 tag
+ */
 int ID3Tag::readHeader(unsigned char *header) {
-    if (header == nullptr) {
+    if(header == nullptr) {
         return -1;
     }
-    if (header[0] == 'I' && header[1] == 'D' && header[2] == '3' && header[3] >= 3) {
+    if(header[0] == 'I' && header[1] == 'D' && header[2] == '3' && header[3] >= 3) {
         int synchSafeInt = header[6] << 21 | header[7] << 14 | header[8] << 7 | header[9];
         mMajorVersion = header[3];
         mMinorVersion = header[4];
-        if (header[3] == 4 && ((header[5] & (0b00010000)) != 0)) {
+        if(header[3] == 4 && ((header[5] & (0b00010000)) != 0)) {
             mFlagFooter = true;
             mHeaderSize = 20;
         } else {
@@ -35,45 +37,55 @@ int ID3Tag::readHeader(unsigned char *header) {
     }
 }
 
-//NO TEST NEEDED
+/**
+ * Sets the ID3 flags to help with reading the whole tag. These flags aren't guaranteed to work
+ * since some encoders don't follow the flag setting rules.
+ * @param flagByte - The byte that contains the set binary flags
+ */
 void ID3Tag::readFlags(char flagByte) {
-    if ((flagByte & 0x80) != 0) {
+    if((flagByte & 0x80) != 0) {
         mFlagUnsynchronisation = true;
     }
-    if ((flagByte & 0x40) != 0) {
+    if((flagByte & 0x40) != 0) {
         mFlagExtendedHeader = true;
     }
-    if ((flagByte & 0x20) != 0) {
+    if((flagByte & 0x20) != 0) {
         mFlagExperimental = true;
     }
-    if ((flagByte & 0x10) != 0) {
+    if((flagByte & 0x10) != 0) {
         mFlagFooter = true;
     }
 }
 
-
-/*Returns value based on the success of reading the tags
-0 = tags were read successfully without any unsuspected errors
--1 = tagBuffer was null
--2 = mTagSize is 0, readHeader() must be called prior to calling readTags
-1 = tags might be corrupted*/
+/**
+ * This is the main method that parses the actual tag data.
+ * @param tagBuffer - A unsigned char array that contains the tag information. The size of this buffer
+ *                    is set in @see #readHeader(unsigned char *header).
+ * @return -2 = @see mTagSize is 0, @see #readHeader(unsigned char *header) must be called prior to calling
+ *              @see #readTags(unsigned char *tagBuffer)
+ *         -1 = @param tagBuffer was null
+ *          0 = @param tagBuffer was parsed successfully without any unexpected errors
+ *          1 = @param tagBuffer was parsed successfully but it may have some sort of corruption. This could
+ *          be caused by a unsychronisation flag not being set
+ */
 int ID3Tag::readTags(unsigned char *tagBuffer) {
     unsigned int pos = 0;
     unsigned int frameSize = 0;
     std::string frameHeader;
 
-    if (tagBuffer == nullptr) {
+    if(tagBuffer == nullptr) {
         return -1;
     }
-    if (mTagSize == 0) {
+    if(mTagSize == 0) {
         return -2;
     }
-    while (pos < mTagSize - mHeaderSize) {
+    int rc = 0;
+    while(pos < mTagSize - mHeaderSize) {
         frameHeader += tagBuffer[pos];
         frameHeader += tagBuffer[pos + 1];
         frameHeader += tagBuffer[pos + 2];
         frameHeader += tagBuffer[pos + 3];
-        if (mFlagUnsynchronisation) {
+        if(mFlagUnsynchronisation) {
             frameSize =
                     tagBuffer[pos + 4] << 21 | tagBuffer[pos + 5] << 14 |
                     tagBuffer[pos + 6] << 7 | tagBuffer[pos + 7];
@@ -83,28 +95,41 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
                     tagBuffer[pos + 6] << 8 | tagBuffer[pos + 7];
         }
 
-        if (frameSize == 0) {
+        if(frameSize == 0) {
             pos += 4;
         } else {
-            if (frameHeader == TITLE_TAG) {
+            if(frameHeader == TITLE_TAG) {
                 setTitle(getTextFrame(tagBuffer, pos + 10, frameSize));
-            } else if (frameHeader == ARTIST_TAG) {
+            } else if(frameHeader == ARTIST_TAG) {
                 setArtist(getTextFrame(tagBuffer, pos + 10, frameSize));
-            } else if (frameHeader == ALBUM_TAG) {
+            } else if(frameHeader == ALBUM_TAG) {
                 setAlbum(getTextFrame(tagBuffer, pos + 10, frameSize));
-            } else if (frameHeader == TRACK_TAG) {
+            } else if(frameHeader == TRACK_TAG) {
                 setTrack(getTextFrame(tagBuffer, pos + 10, frameSize));
-            } else if (frameHeader == YEAR_TAG) {
+            } else if(frameHeader == YEAR_TAG) {
                 setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
-            } else if (frameHeader == COVER_TAG) {
+            } else if(frameHeader == COVER_TAG) {
                 int imageOffset = findCover(tagBuffer, pos + 10);
                 setCover(tagBuffer, frameSize - imageOffset, imageOffset);
             }
-
+            if(pos + frameSize + 12 > mTagSize - mHeaderSize - pos) {
+                break;
+            }
             //Resolves problem that causes invalid reading of tags due to tags being created wrong.
             //Only checks the first 3 since some tag frames have numbers in the 4th slot
-            if (!isupper(frameHeader[0]) || !isupper(frameHeader[1]) || !isupper(frameHeader[2])) {
-                pos += 4;
+            if(tagBuffer[pos + frameSize + 10] < 0x41 || tagBuffer[pos + frameSize + 10] > 0x5A ||
+               tagBuffer[pos + frameSize + 11] < 0x41 || tagBuffer[pos + frameSize + 11] > 0x5A ||
+               tagBuffer[pos + frameSize + 12] < 0x41 || tagBuffer[pos + frameSize + 12] > 0x5A) {
+                if(rc < 1) {
+                    if(mFlagUnsynchronisation) {
+                        mFlagUnsynchronisation = false;
+                    } else {
+                        mFlagUnsynchronisation = true;
+                    }
+                    rc = 1;
+                } else {
+                    pos += 4;
+                }
             } else {
                 pos += frameSize + 10;
             }
@@ -112,41 +137,46 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
         }
 
     }
-    if (pos > mTagSize - mHeaderSize) {
-        return 1;
+    if(pos > mTagSize - mHeaderSize && rc < 1) {
+        rc = 1;
     }
-    return 0;
+    return rc;
 }
 
 
-/*Returns std::string from the passed in frame. Will always return some type of std::string
-within the given frame size
-*/
+
+/**
+ * Returns the text of the ID3 frame passed in
+ * @param buffer - The buffer that contains the string
+ * @param offset - The start of the string including the encoding
+ * @param frameSize - The size of the text data including the encoding
+ * @return - The string contained within the buffer
+ */
 std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSize) {
     std::string frameData;
     int i;
 
-    switch (buffer[offset]) {
+    switch(buffer[offset]) {
 
         case UTF_16: //UTF-16LE
 
             //BOM present
-            if (buffer[1 + offset] == 0xff || buffer[2 + offset] == 0xff) {
+            if(buffer[1 + offset] == 0xff || buffer[2 + offset] == 0xff) {
                 i = 3;
             } else {
                 i = 1;
             }
-            if (buffer[1 + offset] == 0x0ff) {
+            if(buffer[1 + offset] == 0x0ff) {
 
                 //start at three to skip encoding and endianness
-                for (i; i < frameSize; i += 2) {
+                for(i; i < frameSize; i += 2) {
                     //FIXME Fix to work with utf-16 characters
 
                     unsigned int charSize = buffer[i + offset + 1] << 8u | buffer[i + offset];
-                    if (charSize > UCHAR_MAX) {
+                    if(charSize > UCHAR_MAX) {
                         //Inserts placeholder currently
                         frameData += (char) 0x1F;
-                    } else if (charSize == 0) {
+                    } else if(charSize == 0) {
                         break;
                     } else {
                         frameData += buffer[i + offset];
@@ -158,21 +188,21 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
         case UTF_16BE: //UTF-16BE
 
             //BOM present
-            if (buffer[1 + offset] == 0xff || buffer[2 + offset] == 0xff) {
+            if(buffer[1 + offset] == 0xff || buffer[2 + offset] == 0xff) {
                 i = 3;
             } else {
                 i = 1;
             }
 
-            for (i; i < frameSize; i += 2) {
+            for(i; i < frameSize; i += 2) {
 
                 //FIXME Fix to work with utf-16 characters
 
                 unsigned int charSize = buffer[i + offset] << 8u | buffer[i + offset + 1];
-                if (charSize > UCHAR_MAX) {
+                if(charSize > UCHAR_MAX) {
                     //Inserts placeholder currently
                     frameData += (char) 0x1F;
-                } else if (charSize == 0) {
+                } else if(charSize == 0) {
                     break;
                 } else {
                     frameData += buffer[i + offset + 1];
@@ -185,7 +215,7 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
             //Needs to be implemented
         case ISO_8859_1: //ISO-8859-1
         default:
-            for (int j = 1; j < frameSize; j++) {
+            for(int j = 1; j < frameSize; j++) {
                 frameData += buffer[j + offset];
             }
             break;
@@ -200,24 +230,24 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
 /* Returns an int that indicates where the binary image data actually starts in the frame
 */
 int ID3Tag::findCover(unsigned char *buffer, int offset) {
-    if (buffer == nullptr) {
+    if(buffer == nullptr) {
         return -1;
     }
     int apicFrameOffset = offset;
     unsigned char encoding = buffer[apicFrameOffset++];
     std::string mimeType;
-    while (buffer[apicFrameOffset] != 0x00) {
+    while(buffer[apicFrameOffset] != 0x00) {
         mimeType += buffer[apicFrameOffset++];
     }
     apicFrameOffset += 2;
-    if (encoding == 0x01 || encoding == 0x02 /*UTF-16*/) {
-        while (buffer[apicFrameOffset] != 0x00 ||
-               buffer[apicFrameOffset + 1] != 0x00) {
+    if(encoding == 0x01 || encoding == 0x02 /*UTF-16*/) {
+        while(buffer[apicFrameOffset] != 0x00 ||
+              buffer[apicFrameOffset + 1] != 0x00) {
             apicFrameOffset += 2;
         }
         apicFrameOffset += 2;
     } else {
-        while (buffer[apicFrameOffset] != 0x00) {
+        while(buffer[apicFrameOffset] != 0x00) {
             apicFrameOffset++;
         }
         apicFrameOffset++;
@@ -246,25 +276,25 @@ Padding - Adds extra space to the end of the tag array. Used to attach new tags 
 unsigned char *ID3Tag::generateTags(long padding) {
     mTagSize = calculateTagSize(false, 0);
     auto *mGeneratedTag = new unsigned char[mTagSize + padding];
-    if (mTagSize > 0) {
+    if(mTagSize > 0) {
 
         int offset = createID3Header(mGeneratedTag);
-        if (!mTitle.empty()) {
+        if(!mTitle.empty()) {
             offset = createTextFrame(mGeneratedTag, offset, TITLE_TAG, mTitle);
         }
-        if (!mArtist.empty()) {
+        if(!mArtist.empty()) {
             offset = createTextFrame(mGeneratedTag, offset, ARTIST_TAG, mArtist);
         }
-        if (!mAlbum.empty()) {
+        if(!mAlbum.empty()) {
             offset = createTextFrame(mGeneratedTag, offset, ALBUM_TAG, mAlbum);
         }
-        if (!mTrack.empty()) {
+        if(!mTrack.empty()) {
             offset = createTextFrame(mGeneratedTag, offset, TRACK_TAG, mTrack);
         }
-        if (!mYear.empty()) {
+        if(!mYear.empty()) {
             offset = createTextFrame(mGeneratedTag, offset, YEAR_TAG, mYear);
         }
-        if (mCover != nullptr) {
+        if(mCover != nullptr) {
             /*offset =*/ createAPICFrame(mGeneratedTag, offset);
         }
     }
@@ -302,22 +332,22 @@ int ID3Tag::createID3Header(unsigned char *dest, bool unsynch, int extendedHeade
     dest[offset] = 0x00;
 
     //set flags
-    if (mFlagUnsynchronisation) {
+    if(mFlagUnsynchronisation) {
         dest[offset] = dest[offset] | 0x80;
     }
-    if (mFlagExtendedHeader) {
+    if(mFlagExtendedHeader) {
         dest[offset] = dest[offset] | 0x40;
     }
-    if (mFlagExperimental) {
+    if(mFlagExperimental) {
         dest[offset] = dest[offset] | 0x20;
     }
-    if (mFlagFooter) {
+    if(mFlagFooter) {
         dest[offset] = dest[offset] | 0x10;
         footerPresent = 10;
     }
     //Insert tag size (Whole tag - tag header - footer (if present))
     int dataSize = mTagSize - frameStartingPosition - footerPresent;
-    for (int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) {
         dest[++offset] = (unsigned char) ((dataSize >> (21 - (7 * i))) & 0x7f);
     }
 
@@ -335,15 +365,15 @@ int ID3Tag::insertExtendedHeader(int extendedHeaderSize, bool flag) {
 int ID3Tag::createTextFrame(unsigned char *dest, int offset, std::string frameID, std::string data) {
 
     //FrameID
-    for (int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) {
         dest[offset++] = (unsigned char) frameID[i];
     }
 
     //Frame size
     //Add 1 for encoding byte
     unsigned int dataSize = data.size() + 1;
-    for (int i = 0; i < 4; i++) {
-        if (mFlagUnsynchronisation) {
+    for(int i = 0; i < 4; i++) {
+        if(mFlagUnsynchronisation) {
             dest[offset++] = (unsigned char) ((dataSize >> (21 - (7 * i))) & 0x7f);
 
         } else {
@@ -361,7 +391,7 @@ int ID3Tag::createTextFrame(unsigned char *dest, int offset, std::string frameID
     dest[offset++] = UTF_8;
 
     //insert data
-    for (char i : data) {
+    for(char i : data) {
         dest[offset++] = (unsigned char) i;
     }
 
@@ -370,13 +400,13 @@ int ID3Tag::createTextFrame(unsigned char *dest, int offset, std::string frameID
 
 
 int ID3Tag::createAPICFrame(unsigned char *dest, int offset) {
-    for (int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) {
         dest[offset++] = (unsigned char) COVER_TAG[i];
     }
 
     auto dataSize = (unsigned int) (mCoverSize + APIC_HEADER_SIZE);
-    for (int i = 0; i < 4; i++) {
-        if (mFlagUnsynchronisation) {
+    for(int i = 0; i < 4; i++) {
+        if(mFlagUnsynchronisation) {
             dest[offset++] = (unsigned char) ((dataSize >> (21 - (7 * i))) & 0x7f);
 
         } else {
@@ -387,10 +417,10 @@ int ID3Tag::createAPICFrame(unsigned char *dest, int offset) {
     dest[offset++] = 0x00;
     dest[offset++] = 0x00;
 
-    for (char i : mApicBinaryHeader) {
+    for(char i : mApicBinaryHeader) {
         dest[offset++] = (unsigned char) i;
     }
-    for (int i = 0; i < mCoverSize; i++) {
+    for(int i = 0; i < mCoverSize; i++) {
         dest[offset++] = mCover[i];
     }
 
@@ -405,31 +435,31 @@ int ID3Tag::createAPICFrame(unsigned char *dest, int offset) {
 /*Returns int indicating the size of the tag*/
 int ID3Tag::calculateTagSize(bool footerPresent, int extendedHeaderSize) {
     int tagSize = extendedHeaderSize;
-    if (footerPresent) {
+    if(footerPresent) {
         tagSize += 10;
     }
     //Adds extra byte to include the encoding byte
-    if (!mTitle.empty()) {
+    if(!mTitle.empty()) {
         tagSize += mTitle.size() + 1 + 10;
     }
-    if (!mArtist.empty()) {
+    if(!mArtist.empty()) {
         tagSize += mArtist.size() + 1 + 10;
     }
-    if (!mAlbum.empty()) {
+    if(!mAlbum.empty()) {
         tagSize += mAlbum.size() + 1 + 10;
     }
-    if (!mTrack.empty()) {
+    if(!mTrack.empty()) {
         tagSize += mTrack.size() + 1 + 10;
     }
-    if (!mYear.empty()) {
+    if(!mYear.empty()) {
         tagSize += mYear.size() + 1 + 10;
     }
-    if (mCover != nullptr) {
+    if(mCover != nullptr) {
         tagSize += APIC_HEADER_SIZE + mCoverSize + 10;
     }
-    if (tagSize == 0) {
+    if(tagSize == 0) {
         return 0;
-    } else if (tagSize > 0xFFFFFFF) {
+    } else if(tagSize > 0xFFFFFFF) {
         return -2;
     } else {
         return tagSize += 10;
