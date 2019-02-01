@@ -10,8 +10,6 @@
 #include <string>
 #include <map>
 
-#pragma TNT.auto_vacuum = 1
-
 typedef std::map<std::string, int> map;
 
 class SqlWrapper {
@@ -75,12 +73,13 @@ public:
 
     jobjectArray retrieveAllSongs(JNIEnv *env);
 
-    int updateSong(Tag *tag, int ID,long lastModifiedTime);
+    int updateSong(Tag *tag, int ID, long lastModifiedTime);
+
+    int updateSong(Tag *tag,std::string filePath,long lastModifiedTime);
 
     bool tableExist(std::string tableName);
 
     map retrieveAllFilePaths();
-
 
 };
 

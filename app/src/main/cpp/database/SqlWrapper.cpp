@@ -14,12 +14,12 @@ inline bool file_exists(const std::string &name) {
 SqlWrapper::SqlWrapper() {
     //Warning setting this is deprecated but have no choice as no TMPDIR global variable available for android
     sqlite3_temp_directory = (char *) "/data/user/0/com.trippntechnology.tntmusicplayer/cache";
-    if (!file_exists(DATABASE_DIRECTORY)) {
+    if(!file_exists(DATABASE_DIRECTORY)) {
         mkdir(DATABASE_DIRECTORY.c_str(), S_IRWXU | S_IRWXG | S_IXOTH);
     }
     int rc = sqlite3_open_v2(DATABASE_NAME.c_str(), &mDb, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE,
                              nullptr);
-    if (rc) {
+    if(rc) {
         throw databaseCreationError();
     }
 }
@@ -38,7 +38,7 @@ SqlWrapper::~SqlWrapper() {
  * @param tableName - The name of the database table
  */
 int SqlWrapper::createTable(std::string tableName) {
-    if (tableName == SONG_TABLE) {
+    if(tableName == SONG_TABLE) {
         deleteTable(tableName);
         std::string sql = "CREATE TABLE " + SONG_TABLE + "(" +
                           SONG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -54,7 +54,7 @@ int SqlWrapper::createTable(std::string tableName) {
                           SONG_SAMPLERATE + " INT, " +
                           SONG_BITRATE + " INT, " +
 
-                          SONG_LAST_MODIFIED + " BIGINT, "+
+                          SONG_LAST_MODIFIED + " BIGINT, " +
 
                           SONG_COVER + " BLOB);";
 
@@ -83,11 +83,11 @@ bool SqlWrapper::tableExist(std::string tableName) {
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc == SQLITE_OK) {
+    if(rc == SQLITE_OK) {
         rc = sqlite3_step(stmt);
 
         //was found?
-        if (rc == SQLITE_ROW) {
+        if(rc == SQLITE_ROW) {
             sqlite3_clear_bindings(stmt);
             sqlite3_reset(stmt);
             sqlite3_finalize(stmt);
@@ -111,7 +111,7 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
                       "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11);";
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if(rc != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "prepare failed: %s",
                             sqlite3_errmsg(mDb));
     } else {
@@ -136,12 +136,12 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
         sqlite3_bind_int64(stmt, 7, audioFile->getDuration());
         sqlite3_bind_int(stmt, 8, audioFile->getSampleRate());
         sqlite3_bind_int(stmt, 9, audioFile->getBitrate());
-        sqlite3_bind_int64(stmt,10,audioFile->getLastModified());
+        sqlite3_bind_int64(stmt, 10, audioFile->getLastModified());
         sqlite3_bind_blob(stmt, 11, audioFile->getTag()->getCover(), audioFile->getTag()->getCoverSize(),
                           SQLITE_TRANSIENT);
 
         rc = sqlite3_step(stmt);
-        if (rc!=SQLITE_DONE) {
+        if(rc != SQLITE_DONE) {
             __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error inserting into database %d:    %s",
                                 sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
         }
@@ -155,15 +155,15 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
 int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
     std::string sql = "DELETE FROM " + SONG_TABLE + " WHERE " + SONG_FILEPATH + " = \"" + filePath + "\";";
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
+    if(rc != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error deleting from database %d:     %s",
-                            sqlite3_extended_errcode(mDb),sqlite3_errmsg(mDb));
+                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
         return rc;
     }
     rc = sqlite3_step(stmt);
-    if(rc!=SQLITE_DONE){
+    if(rc != SQLITE_DONE) {
         __android_log_print(ANDROID_LOG_ERROR, "SQLITE", "Error deleting from database %d:     %s",
-                            sqlite3_extended_errcode(mDb),sqlite3_errmsg(mDb));
+                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
     }
     sqlite3_step(stmt);
     return sqlite3_finalize(stmt);
@@ -187,8 +187,8 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
     sql = "SELECT * FROM " + SONG_TABLE + " ORDER BY " + SONG_TITLE + " COLLATE NOCASE ASC";
     sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    for (int i = 0; i < numberOfItems; i++) {
-        if (sqlite3_step(stmt) != SQLITE_ROW) {
+    for(int i = 0; i < numberOfItems; i++) {
+        if(sqlite3_step(stmt) != SQLITE_ROW) {
             __android_log_print(ANDROID_LOG_ERROR, "SQLITE",
                                 "Reached last row before number of items was read: Error code %d",
                                 sqlite3_extended_errcode(mDb));
@@ -206,7 +206,7 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
         int length = sqlite3_column_bytes(stmt, SONG_COVER_COLUMN);
         char *blob = (char *) sqlite3_column_blob(stmt, SONG_COVER_COLUMN);
         jbyteArray jCover;
-        if (blob != nullptr) {
+        if(blob != nullptr) {
             jCover = env->NewByteArray(length);
             env->SetByteArrayRegion(jCover, 0, length, (jbyte *) blob);
         } else {
@@ -234,20 +234,20 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
  * @param audioFile - The new audio file to be updated
  * @param ID - The ID of the database entry to be updated
  */
-int SqlWrapper::updateSong(Tag *tag, int ID,long lastModifiedTime) {
+int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
     std::string sql = "UPDATE " + SONG_TABLE + " SET " +
                       SONG_TITLE + " = ?1, " +
                       SONG_ALBUM + " = ?2, " +
                       SONG_ARTIST + " = ?3, " +
                       SONG_YEAR + " = ?4, " +
                       SONG_TRACK + " = ?5, " +
-                      SONG_LAST_MODIFIED+ " = ?6, "+
+                      SONG_LAST_MODIFIED + " = ?6, " +
                       SONG_COVER + " = ?7 WHERE " +
                       SONG_ID + " = " + std::to_string(ID) + ";";
 
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if(rc != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",
                             sqlite3_errmsg(mDb));
     } else {
@@ -256,10 +256,41 @@ int SqlWrapper::updateSong(Tag *tag, int ID,long lastModifiedTime) {
         sqlite3_bind_text(stmt, 3, tag->getArtist().c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 4, tag->getYear().c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 5, tag->getTrack().c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_int64(stmt,6,lastModifiedTime);
+        sqlite3_bind_int64(stmt, 6, lastModifiedTime);
         sqlite3_bind_blob(stmt, 7, tag->getCover(), tag->getCoverSize(), SQLITE_TRANSIENT);
     }
     sqlite3_step(stmt);
+    return sqlite3_finalize(stmt);
+}
+
+int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime) {
+    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
+                      SONG_TITLE + " = ?1, " +
+                      SONG_ALBUM + " = ?2, " +
+                      SONG_ARTIST + " = ?3, " +
+                      SONG_YEAR + " = ?4, " +
+                      SONG_TRACK + " = ?5, " +
+                      SONG_LAST_MODIFIED + " = ?6, " +
+                      SONG_COVER + " = ?7 WHERE " +
+                      SONG_FILEPATH + " = '" + filePath + "';";
+
+    int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
+
+    if(rc != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "prepare failed: %s",
+                            sqlite3_errmsg(mDb));
+        sqlite3_finalize(stmt);
+        return rc;
+    } else {
+        sqlite3_bind_text(stmt, 1, tag->getTitle().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, tag->getAlbum().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, tag->getArtist().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, tag->getYear().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, tag->getTrack().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(stmt, 6, lastModifiedTime);
+        sqlite3_bind_blob(stmt, 7, tag->getCover(), tag->getCoverSize(), SQLITE_TRANSIENT);
+        sqlite3_step(stmt);
+    }
     return sqlite3_finalize(stmt);
 }
 
@@ -272,12 +303,12 @@ map SqlWrapper::retrieveAllFilePaths() {
 
     map filePaths;
 
-    sql = "SELECT " + SONG_FILEPATH + " FROM " + SONG_TABLE;
+    sql = "SELECT " + SONG_FILEPATH + ", " + SONG_LAST_MODIFIED + " FROM " + SONG_TABLE;
     int rc = sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc == SQLITE_OK) {
-        for (int i = 0; i < numberOfItems; i++) {
-            if (sqlite3_step(stmt) != SQLITE_ROW) {
+    if(rc == SQLITE_OK) {
+        for(int i = 0; i < numberOfItems; i++) {
+            if(sqlite3_step(stmt) != SQLITE_ROW) {
                 __android_log_print(ANDROID_LOG_ERROR, "SQLITE",
                                     "Reached last row before number of items was read: Error code %d",
                                     sqlite3_extended_errcode(mDb));
@@ -285,14 +316,12 @@ map SqlWrapper::retrieveAllFilePaths() {
                 return filePaths;
             }
             char *path = (char *) sqlite3_column_text(stmt, 0);
-//            std::string path = std::string((char *) sqlite3_column_text(stmt, 1));
-            filePaths[path] = i;
+            filePaths[path] = sqlite3_column_int64(stmt, 1);
 
         }
     }
     sqlite3_finalize(stmt);
     return filePaths;
 }
-
 
 #pragma clang diagnostic pop

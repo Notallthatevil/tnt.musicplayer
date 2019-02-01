@@ -13,7 +13,6 @@ struct FileAccessException : public std::exception {
     }
 };
 
-
 /*
  * directory must look like /storage/emulated/0/Music/
  */
@@ -21,19 +20,19 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
     DIR *d = opendir(directory.c_str());
     std::vector<std::string> dirFileList;
 
-    if (d) {
+    if(d) {
 
 //        __android_log_print(ANDROID_LOG_INFO, "scanDirectoryForAudio", "%s", directory.c_str());
 
         struct dirent *dir;
-        while ((dir = readdir(d)) != nullptr) {
+        while((dir = readdir(d)) != nullptr) {
             std::string dirName(dir->d_name);
-            if (dirName != "." && dirName != "..") {
+            if(dirName != "." && dirName != "..") {
                 std::string newDir = directory + dirName;
 
                 //Check to see if opendir() returns a file or directory
                 ///Directory
-                if (opendir(newDir.c_str()) != nullptr) {
+                if(opendir(newDir.c_str()) != nullptr) {
 
                     auto subDirList = scanDirectoryForAudio(newDir + "/");
                     dirFileList.insert(dirFileList.end(), subDirList.begin(), subDirList.end());
@@ -41,7 +40,7 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
                     ///File
                 } else {
                     std::string extension = dirName.substr(dirName.find_last_of('.') + 1);
-                    if (extension == "mp3") {
+                    if(extension == "mp3") {
                         dirFileList.resize(dirFileList.size() + 1);
                         dirFileList.back() = directory + dirName;
                     }
@@ -70,7 +69,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
     std::vector<std::string> directoryList;
     try {
         directoryList = scanDirectoryForAudio(jstringToString(env, &directory));
-    } catch (FileAccessException &e) {
+    } catch(FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
     }
@@ -99,20 +98,20 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
     jobjectArray jDirList = env->NewObjectArray((jint) directoryList.size(), env->FindClass("java/lang/String"),
                                                 nullptr);
 
-    for (int i = 0; i < directoryList.size(); i++) {
+    for(int i = 0; i < directoryList.size(); i++) {
         env->SetObjectArrayElement(jDirList, i, env->NewStringUTF(directoryList[i].c_str()));
     }
 
     SqlWrapper sqlWrapper;
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
 
-    for (int i = 0; i < directoryList.size(); i++) {
+    for(int i = 0; i < directoryList.size(); i++) {
 
         jstring directoryItem = env->NewStringUTF(directoryList[i].c_str());
         jobject jProgressWrapperObject = env->NewObject(jProgressWrapper, progressWrapperConstructor, i, directoryItem);
         env->CallVoidMethod(currentSong, postCurrentSong, jProgressWrapperObject);
 
-        if (directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
+        if(directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&directoryList[i]);
             mp3.parse(true);
             sqlWrapper.insertSong(&mp3);
@@ -132,7 +131,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
     std::vector<std::string> newList;
     try {
         newList = scanDirectoryForAudio(jstringToString(env, &directory));
-    } catch (FileAccessException &e) {
+    } catch(FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
         return nullptr;
     }
@@ -140,31 +139,45 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
     SqlWrapper sqlWrapper;
     auto oldList = sqlWrapper.retrieveAllFilePaths();
 
+
+    struct stat result;
     map::iterator it;
     auto limit = newList.size();
-    for (int i = 0; i < limit;) {
+    for(int i = 0; i < limit;) {
         it = oldList.find(newList[i]);
-        if (it != oldList.end()) {
+
+        //File paths match
+        if(it != oldList.end()) {
+            if(stat(newList[i].c_str(), &result) == 0) {
+                if(oldList[newList[i]] != result.st_mtime) {
+                    if(newList[i].substr(newList[i].find_last_of('.') + 1) == "mp3") {
+                        Mp3File mp3(&newList[i]);
+                        mp3.parse(true);
+                        int rc = sqlWrapper.updateSong(mp3.getTag(),mp3.getFilePath(),mp3.getLastModified());
+                        __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Updated %s with code %d", newList[i].c_str(), rc);
+                    }
+                }
+            }
             oldList.erase(it);
             newList.erase(newList.begin() + i);
             limit = newList.size();
+
+            //File paths don't match
         } else {
             i++;
         }
     }
 
-
-    for (auto const &oldFilePath:oldList) {
+    for(auto const &oldFilePath:oldList) {
         int rc = sqlWrapper.deleteAudioFileByFilePath(oldFilePath.first);
         __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Deleted %s with code %d", oldFilePath.first.c_str(), rc);
     }
-    for (std::string newAudioFile:newList) {
-        if (newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
+    for(std::string newAudioFile:newList) {
+        if(newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
             int rc = sqlWrapper.insertSong(&mp3);
-            __android_log_print(ANDROID_LOG_DEBUG, "SYNCING" ,"Added %s with code %d",newAudioFile.c_str(), rc);
-
+            __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
         }
     }
 
@@ -210,7 +223,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
 
     unsigned char *cover;
     int length = 0;
-    if (jcover != nullptr) {
+    if(jcover != nullptr) {
         length = env->GetArrayLength(jcover);
         cover = new unsigned char[length];
         env->GetByteArrayRegion(jcover, 0, length, (jbyte *) cover);
@@ -221,14 +234,14 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
     Tag *tag = nullptr;
     AudioFile *audioFile = nullptr;
 
-    if (filePath.substr(filePath.find_last_of('.') + 1) == "mp3") {
+    if(filePath.substr(filePath.find_last_of('.') + 1) == "mp3") {
         tag = new ID3Tag();
         audioFile = new Mp3File(&filePath);
     }
 
     jint jsuccess = 0;
 
-    if (tag != nullptr) {
+    if(tag != nullptr) {
         tag->setTitle(title);
         tag->setAlbum(album);
         tag->setArtist(artist);
@@ -238,7 +251,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
 
 
         int rc = audioFile->saveNewTag(tag);
-        if (rc == 0) {
+        if(rc == 0) {
             SqlWrapper sqlWrapper;
             sqlWrapper.updateSong(tag, id, audioFile->getLastModified());
         } else {
