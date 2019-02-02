@@ -1,60 +1,100 @@
 package com.trippntechnology.tntmusicplayer.network.coverartretriever
 
 import android.util.Log
+import com.trippntechnology.tntmusicplayer.network.jsonreader.CoverArtJsonReader
 import com.trippntechnology.tntmusicplayer.network.xmlparser.CoverArtParser
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.objects.XMLAlbum
+import org.xmlpull.v1.XmlPullParserException
+import java.io.IOException
 import java.net.URL
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 
 
 class CoverArtRetriever {
 
 
-    fun retrieveAlbumIDs(audioFile: AudioFile):List<XMLAlbum>?{
+    fun autoFindAlbumArt(audioFile: AudioFile): ByteArray? {
+        var albumIds: List<XMLAlbum>? = null
+        try {
+            try {
+                albumIds = retrieveAlbumIDs(audioFile)
+            } catch (e: XmlPullParserException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            albumIds ?: return null
+            val coverArtURL = URL("$BASE_COVER_URL${albumIds[0].xmlID}")
+
+            Log.d("AUTO_FIND_COVER", "Cover art URL: $BASE_COVER_URL${albumIds[0].xmlID}")
+            val imageURL = CoverArtJsonReader().getCoverArtUrl(coverArtURL.openStream())
+
+
+            val imageStream = URL(imageURL).openStream()
+            val boas = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            var count = imageStream.read(buffer)
+            while (count != -1) {
+                boas.write(buffer, 0, count)
+                count = imageStream.read(buffer)
+            }
+            return boas.toByteArray()
+//        Log.d("AUTO_FIND_COVER", "Creating bitmap")
+//        return BitmapFactory.decodeStream(URL(imageURL).openStream())
+        } catch (e: FileNotFoundException) {
+            return null
+        }
+    }
+
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun retrieveAlbumIDs(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createSearchQuery(audioFile)).openStream()
-        val list = CoverArtParser().parse(urlStream,audioFile)
-        Log.d("XML","list has returned")
-        if (list!= null){
-           return list
+        val list = CoverArtParser().parse(urlStream, audioFile)
+        Log.d("XML", "list has returned")
+        if (list != null) {
+            return list
         }
         val albumSearch = albumSearch(audioFile)
-        if (albumSearch!=null){
-            Log.d("XML","album has returned")
+        if (albumSearch != null) {
+            Log.d("XML", "album has returned")
             return albumSearch
         }
         val songTitleSearch = songTitleSearch(audioFile)
-        if (songTitleSearch!=null){
-            Log.d("XML","title has returned")
+        if (songTitleSearch != null) {
+            Log.d("XML", "title has returned")
             return songTitleSearch
         }
         val artistSearch = artistSearch(audioFile)
-        if (artistSearch!=null){
-            Log.d("XML","artist has returned")
+        if (artistSearch != null) {
+            Log.d("XML", "artist has returned")
             return artistSearch
         }
-        Log.d("XML","returning null")
+        Log.d("XML", "returning null")
         return null
     }
 
     private fun albumSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createAlbumSearchQuery(audioFile.album)).openStream()
-        return CoverArtParser().parse(urlStream,audioFile)
+        return CoverArtParser().parse(urlStream, audioFile)
     }
 
     private fun songTitleSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createSongTitleSearchQuery(audioFile.title)).openStream()
-        return CoverArtParser().parse(urlStream,audioFile)
+        return CoverArtParser().parse(urlStream, audioFile)
     }
 
     private fun artistSearch(audioFile: AudioFile): List<XMLAlbum>? {
         val artistIdStream = URL(createArtistSearchQuery(audioFile.artist)).openStream()
         val parser = CoverArtParser()
-        val artistIds = parser.parse(artistIdStream,audioFile)
-        return if (artistIds.isNullOrEmpty()){
+        val artistIds = parser.parse(artistIdStream, audioFile)
+        return if (artistIds.isNullOrEmpty()) {
             null
-        }else{
+        } else {
             val urlStream = URL(createArtistIdLookup(artistIds[0].xmlID)).openStream()
-            parser.parse(urlStream,audioFile)
+            parser.parse(urlStream, audioFile)
         }
     }
 
@@ -106,7 +146,7 @@ class CoverArtRetriever {
         }
     }
 
-    private fun createArtistIdLookup(artistId:String?):String{
+    private fun createArtistIdLookup(artistId: String?): String {
         return if (artistId != null) {
             "$ARTIST_LOOKUP$artistId$INCLUDE_ALBUM_SEARCH"
         } else {
@@ -123,6 +163,6 @@ class CoverArtRetriever {
         const val INCLUDE_ALBUM_SEARCH = "?inc=release-groups"
 
 
-        private val BASE_COVER_URL = "https://coverartarchive.org/release/"
+        private val BASE_COVER_URL = "https://coverartarchive.org/release-group/"
     }
 }

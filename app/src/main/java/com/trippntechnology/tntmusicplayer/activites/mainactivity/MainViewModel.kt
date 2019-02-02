@@ -1,5 +1,7 @@
 package com.trippntechnology.tntmusicplayer.activites.mainactivity
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
@@ -73,13 +75,33 @@ class MainViewModel
     }
 
 
-
     //DIALOG============================================================================================================
-    fun selectAlbumArt() {
+    fun selectAlbumArt(audioFile: AudioFile) {
 //        selectNewCover.call()
-        launch{
-           val list = CoverArtRetriever().retrieveAlbumIDs(fullSongList.value!![12])
+        launch {
+            newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
+            Log.d("AUTO_FIND_COVER", "Cover has returned")
         }
+    }
+
+    fun autoFindAllAlbumArt() {
+        Log.d("AUTO_FIND_COVER", "Not ready to implement")
+//        launch {
+//            val list = fullSongList.value as MutableList
+//            if (!list.isNullOrEmpty()) {
+//                list.forEachIndexed { index, audioFile ->
+//                    Log.d("AUTO_FIND_COVER", "On file $index of ${list.size}")
+//                    if (audioFile.cover == null) {
+//                        Log.d("AUTO_FIND_COVER", "Adding cover to ${audioFile.title}")
+//                        val newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
+//                        if (newCover != null) {
+//                            taggerLib.updateNewTags(audioFile, newCover)
+//                        }
+//                    }
+//                }
+//            }
+//            updateFullSongList(taggerLib.getAllAudioFiles().asList())
+//        }
     }
 
     fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {

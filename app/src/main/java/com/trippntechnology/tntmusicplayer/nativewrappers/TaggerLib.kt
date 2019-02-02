@@ -19,6 +19,15 @@ object TaggerLib {
 
     external fun updateNewTags(id: Int, title: String, album: String, artist: String, year: String, track: String, filepath: String, cover: ByteArray?): Int
 
+    fun updateNewTags(audioFile: AudioFile,cover:ByteArray):Int{
+        val title = audioFile.title?:""
+        val album = audioFile.album?:""
+        val artist = audioFile.artist?:""
+        val year = audioFile.year?:""
+        val track = audioFile.track?:""
+        return updateNewTags(audioFile.id,title,album,artist,year,track,audioFile.filePath,cover)
+    }
+
     external fun songTableExist():Boolean
 
     init {

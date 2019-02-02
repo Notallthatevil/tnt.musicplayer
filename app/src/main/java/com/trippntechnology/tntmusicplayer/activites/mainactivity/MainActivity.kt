@@ -3,6 +3,8 @@ package com.trippntechnology.tntmusicplayer.activites.mainactivity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -124,5 +126,17 @@ class MainActivity : LiveDataObserverActivity() {
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.autoTag->viewModel.autoFindAllAlbumArt()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
