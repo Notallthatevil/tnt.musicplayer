@@ -22,7 +22,6 @@
         android:background="@drawable/dialog_shape"
         android:elevation="@dimen/dialog_elevation">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="@dimen/alert_dialog_width"
             android:layout_height="wrap_content">
@@ -40,21 +39,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <ImageView
                 android:id="@+id/editTagCover"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:contentDescription="@string/albumcover"
-                android:onClick="@{()->viewModel.selectAlbumArt(audioFile)}"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTagFilePath"
                 app:setImageLoader="@{audioFile.cover}" />
-
 
             <Button
                 android:id="@+id/button"
@@ -146,13 +140,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/album"
-                    android:maxLength="127"
                     android:inputType="text"
+                    android:maxLength="127"
                     android:text="@{audioFile.Album}"
                     android:textColor="@color/primaryTextDark"
                     tools:ignore="Autofill,LabelFor" />
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editTagArtistLayout"
@@ -176,7 +169,6 @@
                     tools:ignore="Autofill,LabelFor" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editTagYearLayout"
@@ -222,6 +214,32 @@
                     android:textColor="@color/primaryTextDark"
                     tools:ignore="Autofill,LabelFor" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
+                android:text="Auto find"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editTagCover"
+                app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Select"
+                android:onClick="@{()->viewModel.selectAlbumArt()}"
+                app:layout_constraintBottom_toTopOf="@+id/editTagTitleLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editTagCover" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

@@ -34,6 +34,8 @@ class MainViewModel
     val saveTags = SingleLiveEvent<Int>()
     val selectNewCover = SingleLiveEvent<Void>()
     val savingInProcess = SingleLiveEvent<Void>()
+    val updateDialogCover = SingleLiveEvent<ByteArray>()
+
 
     var newCover: ByteArray? = null
 
@@ -76,11 +78,34 @@ class MainViewModel
 
 
     //DIALOG============================================================================================================
-    fun selectAlbumArt(audioFile: AudioFile) {
-//        selectNewCover.call()
+    fun selectAlbumArt() {
+        selectNewCover.call()
+    }
+
+    fun autoFindAlbumArt(
+        title: String,
+        album: String,
+        artist: String,
+        year: String,
+        track: String,
+        audioFile: AudioFile
+    ) {
         launch {
-            newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
-            Log.d("AUTO_FIND_COVER", "Cover has returned")
+            val newAudioFile = AudioFile(
+                audioFile.id,
+                title,
+                album,
+                artist,
+                year,
+                track,
+                null,
+                audioFile.filePath,
+                audioFile.duration,
+                audioFile.sampleRate,
+                audioFile.bitRate
+            )
+            newCover = CoverArtRetriever().autoFindAlbumArt(newAudioFile)
+            updateDialogCover.postValue(newCover)
         }
     }
 

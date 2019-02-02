@@ -2,6 +2,7 @@ package com.trippntechnology.tntmusicplayer.dialogs.edittagdialog
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -96,6 +97,12 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
         viewModel.savingInProcess.observe{
             Toast.makeText(context,"Saving new tags . . .",Toast.LENGTH_SHORT).show()
         }
+
+        viewModel.updateDialogCover.observe{
+            if (it!=null){
+                CustomBinders.setImageLoader(editTagCover,it)
+            }
+        }
     }
 
     override fun onPause() {
@@ -104,6 +111,7 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
         viewModel.saveTags.removeObservers(requireActivity())
         viewModel.selectNewCover.removeObservers(requireActivity())
         viewModel.savingInProcess.removeObservers(requireActivity())
+        viewModel.updateDialogCover.removeObservers(requireActivity())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
