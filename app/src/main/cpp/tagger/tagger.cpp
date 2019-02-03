@@ -104,6 +104,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 
     SqlWrapper sqlWrapper;
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
+    sqlWrapper.createTable(sqlWrapper.ALBUM_TABLE);
 
     for(int i = 0; i < directoryList.size(); i++) {
 
@@ -140,7 +141,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
     auto oldList = sqlWrapper.retrieveAllFilePaths();
 
 
-    struct stat result;
+    struct stat result{};
     map::iterator it;
     auto limit = newList.size();
     for(int i = 0; i < limit;) {

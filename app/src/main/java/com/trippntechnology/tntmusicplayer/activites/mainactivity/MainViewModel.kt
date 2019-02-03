@@ -93,12 +93,12 @@ class MainViewModel
         launch {
             val newAudioFile = AudioFile(
                 audioFile.id,
+                audioFile.albumId,
                 title,
                 album,
                 artist,
                 year,
                 track,
-                null,
                 audioFile.filePath,
                 audioFile.duration,
                 audioFile.sampleRate,
@@ -130,7 +130,7 @@ class MainViewModel
     }
 
     fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {
-        if (!oldAudioFile.tagsEqual(title, album, artist, year, track, newCover)) {
+        if (!oldAudioFile.tagsEqual(title, album, artist, year, track)) {
             savingInProcess.call()
             launch {
                 val success = taggerLib.updateNewTags(
