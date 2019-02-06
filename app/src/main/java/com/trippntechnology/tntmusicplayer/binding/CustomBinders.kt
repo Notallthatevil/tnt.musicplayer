@@ -41,12 +41,11 @@ object CustomBinders {
     @JvmStatic
     @BindingAdapter("setDuration")
     fun setDuration(textView: TextView, duration: Long) {
-        val mmss = String.format(
+        textView.text = String.format(
             "%d:%02d",
             TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)
         )
-        textView.text = mmss
     }
 
 }

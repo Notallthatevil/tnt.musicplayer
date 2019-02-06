@@ -416,6 +416,7 @@ int ID3Tag::createAPICFrame(unsigned char *dest, int offset) {
     for(char i : mApicBinaryHeader) {
         dest[offset++] = (unsigned char) i;
     }
+    mCoverOffset = offset;
     for(int i = 0; i < mCoverSize; i++) {
         dest[offset++] = mCover[i];
     }
