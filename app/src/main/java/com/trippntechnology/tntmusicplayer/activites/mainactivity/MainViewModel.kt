@@ -93,12 +93,13 @@ class MainViewModel
         launch {
             val newAudioFile = AudioFile(
                 audioFile.id,
-                audioFile.albumId,
                 title,
                 album,
                 artist,
                 year,
                 track,
+                audioFile.coverOffset,
+                audioFile.coverSize,
                 audioFile.filePath,
                 audioFile.duration,
                 audioFile.sampleRate,

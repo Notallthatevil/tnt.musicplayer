@@ -104,7 +104,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 
     SqlWrapper sqlWrapper;
     sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
-    sqlWrapper.createTable(sqlWrapper.ALBUM_TABLE);
+//    sqlWrapper.createTable(sqlWrapper.COVER_TABLE);
 
     for(int i = 0; i < directoryList.size(); i++) {
 

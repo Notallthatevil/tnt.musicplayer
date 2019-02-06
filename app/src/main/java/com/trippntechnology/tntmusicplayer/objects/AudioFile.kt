@@ -2,13 +2,14 @@ package com.trippntechnology.tntmusicplayer.objects
 
 data class AudioFile(
     val id: Int,
-    val albumId:Int,
     //Tags
     val title: String?,
     val album: String?,
     val artist: String?,
     val year: String?,
     val track: String?,
+    val coverOffset: Int,
+    val coverSize: Int,
 
     //Audio data
     val filePath: String,

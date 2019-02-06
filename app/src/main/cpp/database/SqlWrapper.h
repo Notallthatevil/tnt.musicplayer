@@ -18,7 +18,7 @@ private:
     const std::string DATABASE_NAME = DATABASE_DIRECTORY + "/TNT.db";
 
     const std::string SONG_ID = "ID";
-    const std::string SONG_ALBUM_ID = "ALBUM_ID";
+    const std::string SONG_COVER_ID = "COVER_ID";
 
     const std::string SONG_TITLE = "TITLE";
     const std::string SONG_ALBUM = "ALBUM";
@@ -31,29 +31,34 @@ private:
     const std::string SONG_SAMPLERATE = "SAMPLERATE";
     const std::string SONG_BITRATE = "BITRATE";
 
+    const std::string SONG_COVER_OFFSET = "COVER_OFFSET";
+    const std::string SONG_COVER_SIZE = "COVER_SIZE";
+
+
     const std::string SONG_LAST_MODIFIED = "MODIFIED_DATE";
 
-    const std::string ALBUM_ID = "ID";
-    const std::string ALBUM_NAME = "ALBUM_NAME";
-    const std::string ALBUM_ARTWORK = "ARTWORK";
+//    const std::string COVER_ID = "ID";
+//    const std::string COVER_ALBUM_NAME = "COVER_ALBUM_NAME";
+//    const std::string COVER_ARTWORK = "ARTWORK";
 
     enum tableColumnNumbers {
         SONG_ID_COLUMN = 0,
-        SONG_ALBUM_ID_COLUMN = 1,
-        SONG_TITLE_COLUMN = 2,
-        SONG_ALBUM_COLUMN = 3,
-        SONG_ARTIST_COLUMN = 4,
-        SONG_YEAR_COLUMN = 5,
-        SONG_TRACK_COLUMN = 6,
-        SONG_FILEPATH_COLUMN = 7,
-        SONG_DURATION_COLUMN = 8,
-        SONG_SAMPLERATE_COLUMN = 9,
-        SONG_BITRATE_COLUMN = 10,
-        SONG_LAST_MODIFIED_COLUMN = 11,
+        SONG_TITLE_COLUMN = 1,
+        SONG_ALBUM_COLUMN = 2,
+        SONG_ARTIST_COLUMN = 3,
+        SONG_YEAR_COLUMN = 4,
+        SONG_TRACK_COLUMN = 5,
+        SONG_FILEPATH_COLUMN = 6,
+        SONG_DURATION_COLUMN = 7,
+        SONG_SAMPLERATE_COLUMN = 8,
+        SONG_BITRATE_COLUMN = 9,
+        SONG_COVER_OFFSET_COLUMN = 10,
+        SONG_COVER_SIZE_COLUMN = 11,
+        SONG_LAST_MODIFIED_COLUMN = 12
 
-        ALBUM_ID_COLUMN = 0,
-        ALBUM_NAME_COLUMN = 1,
-        ALBUM_ARTWORK_COLUMN = 2
+//        COVER_ID_COLUMN = 0,
+//        COVER_ALBUM_NAME_COLUMN = 1,
+//        COVER_ARTWORK_COLUMN = 2
     };
 
     sqlite3 *mDb;
@@ -64,11 +69,9 @@ private:
         return 0;
     }
 
-    int insertAlbum(std::string albumName, unsigned char *cover, long coverSize);
+    long insertCover(const std::string &albumName, unsigned char *cover, long coverSize);
 
-    int updateAlbumCover(std::string albumName, unsigned char *cover, long coverSize);
-
-    int getAlbumId(std::string albumName, unsigned char *cover, long coverSize);
+    long getCoverId(const std::string &albumName, unsigned char *cover, long coverSize);
 
     int getNumberOfEntries(const std::string &tableName);
 
@@ -76,7 +79,7 @@ private:
 
 public:
     const std::string SONG_TABLE = "SONGS";
-    const std::string ALBUM_TABLE = "ALBUMS";
+    const std::string COVER_TABLE = "COVERS";
 
     SqlWrapper();
 
@@ -95,7 +98,6 @@ public:
     int updateSong(Tag *tag, int ID, long lastModifiedTime);
 
     int updateSong(Tag *tag, std::string filePath, long lastModifiedTime);
-
 
     bool tableExist(std::string tableName);
 
