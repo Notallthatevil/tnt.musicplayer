@@ -51,9 +51,6 @@ private:
         SONG_COVER_SIZE_COLUMN = 11,
         SONG_LAST_MODIFIED_COLUMN = 12
 
-//        COVER_ID_COLUMN = 0,
-//        COVER_ALBUM_NAME_COLUMN = 1,
-//        COVER_ARTWORK_COLUMN = 2
     };
 
     sqlite3 *mDb;
