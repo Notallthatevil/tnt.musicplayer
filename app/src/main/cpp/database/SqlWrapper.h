@@ -18,7 +18,6 @@ private:
     const std::string DATABASE_NAME = DATABASE_DIRECTORY + "/TNT.db";
 
     const std::string SONG_ID = "ID";
-    const std::string SONG_COVER_ID = "COVER_ID";
 
     const std::string SONG_TITLE = "TITLE";
     const std::string SONG_ALBUM = "ALBUM";
@@ -36,10 +35,6 @@ private:
 
 
     const std::string SONG_LAST_MODIFIED = "MODIFIED_DATE";
-
-//    const std::string COVER_ID = "ID";
-//    const std::string COVER_ALBUM_NAME = "COVER_ALBUM_NAME";
-//    const std::string COVER_ARTWORK = "ARTWORK";
 
     enum tableColumnNumbers {
         SONG_ID_COLUMN = 0,
@@ -68,10 +63,6 @@ private:
         *c = atoi(argv[0]);
         return 0;
     }
-
-    long insertCover(const std::string &albumName, unsigned char *cover, long coverSize);
-
-    long getCoverId(const std::string &albumName, unsigned char *cover, long coverSize);
 
     int getNumberOfEntries(const std::string &tableName);
 

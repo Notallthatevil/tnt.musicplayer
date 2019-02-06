@@ -70,12 +70,6 @@ int SqlWrapper::createTable(std::string tableName) {
 
               SONG_LAST_MODIFIED + " BIGINT);";
     }
-//    else if(tableName == COVER_TABLE) {
-//        sql = "CREATE TABLE " + COVER_TABLE + "(" +
-//              COVER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//              COVER_ALBUM_NAME + " TEXT, " +
-//              COVER_ARTWORK + " BLOB);";
-//    }
     if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error preparing table %s: %s",
                             tableName.c_str(), sqlite3_errmsg(mDb));
@@ -259,126 +253,6 @@ int SqlWrapper::updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime)
     sqlite3_clear_bindings(*stmt);
     return sqlite3_finalize(*stmt);
 }
-
-/**
- * Inserts the desired album into the database if the album doesn't exist yet.
- * @param albumName - The album name to be inserted into the database
- * @param cover - The bytes representing the cover
- * @param coverSize - The size of @param cover
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-//long SqlWrapper::insertCover(const std::string &albumName, unsigned char *cover, long coverSize) {
-//    sqlite3_stmt *stmt = nullptr;
-//    std::string sql;
-//
-//    long id = getCoverId(albumName, cover, coverSize);
-//    if(id > 0) {
-//        return id;
-//    }
-//
-//    if(!albumName.empty() && cover != nullptr) {
-//        sql = "INSERT INTO " + COVER_TABLE + "(" + COVER_ALBUM_NAME + "," + COVER_ARTWORK + ")" +
-//              "SELECT ?1,?2 WHERE NOT EXISTS (SELECT * FROM " + COVER_TABLE + " WHERE " + COVER_ALBUM_NAME + " = ?1);";
-////        sql = "INSERT OR REPLACE INTO " + COVER_TABLE + "(" + COVER_ID + "," + COVER_ALBUM_NAME + "," + COVER_ARTWORK +
-////              ")VALUES((SELECT " + COVER_ID + " FROM " + COVER_TABLE + " WHERE " + COVER_ALBUM_NAME +
-////              " IS NULL AND " + COVER_ARTWORK + " = ?2),?1,?2);";
-//        if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-//            __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Album insert prepare failed on %s: %s",
-//                                albumName.c_str(), sqlite3_errmsg(mDb));
-//            sqlite3_finalize(stmt);
-//            return -1;
-//        }
-//        sqlite3_bind_text(stmt, 1, albumName.c_str(), -1, SQLITE_TRANSIENT);
-//    } else if(cover != nullptr) {
-//        //COVER IS NOT NULL INSERT COVER ALONE
-//        sql = "INSERT INTO " + COVER_TABLE + "(" + COVER_ARTWORK + ")" +
-//              "SELECT ?1 WHERE NOT EXISTS (SELECT 1 FROM " + COVER_TABLE + " WHERE " +
-//              COVER_ARTWORK + " = ?2);";
-//
-//        if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-//            __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Album insert prepare failed on %s",
-//                                sqlite3_errmsg(mDb));
-//            sqlite3_finalize(stmt);
-//            return -1;
-//        }
-//    } else {
-//        return -1;
-//    }
-//    sqlite3_bind_blob(stmt, 2, cover, coverSize, SQLITE_TRANSIENT);
-//
-//    if(sqlite3_step(stmt) != SQLITE_DONE) {
-//        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error inserting album into database %d: %s",
-//                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-//        sqlite3_finalize(stmt);
-//        return -1;
-//    }
-//    sqlite3_finalize(stmt);
-//    return sqlite3_last_insert_rowid(mDb);
-//}
-
-///**
-// * Adds the cover byte array to the database only if the value currently in the database is null, otherwise it is left
-// * as is and skipped.
-// * @param albumName - The album name to be updated
-// * @param cover - The bytes representing the cover
-// * @param coverSize - The size of @param cover
-// * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
-// */
-//int SqlWrapper::updateAlbumCover(std::string albumName, unsigned char *cover, long coverSize) {
-//    sqlite3_stmt *stmt = nullptr;
-//
-//    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
-//                      COVER_ARTWORK + "= ?1 WHERE " +
-//                      COVER_ALBUM_NAME + " = \'" + albumName + "\' AND " + COVER_ARTWORK + " IS NULL;";
-//
-//    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-//        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Setting cover prepare failed on %s: %s",
-//                            albumName.c_str(), sqlite3_errmsg(mDb));
-//        return sqlite3_finalize(stmt);
-//    }
-//    sqlite3_bind_blob(stmt, 1, cover, coverSize, SQLITE_TRANSIENT);
-//
-//    if(sqlite3_step(stmt) != SQLITE_DONE) {
-//        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Setting cover failed on %s: %s",
-//                            albumName.c_str(), sqlite3_errmsg(mDb));
-//    }
-//    return sqlite3_finalize(stmt);
-//}
-
-/**
- * Inserts the desired album if it doesn't exist along with the cover, and then returns the ID for the given @param
- * albumName.
- * @note - The reason an ID is used and not just the album name itself is to allow the user to use different images in
- * the event the album names overlap. Or if the user wants to have a different cover on one audio file in the album.
- * @param albumName - The album name to query for an ID
- * @param cover - The bytes representing the cover
- * @param coverSize - The size of @param cover
- * @returns the ID associated with @param albumName
- */
-//long SqlWrapper::getCoverId(const std::string &albumName, unsigned char *cover, long coverSize) {
-//    long albumID = -1;
-//
-//    sqlite3_stmt *stmt = nullptr;
-//    std::string sql =
-//            "SELECT " + COVER_ID + " FROM " + COVER_TABLE + " WHERE " + COVER_ALBUM_NAME + " =\'" + albumName + "\';";
-//
-//    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-//        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Retrieving album id prepare failed on %s: %s",
-//                            albumName.c_str(), sqlite3_errmsg(mDb));
-//        sqlite3_finalize(stmt);
-//        return albumID;
-//    }
-//
-//    if(sqlite3_step(stmt) != SQLITE_DONE) {
-//        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error inserting album into database %d: %s",
-//                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-//    } else {
-//        albumID = sqlite3_column_int(stmt, 0);
-//    }
-//    sqlite3_finalize(stmt);
-//    return albumID;
-//
-//}
 
 /**
  * Deletes the specified audio file from the database
