@@ -32,7 +32,6 @@
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/albumcover"
             android:background="#00000000"
-            app:setImage="@{audioFile.filePath,audioFile.coverSize,audioFile.coverOffset}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

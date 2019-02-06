@@ -30,8 +30,6 @@ object TaggerLib {
 
     external fun songTableExist():Boolean
 
-    external fun getCover(filePath:String,size:Int,offset:Int):ByteArray?
-
     init {
         System.loadLibrary("tagger-lib")
     }

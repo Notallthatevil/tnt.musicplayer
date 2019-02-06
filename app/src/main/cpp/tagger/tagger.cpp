@@ -154,9 +154,8 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
                     if(newList[i].substr(newList[i].find_last_of('.') + 1) == "mp3") {
                         Mp3File mp3(&newList[i]);
                         mp3.parse(true);
-                        int rc = sqlWrapper.updateSong(mp3.getTag(), mp3.getFilePath(), mp3.getLastModified());
-                        __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Updated %s with code %d", newList[i].c_str(),
-                                            rc);
+                        int rc = sqlWrapper.updateSong(mp3.getTag(),mp3.getFilePath(),mp3.getLastModified());
+                        __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Updated %s with code %d", newList[i].c_str(), rc);
                     }
                 }
             }
@@ -194,33 +193,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFil
     SqlWrapper sqlWrapper;
     return sqlWrapper.retrieveAllSongs(env);
 }
-
-extern "C"
-JNIEXPORT jbyteArray
-JNICALL
-Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getCover(JNIEnv *env, jobject /*this*/,
-                                                                           jstring jFilePath, jint coverSize,
-                                                                           jint offset) {
-    if(coverSize < 1 || offset < 0) {
-        return nullptr;
-    }
-    std::string filePath = jstringToString(env, &jFilePath);
-    auto *cover = new char[coverSize];
-    std::ifstream stream(filePath.c_str(), std::ios::ate | std::ios::binary);
-    if(stream.is_open()) {
-        stream.seekg(offset, std::ios::beg);
-        stream.read(cover, coverSize);
-    } else {
-        delete[]cover;
-        return nullptr;
-    }
-
-    jbyteArray jCover = env->NewByteArray(coverSize);
-    env->SetByteArrayRegion(jCover, 0, coverSize, (jbyte *) cover);
-    delete[]cover;
-    return jCover;
-}
-
 
 extern "C"
 JNIEXPORT jboolean
