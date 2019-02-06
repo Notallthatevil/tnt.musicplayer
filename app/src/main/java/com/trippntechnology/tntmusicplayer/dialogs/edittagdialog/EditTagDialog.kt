@@ -100,7 +100,7 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
 
         viewModel.updateDialogCover.observe{
             if (it!=null){
-                CustomBinders.setImageLoader(editTagCover,it)
+//                CustomBinders.setImageLoader(editTagCover,it)
             }
         }
     }
@@ -127,7 +127,7 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
                     val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver,contentUri)
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
-                    CustomBinders.setImage(editTagCover,bitmap)
+//                    CustomBinders.setImage(editTagCover,bitmap)
                     viewModel.newCover = stream.toByteArray()
                 }catch (e:IOException){
                     e.printStackTrace()

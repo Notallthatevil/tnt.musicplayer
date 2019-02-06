@@ -1,7 +1,5 @@
 package com.trippntechnology.tntmusicplayer.binding
 
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -10,28 +8,32 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.trippntechnology.tntmusicplayer.R
+import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
+import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import java.util.concurrent.TimeUnit
 
 object CustomBinders {
 
-    val requestOptions = RequestOptions()
-        .placeholder(R.mipmap.ic_launcher)
-        .transforms(RoundedCorners(12))
-
+    /**
+     * Sets the @param imageView's image to the cover that the @filePath points too. Otherwise the
+     * image remains the placeholder image.
+     * @param imageView - The image view the desired image should be attached to
+     * @param audioFile - The audio file to look for the cover for
+     */
     @JvmStatic
-    @BindingAdapter("setImageLoader")
-    fun setImageLoader(imageView: ImageView, image: ByteArray?) {
+    @BindingAdapter("setImage")
+    fun setImage(imageView: ImageView, audioFile: AudioFile) {
+        var cover: ByteArray? = null
+        if (audioFile.coverSize > 0 && audioFile.coverOffset >= 0) {
+            cover = TaggerLib.getCover(audioFile.filePath, audioFile.coverSize, audioFile.coverOffset)
+        }
         Glide.with(imageView)
-            .load(image)
-            .apply(requestOptions)
-            .transition(withCrossFade())
-            .into(imageView)
-    }
-
-    fun setImage(imageView: ImageView, bitmap: Bitmap) {
-        Glide.with(imageView)
-            .load(bitmap)
-            .apply(requestOptions)
+            .load(cover)
+            .apply(
+                RequestOptions()
+                    .placeholder(R.mipmap.ic_launcher)
+                    .transforms(RoundedCorners(12))
+            )
             .transition(withCrossFade())
             .into(imageView)
     }
