@@ -81,9 +81,6 @@ int Tag::getTagSize() const {
     return mTagSize;
 }
 
-
-
-
-
-
-
+int Tag::getCoverOffset() const {
+    return mCoverOffset;
+}

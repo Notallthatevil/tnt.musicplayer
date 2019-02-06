@@ -24,6 +24,7 @@ protected: //NOTE:Tag data
     unsigned char *mCover = nullptr;
     int mCoverSize = 0;
     int mTagSize = 0;
+    int mCoverOffset = -1;
 	Tag() = default;
 
 public:
@@ -61,6 +62,9 @@ public:
     int getCoverSize() const;
 
     int getTagSize() const;
+
+	int getCoverOffset() const;
+
 
 };
 

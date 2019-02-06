@@ -109,8 +109,9 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
             } else if(frameHeader == YEAR_TAG) {
                 setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
             } else if(frameHeader == COVER_TAG) {
-                int imageOffset = findCover(tagBuffer, pos + 10);
-                setCover(tagBuffer, frameSize - imageOffset, imageOffset);
+                mCoverOffset = findCover(tagBuffer, pos + 10) + 10;
+                mCoverSize = frameSize-((mCoverOffset-10)-(pos+10));
+//                setCover(tagBuffer, frameSize - imageOffset, imageOffset);
             }
             if(pos + frameSize + 12 > mTagSize - mHeaderSize) {
                 break;
@@ -138,7 +139,6 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
     }
     return rc;
 }
-
 
 
 /**
