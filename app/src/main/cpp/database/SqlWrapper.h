@@ -65,11 +65,12 @@ private:
 
     int updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime);
 
-public:
-    const std::string SONG_TABLE = "SONGS";
-    const std::string COVER_TABLE = "COVERS";
-
     SqlWrapper();
+
+public:
+    static const std::string SONG_TABLE;
+
+    static SqlWrapper& getInstance();
 
     ~SqlWrapper();
 
@@ -90,6 +91,10 @@ public:
     bool tableExist(std::string tableName);
 
     map retrieveAllFilePaths();
+
+    SqlWrapper(SqlWrapper const &) = delete;
+
+    void operator=(SqlWrapper const &) = delete;
 
 };
 

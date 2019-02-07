@@ -102,9 +102,8 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         env->SetObjectArrayElement(jDirList, i, env->NewStringUTF(directoryList[i].c_str()));
     }
 
-    SqlWrapper sqlWrapper;
-    sqlWrapper.createTable(sqlWrapper.SONG_TABLE);
-//    sqlWrapper.createTable(sqlWrapper.COVER_TABLE);
+
+    SqlWrapper::getInstance().createTable(SqlWrapper::SONG_TABLE);
 
     for(int i = 0; i < directoryList.size(); i++) {
 
@@ -115,7 +114,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         if(directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&directoryList[i]);
             mp3.parse(true);
-            sqlWrapper.insertSong(&mp3);
+            SqlWrapper::getInstance().insertSong(&mp3);
 
         }
     }
@@ -137,8 +136,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         return nullptr;
     }
 
-    SqlWrapper sqlWrapper;
-    auto oldList = sqlWrapper.retrieveAllFilePaths();
+    auto oldList = SqlWrapper::getInstance().retrieveAllFilePaths();
 
 
     struct stat result{};
@@ -154,7 +152,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
                     if(newList[i].substr(newList[i].find_last_of('.') + 1) == "mp3") {
                         Mp3File mp3(&newList[i]);
                         mp3.parse(true);
-                        int rc = sqlWrapper.updateSong(mp3.getTag(), mp3.getFilePath(), mp3.getLastModified());
+                        int rc = SqlWrapper::getInstance().updateSong(mp3.getTag(), mp3.getFilePath(), mp3.getLastModified());
                         __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Updated %s with code %d", newList[i].c_str(),
                                             rc);
                     }
@@ -171,19 +169,19 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
     }
 
     for(auto const &oldFilePath:oldList) {
-        int rc = sqlWrapper.deleteAudioFileByFilePath(oldFilePath.first);
+        int rc = SqlWrapper::getInstance().deleteAudioFileByFilePath(oldFilePath.first);
         __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Deleted %s with code %d", oldFilePath.first.c_str(), rc);
     }
     for(std::string newAudioFile:newList) {
         if(newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
-            int rc = sqlWrapper.insertSong(&mp3);
+            int rc = SqlWrapper::getInstance().insertSong(&mp3);
             __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
         }
     }
 
-    return sqlWrapper.retrieveAllSongs(env);
+    return SqlWrapper::getInstance().retrieveAllSongs(env);
 }
 
 
@@ -191,8 +189,7 @@ extern "C"
 JNIEXPORT jobjectArray //java audio file
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
-    SqlWrapper sqlWrapper;
-    return sqlWrapper.retrieveAllSongs(env);
+    return SqlWrapper::getInstance().retrieveAllSongs(env);
 }
 
 extern "C"
@@ -226,8 +223,8 @@ extern "C"
 JNIEXPORT jboolean
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist(JNIEnv *env, jobject /*this*/) {
-    SqlWrapper sqlWrapper;
-    jboolean jbool = sqlWrapper.tableExist(sqlWrapper.SONG_TABLE) ? JNI_TRUE : JNI_FALSE;
+
+    jboolean jbool = SqlWrapper::getInstance().tableExist(SqlWrapper::SONG_TABLE) ? JNI_TRUE : JNI_FALSE;
     return jbool;
 }
 
@@ -281,8 +278,8 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
 
         int rc = audioFile->saveNewTag(tag);
         if(rc == 0) {
-            SqlWrapper sqlWrapper;
-            sqlWrapper.updateSong(tag, id, audioFile->getLastModified());
+
+            SqlWrapper::getInstance().updateSong(tag, id, audioFile->getLastModified());
         } else {
             jsuccess = rc;
         }

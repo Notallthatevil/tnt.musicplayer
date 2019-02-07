@@ -3,6 +3,14 @@
 
 #include "SqlWrapper.h"
 
+const std::string SqlWrapper::SONG_TABLE = "SONGS";
+
+SqlWrapper &SqlWrapper::getInstance() {
+    static SqlWrapper sqlWrapper; // Guaranteed to be destroyed.
+    // Instantiated on first use.
+    return sqlWrapper;
+}
+
 /**
  * Simple inline method to determin if a file exists or not
  * @param fileName - The fully qualified file name
@@ -325,7 +333,7 @@ jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
 
         jobject jSong = env->NewObject(jAudioFile, jConstructor,
                                        jid, jTitle, jAlbum, jArtist, jYear, jTrack, jCoverOffset, jCoverSize,
-                                       jFilepath, jDuration,jSampleRate, jBitrate);
+                                       jFilepath, jDuration, jSampleRate, jBitrate);
 
         env->SetObjectArrayElement(jAudioArray, i, jSong);
     }
