@@ -196,7 +196,7 @@ int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
                       SONG_TRACK + " = ?5, " +
                       SONG_COVER_OFFSET + " = ?6, " +
                       SONG_COVER_SIZE + " = ?7, " +
-                      SONG_LAST_MODIFIED + " = ?8, WHERE " +
+                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
                       SONG_ID + " = " + std::to_string(ID) + ";";
 
 
@@ -226,7 +226,7 @@ int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime
                       SONG_TRACK + " = ?5, " +
                       SONG_COVER_OFFSET + " = ?6, " +
                       SONG_COVER_SIZE + " = ?7, " +
-                      SONG_LAST_MODIFIED + " = ?8, WHERE " +
+                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
                       SONG_FILEPATH + " = \'" + filePath + "\';";
 
 

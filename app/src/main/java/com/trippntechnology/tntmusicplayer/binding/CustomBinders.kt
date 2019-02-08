@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.binding
 
+import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -9,9 +10,8 @@ import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import java.util.concurrent.TimeUnit
-import com.bumptech.glide.module.AppGlideModule
-import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.trippntechnology.tntmusicplayer.glideutils.GlideApp
 
 object CustomBinders {
 
@@ -28,14 +28,29 @@ object CustomBinders {
         if (audioFile.coverSize > 0 && audioFile.coverOffset >= 0) {
             cover = TaggerLib.getCover(audioFile.filePath, audioFile.coverSize, audioFile.coverOffset)
         }
+        CustomBinders.setImage(imageView, cover)
+    }
+
+    fun setImage(imageView: ImageView, coverBytes: ByteArray?) {
         GlideApp.with(imageView)
-            .load(cover)
+            .load(coverBytes)
             .placeholder(R.mipmap.ic_launcher)
             .transforms(RoundedCorners(12))
-            .transition(withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .override(imageView.width, imageView.height)
             .into(imageView)
     }
+
+    fun setImage(imageView: ImageView, bitmap: Bitmap) {
+        GlideApp.with(imageView)
+            .load(bitmap)
+            .placeholder(R.mipmap.ic_launcher)
+            .transforms(RoundedCorners(12))
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .override(imageView.width, imageView.height)
+            .into(imageView)
+    }
+
 
     @JvmStatic
     @BindingAdapter("setDuration")
@@ -48,4 +63,3 @@ object CustomBinders {
     }
 
 }
-@GlideModule class MyGlideModule : AppGlideModule()

@@ -35,13 +35,12 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
         const val GALLERY = 42
 
         @JvmStatic
-        fun newInstance(listPosition:Int) = EditTagDialog().apply{
+        fun newInstance(listPosition: Int) = EditTagDialog().apply {
             arguments = Bundle().apply {
-                putInt(AUDIO_FILE,listPosition)
+                putInt(AUDIO_FILE, listPosition)
             }
         }
     }
-
 
 
     @Inject
@@ -60,7 +59,7 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.dialog_edit_tag,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_edit_tag, container, false)
         binding.viewModel = viewModel
         arguments?.getInt(AUDIO_FILE).let {
             binding.audioFile = viewModel.fullSongList.value!![it!!]
@@ -75,33 +74,31 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
     }
 
 
-    private fun setupObservers(){
-        viewModel.cancel.observe{
+    private fun setupObservers() {
+        viewModel.cancel.observe {
             dismiss()
         }
 
-        viewModel.saveTags.observe{
-            if (it==0){
+        viewModel.saveTags.observe {
+            if (it == 0) {
                 dismiss()
-                Toast.makeText(context,"Tags saved",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(context,"Error saving tags",Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Tags saved", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Error saving tags", Toast.LENGTH_LONG).show()
             }
         }
 
-        viewModel.selectNewCover.observe{
-            val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        viewModel.selectNewCover.observe {
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
         }
 
-        viewModel.savingInProcess.observe{
-            Toast.makeText(context,"Saving new tags . . .",Toast.LENGTH_SHORT).show()
+        viewModel.savingInProcess.observe {
+            Toast.makeText(context, "Saving new tags . . .", Toast.LENGTH_SHORT).show()
         }
 
-        viewModel.updateDialogCover.observe{
-            if (it!=null){
-//                CustomBinders.setImageLoader(editTagCover,it)
-            }
+        viewModel.updateDialogCover.observe {
+            CustomBinders.setImage(editTagCover, it)
         }
     }
 
@@ -117,25 +114,23 @@ class EditTagDialog : LiveDataObserverDialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        when (requestCode){
-            GALLERY ->{
-                data ?:return
+        when (requestCode) {
+            GALLERY -> {
+                data ?: return
 
                 val contentUri = data.data
 
                 try {
-                    val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver,contentUri)
+                    val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, contentUri)
                     val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
-//                    CustomBinders.setImage(editTagCover,bitmap)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    CustomBinders.setImage(editTagCover, bitmap)
                     viewModel.newCover = stream.toByteArray()
-                }catch (e:IOException){
+                } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
         }
-
-
 
 
     }
