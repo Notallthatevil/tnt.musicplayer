@@ -55,11 +55,21 @@ private:
 
     sqlite3 *mDb;
 
+    JNIEnv * env = nullptr;
+    JavaVM *javaVM;
+
+    jobject jLiveData = nullptr;
+    jmethodID postValue = nullptr;
+
+
+
     static int callback(void *count, int argc, char **argv, char **azColName) {
         int *c = (int *) count;
         *c = atoi(argv[0]);
         return 0;
     }
+
+    int commitChanges(sqlite3_stmt *pStmt);
 
     int getNumberOfEntries(const std::string &tableName);
 
@@ -92,11 +102,14 @@ public:
 
     map retrieveAllFilePaths();
 
+    jobject getLiveData(JNIEnv*env);
+
     SqlWrapper(SqlWrapper const &) = delete;
 
     void operator=(SqlWrapper const &) = delete;
-
 };
+
+
 
 
 #endif //TAGGER_SQLHELPER_H

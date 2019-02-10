@@ -186,10 +186,10 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
 
 
 extern "C"
-JNIEXPORT jobjectArray //java audio file
+JNIEXPORT jobject //java audio file
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
-    return SqlWrapper::getInstance().retrieveAllSongs(env);
+    return SqlWrapper::getInstance().getLiveData(env);
 }
 
 extern "C"
@@ -223,7 +223,6 @@ extern "C"
 JNIEXPORT jboolean
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist(JNIEnv *env, jobject /*this*/) {
-
     jboolean jbool = SqlWrapper::getInstance().tableExist(SqlWrapper::SONG_TABLE) ? JNI_TRUE : JNI_FALSE;
     return jbool;
 }

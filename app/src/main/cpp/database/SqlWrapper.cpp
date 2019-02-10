@@ -43,6 +43,7 @@ SqlWrapper::SqlWrapper() {
  */
 SqlWrapper::~SqlWrapper() {
     sqlite3_close_v2(mDb);
+    env->DeleteGlobalRef(jLiveData);
 }
 
 /**
@@ -176,7 +177,7 @@ int SqlWrapper::insertSong(AudioFile *audioFile) {
     }
     sqlite3_clear_bindings(stmt);
     sqlite3_reset(stmt);
-    return sqlite3_finalize(stmt);
+    return commitChanges(stmt);
 }
 
 /**
@@ -259,7 +260,7 @@ int SqlWrapper::updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime)
                             sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
     }
     sqlite3_clear_bindings(*stmt);
-    return sqlite3_finalize(*stmt);
+    return commitChanges(*stmt);
 }
 
 /**
@@ -280,7 +281,7 @@ int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error deleting from database %d: %s",
                             sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
     }
-    return sqlite3_finalize(stmt);
+    return commitChanges(stmt);
 }
 
 /**
@@ -289,6 +290,9 @@ int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
  * @returns a jobjectArray that represents an array of @class AudioFile
  */
 jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
+    if(env == nullptr){
+        return nullptr;
+    }
     sqlite3_stmt *stmt;
     int numberOfItems = getNumberOfEntries(SONG_TABLE);
 
@@ -371,6 +375,7 @@ map SqlWrapper::retrieveAllFilePaths() {
                                 "Reached last row before number of items was read: Error code %d",
                                 sqlite3_extended_errcode(mDb));
             filePaths.clear();
+            sqlite3_finalize(stmt);
             return filePaths;
         }
         char *path = (char *) sqlite3_column_text(stmt, 0);
@@ -419,6 +424,45 @@ int SqlWrapper::getNumberOfEntries(const std::string &tableName) {
     sqlite3_exec(mDb, sql.c_str(), callback, &numberOfItems, &error);
     return numberOfItems;
 }
+
+int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
+    if(jLiveData!= nullptr){
+        JNIEnv *env;
+        int environmentState = javaVM->GetEnv((void**)&env,JNI_VERSION_1_6);
+        bool attached = false;
+        if(environmentState == JNI_EDETACHED){
+            int rc = javaVM->AttachCurrentThread(&env, nullptr);
+            if (rc != JNI_OK) {
+                __android_log_print(ANDROID_LOG_DEBUG,"SQL_ERROR","Failed to attach");
+            }else{
+                attached = true;
+            }
+        }
+        jobjectArray jAudioFileArray = retrieveAllSongs(env);
+        if (jAudioFileArray!= nullptr){
+            env->CallVoidMethod(jLiveData,postValue,jAudioFileArray);
+        }
+        if(attached){
+            javaVM->DetachCurrentThread();
+        }
+    }
+    return sqlite3_finalize(pStmt);
+}
+
+jobject SqlWrapper::getLiveData(JNIEnv*env) {
+    if(javaVM == nullptr){
+        env->GetJavaVM(&javaVM);
+    }
+    if(this->jLiveData == nullptr){
+        jclass jLiveDataClass = env->FindClass("androidx/lifecycle/MutableLiveData");
+        jmethodID jConstructor = env->GetMethodID(jLiveDataClass,"<init>","()V");
+        jobject jLocal = env->NewObject(jLiveDataClass,jConstructor);
+        jLiveData = env->NewGlobalRef(jLocal);
+        postValue = env->GetMethodID(jLiveDataClass,"postValue","(Ljava/lang/Object;)V");
+    }
+    return jLiveData;
+}
+
 
 
 #pragma clang diagnostic pop

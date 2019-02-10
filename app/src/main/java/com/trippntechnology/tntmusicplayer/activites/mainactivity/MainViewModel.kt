@@ -21,7 +21,8 @@ class MainViewModel
 ) : BaseViewModel(cc) {
 
     //Scanning data
-    val fullSongList = MutableLiveData<List<AudioFile>>()
+    val fullSongList: MutableLiveData<Array<AudioFile>> = taggerLib.getAllAudioFiles()
+
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
 
@@ -40,25 +41,24 @@ class MainViewModel
 
     private var syncing = false
 
+
     fun startUp() {
         if (taggerLib.songTableExist()) {
-            fullSongList.value = taggerLib.getAllAudioFiles().asList()
             syncAudioFiles()
         } else {
             launch(Dispatchers.IO) {
                 syncing = true
                 taggerLib.scanDirectory("/storage/emulated/0/Music/", parsingCurrentSong, numberOfSongs)
-                updateFullSongList(taggerLib.getAllAudioFiles().asList())
                 syncing = false
             }
         }
     }
 
     //Background thread
-    private fun updateFullSongList(audioFileList: List<AudioFile>?) {
-        audioFileList ?: return
-        fullSongList.postValue(audioFileList)
-    }
+//    private fun updateFullSongList(audioFileList: Array<AudioFile>?) {
+//        audioFileList ?: return
+//        fullSongList.postValue(audioFileList)
+//    }
 
     fun audioFileSelected(view: View, position: Int): Boolean {
         selectedSong.value = position
@@ -69,7 +69,7 @@ class MainViewModel
         if (!syncing) {
             launch(Dispatchers.IO) {
                 syncing = true
-                updateFullSongList(taggerLib.backgroundScan("/storage/emulated/0/Music/")?.asList())
+                taggerLib.backgroundScan("/storage/emulated/0/Music/")
                 syncing = false
             }
         }
@@ -108,7 +108,7 @@ class MainViewModel
     fun autoFindAllAlbumArt() {
         Log.d("AUTO_FIND_COVER", "Not ready to implement")
         launch {
-            val list = fullSongList.value as MutableList
+            val list = fullSongList.value
             if (!list.isNullOrEmpty()) {
                 list.forEachIndexed { index, audioFile ->
                     Log.d("AUTO_FIND_COVER", "On file $index of ${list.size}")
@@ -121,7 +121,6 @@ class MainViewModel
                     }
                 }
             }
-            updateFullSongList(taggerLib.getAllAudioFiles().asList())
         }
     }
 
@@ -139,7 +138,6 @@ class MainViewModel
                     oldAudioFile.filePath,
                     newCover
                 )
-                updateFullSongList(taggerLib.getAllAudioFiles().asList())
                 newCover = null
                 saveTags.postValue(success)
             }

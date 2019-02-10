@@ -108,7 +108,7 @@ class MainActivity : LiveDataObserverActivity() {
             showEditTagDialog(it)
         }
         viewModel.fullSongList.observe {
-            adapter.submitList(it!!)
+            adapter.submitList(it?.toList())
             if (scanningDialog.isShowing) {
                 scanningDialog.dismiss()
             }
