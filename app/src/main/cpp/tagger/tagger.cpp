@@ -104,9 +104,9 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
 
 
     SqlWrapper::getInstance().createTable(SqlWrapper::SONG_TABLE);
+    SqlWrapper::getInstance().beginTransaction();
 
     for(int i = 0; i < directoryList.size(); i++) {
-
         jstring directoryItem = env->NewStringUTF(directoryList[i].c_str());
         jobject jProgressWrapperObject = env->NewObject(jProgressWrapper, progressWrapperConstructor, i, directoryItem);
         env->CallVoidMethod(currentSong, postCurrentSong, jProgressWrapperObject);
@@ -114,16 +114,16 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
         if(directoryList[i].substr(directoryList[i].find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&directoryList[i]);
             mp3.parse(true);
-            SqlWrapper::getInstance().insertSong(&mp3);
-
+            SqlWrapper::getInstance().insertAudioFile(&mp3);
         }
     }
+    SqlWrapper::getInstance().closeTransaction();
     __android_log_print(ANDROID_LOG_INFO, "SCANNING", "Finished");
     return jDirList;
 }
 
 extern "C"
-JNIEXPORT jobjectArray //java audio file
+JNIEXPORT void
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan(JNIEnv *env, jobject /*this*/,
                                                                                  jstring directory) {
@@ -133,12 +133,12 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         newList = scanDirectoryForAudio(jstringToString(env, &directory));
     } catch(FileAccessException &e) {
         __android_log_print(ANDROID_LOG_ERROR, "FileAccessException", "%s", e.what());
-        return nullptr;
+        return;
     }
 
     auto oldList = SqlWrapper::getInstance().retrieveAllFilePaths();
 
-
+    SqlWrapper::getInstance().beginTransaction();
     struct stat result{};
     map::iterator it;
     auto limit = newList.size();
@@ -176,12 +176,12 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         if(newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
-            int rc = SqlWrapper::getInstance().insertSong(&mp3);
+            int rc = SqlWrapper::getInstance().insertAudioFile(&mp3);
             __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
         }
     }
+    SqlWrapper::getInstance().closeTransaction();
 
-    return SqlWrapper::getInstance().retrieveAllSongs(env);
 }
 
 

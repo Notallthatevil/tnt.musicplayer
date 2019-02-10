@@ -9,6 +9,7 @@
 #include "../tagger/files/AudioFile.h"
 #include <string>
 #include <map>
+#include <vector>
 
 typedef std::map<std::string, int> map;
 
@@ -55,13 +56,13 @@ private:
 
     sqlite3 *mDb;
 
+    bool transaction = false;
+
     JNIEnv * env = nullptr;
     JavaVM *javaVM;
 
     jobject jLiveData = nullptr;
     jmethodID postValue = nullptr;
-
-
 
     static int callback(void *count, int argc, char **argv, char **azColName) {
         int *c = (int *) count;
@@ -88,7 +89,7 @@ public:
 
     int createTable(std::string tableName);
 
-    int insertSong(AudioFile *audioFile);
+    int insertAudioFile(AudioFile *audioFile);
 
     int deleteAudioFileByFilePath(std::string filePath);
 
@@ -103,6 +104,10 @@ public:
     map retrieveAllFilePaths();
 
     jobject getLiveData(JNIEnv*env);
+
+    void beginTransaction();
+
+    void closeTransaction();
 
     SqlWrapper(SqlWrapper const &) = delete;
 

@@ -12,7 +12,7 @@ SqlWrapper &SqlWrapper::getInstance() {
 }
 
 /**
- * Simple inline method to determin if a file exists or not
+ * Simple inline method to determine if a file exists or not
  * @param fileName - The fully qualified file name
  * @returns if the file exists or not
  */
@@ -115,182 +115,12 @@ int SqlWrapper::deleteTable(std::string tableName) {
 }
 
 /**
- * Inserts the passed in audio file into the database.
- * @param audioFile - The audio file to be written
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-int SqlWrapper::insertSong(AudioFile *audioFile) {
-    sqlite3_stmt *stmt = nullptr;
-//    long albumID = insertCover(audioFile->getTag()->getAlbum(), audioFile->getTag()->getCover(),
-//                               audioFile->getTag()->getCoverSize());
-
-    std::string sql = "INSERT INTO " + SONG_TABLE + "(" +
-                      SONG_TITLE + "," +        //1
-                      SONG_ALBUM + "," +        //2
-                      SONG_ARTIST + "," +       //3
-                      SONG_YEAR + "," +         //4
-                      SONG_TRACK + "," +        //5
-                      SONG_FILEPATH + "," +     //6
-                      SONG_DURATION + "," +     //7
-                      SONG_SAMPLERATE + "," +   //8
-                      SONG_BITRATE + "," +      //9
-                      SONG_COVER_OFFSET + "," + //10
-                      SONG_COVER_SIZE + "," +   //11
-                      SONG_LAST_MODIFIED + ")" +//12
-                      "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12);";
-
-
-    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song insert prepare failed on %s: %s",
-                            audioFile->getTag()->getTitle().c_str(), sqlite3_errmsg(mDb));
-        return sqlite3_finalize(stmt);
-    } else {
-        const char *title =
-                !audioFile->getTag()->getTitle().empty() ? audioFile->getTag()->getTitle().c_str() : nullptr;
-        const char *album =
-                !audioFile->getTag()->getAlbum().empty() ? audioFile->getTag()->getAlbum().c_str() : nullptr;
-        const char *artist =
-                !audioFile->getTag()->getArtist().empty() ? audioFile->getTag()->getArtist().c_str() : nullptr;
-        const char *year =
-                !audioFile->getTag()->getYear().empty() ? audioFile->getTag()->getYear().c_str() : nullptr;
-        const char *track =
-                !audioFile->getTag()->getTrack().empty() ? audioFile->getTag()->getTrack().c_str() : nullptr;
-
-        ///Hardcoded numbers correspond to the position in values in above sql statement starting at 1
-        sqlite3_bind_text(stmt, 1, title, -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 2, album, -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 3, artist, -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 4, year, -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 5, track, -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 6, audioFile->getFilePath().c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_int64(stmt, 7, audioFile->getDuration());
-        sqlite3_bind_int(stmt, 8, audioFile->getSampleRate());
-        sqlite3_bind_int(stmt, 9, audioFile->getBitrate());
-        sqlite3_bind_int(stmt, 10, audioFile->getTag()->getCoverOffset());
-        sqlite3_bind_int(stmt, 11, audioFile->getTag()->getCoverSize());
-        sqlite3_bind_int64(stmt, 12, audioFile->getLastModified());
-
-        if(sqlite3_step(stmt) != SQLITE_DONE) {
-            __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error inserting into database %d: %s",
-                                sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-        }
-    }
-    sqlite3_clear_bindings(stmt);
-    sqlite3_reset(stmt);
-    return commitChanges(stmt);
-}
-
-/**
- * Updates the song at the given @param ID.
- * @param tag - The new tag associated with the audio file
- * @param ID - The ID of the audio file to be updated
- * @param lastModifiedTime - The new last modified time returned form writting the new @param tag
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
-    sqlite3_stmt *stmt;
-    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
-                      SONG_TITLE + " = ?1, " +
-                      SONG_ALBUM + " = ?2, " +
-                      SONG_ARTIST + " = ?3, " +
-                      SONG_YEAR + " = ?4, " +
-                      SONG_TRACK + " = ?5, " +
-                      SONG_COVER_OFFSET + " = ?6, " +
-                      SONG_COVER_SIZE + " = ?7, " +
-                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
-                      SONG_ID + " = " + std::to_string(ID) + ";";
-
-
-    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song update prepare failed: %s",
-                            sqlite3_errmsg(mDb));
-        return sqlite3_finalize(stmt);
-
-    }
-    return updateSong(&stmt, tag, lastModifiedTime);
-}
-
-/**
- * Updates the song at the given @param filePath.
- * @param tag - The new tag associated with the audio file
- * @param filePath - The file path of the audio file to be updated
- * @param lastModifiedTime - The new last modified time returned form writting the new @param tag
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime) {
-    sqlite3_stmt *stmt;
-    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
-                      SONG_TITLE + " = ?1, " +
-                      SONG_ALBUM + " = ?2, " +
-                      SONG_ARTIST + " = ?3, " +
-                      SONG_YEAR + " = ?4, " +
-                      SONG_TRACK + " = ?5, " +
-                      SONG_COVER_OFFSET + " = ?6, " +
-                      SONG_COVER_SIZE + " = ?7, " +
-                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
-                      SONG_FILEPATH + " = \'" + filePath + "\';";
-
-
-    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song update prepare failed: %s",
-                            sqlite3_errmsg(mDb));
-        return sqlite3_finalize(stmt);
-    }
-    return updateSong(&stmt, tag, lastModifiedTime);
-}
-
-/**
- * The actual update process. This method updates the audio file found in the @param stmt
- * @param stmt - The @typedef sqlite3_stmt created with a prepare statment
- * @param tag - The new tag associated with the audio file
- * @param lastModifiedTime - The new last modified time returned form writting the new @param tag
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-int SqlWrapper::updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime) {
-    sqlite3_bind_text(*stmt, 1, tag->getTitle().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(*stmt, 2, tag->getAlbum().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(*stmt, 3, tag->getArtist().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(*stmt, 4, tag->getYear().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(*stmt, 5, tag->getTrack().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(*stmt, 6, tag->getCoverOffset());
-    sqlite3_bind_int(*stmt, 7, tag->getCoverSize());
-    sqlite3_bind_int64(*stmt, 8, lastModifiedTime);
-    if(sqlite3_step(*stmt) != SQLITE_DONE) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error updating song %d: %s",
-                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-    }
-    sqlite3_clear_bindings(*stmt);
-    return commitChanges(*stmt);
-}
-
-/**
- * Deletes the specified audio file from the database
- * @param filePath - The absolute file path to the audio file
- * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
- */
-int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
-    sqlite3_stmt *stmt = nullptr;
-    std::string sql = "DELETE FROM " + SONG_TABLE + " WHERE " + SONG_FILEPATH + " = \"" + filePath + "\";";
-
-    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error preparing to delete from database %d: %s",
-                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-        return sqlite3_finalize(stmt);
-    }
-    if(sqlite3_step(stmt) != SQLITE_DONE) {
-        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error deleting from database %d: %s",
-                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
-    }
-    return commitChanges(stmt);
-}
-
-/**
  * Queries the database for all of the audio files contained within it.
  * @param env - A pointer to the JNI environment
  * @returns a jobjectArray that represents an array of @class AudioFile
  */
 jobjectArray SqlWrapper::retrieveAllSongs(JNIEnv *env) {
-    if(env == nullptr){
+    if(env == nullptr) {
         return nullptr;
     }
     sqlite3_stmt *stmt;
@@ -410,7 +240,6 @@ bool SqlWrapper::tableExist(std::string tableName) {
     return false;
 }
 
-
 /**
  * Determines the number of rows in a given table
  * @param tableName - The name of table to find the number of rows
@@ -425,44 +254,230 @@ int SqlWrapper::getNumberOfEntries(const std::string &tableName) {
     return numberOfItems;
 }
 
+
+void SqlWrapper::beginTransaction() {
+    transaction = true;
+}
+
+void SqlWrapper::closeTransaction() {
+    transaction = false;
+    commitChanges(nullptr);
+}
+
 int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
-    if(jLiveData!= nullptr){
-        JNIEnv *env;
-        int environmentState = javaVM->GetEnv((void**)&env,JNI_VERSION_1_6);
-        bool attached = false;
-        if(environmentState == JNI_EDETACHED){
-            int rc = javaVM->AttachCurrentThread(&env, nullptr);
-            if (rc != JNI_OK) {
-                __android_log_print(ANDROID_LOG_DEBUG,"SQL_ERROR","Failed to attach");
-            }else{
-                attached = true;
+    if(!transaction) {
+        if(jLiveData != nullptr) {
+            JNIEnv *env;
+            int environmentState = javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+            bool attached = false;
+            if(environmentState == JNI_EDETACHED) {
+                int rc = javaVM->AttachCurrentThread(&env, nullptr);
+                if(rc != JNI_OK) {
+                    __android_log_print(ANDROID_LOG_DEBUG, "SQL_ERROR", "Failed to attach");
+                } else {
+                    attached = true;
+                }
+            }
+            jobjectArray jAudioFileArray = retrieveAllSongs(env);
+            if(jAudioFileArray != nullptr) {
+                env->CallVoidMethod(jLiveData, postValue, jAudioFileArray);
+            }
+            if(attached) {
+                javaVM->DetachCurrentThread();
             }
         }
-        jobjectArray jAudioFileArray = retrieveAllSongs(env);
-        if (jAudioFileArray!= nullptr){
-            env->CallVoidMethod(jLiveData,postValue,jAudioFileArray);
-        }
-        if(attached){
-            javaVM->DetachCurrentThread();
-        }
+    }
+    if(pStmt == nullptr){
+        return 0;
     }
     return sqlite3_finalize(pStmt);
 }
 
-jobject SqlWrapper::getLiveData(JNIEnv*env) {
-    if(javaVM == nullptr){
+jobject SqlWrapper::getLiveData(JNIEnv *env) {
+    if(javaVM == nullptr) {
         env->GetJavaVM(&javaVM);
     }
-    if(this->jLiveData == nullptr){
+    if(this->jLiveData == nullptr) {
         jclass jLiveDataClass = env->FindClass("androidx/lifecycle/MutableLiveData");
-        jmethodID jConstructor = env->GetMethodID(jLiveDataClass,"<init>","()V");
-        jobject jLocal = env->NewObject(jLiveDataClass,jConstructor);
+        jmethodID jConstructor = env->GetMethodID(jLiveDataClass, "<init>", "()V");
+        jobject jLocal = env->NewObject(jLiveDataClass, jConstructor);
         jLiveData = env->NewGlobalRef(jLocal);
-        postValue = env->GetMethodID(jLiveDataClass,"postValue","(Ljava/lang/Object;)V");
+        postValue = env->GetMethodID(jLiveDataClass, "postValue", "(Ljava/lang/Object;)V");
     }
     return jLiveData;
 }
 
+
+
+///========TABLE CHANGES ===============================================================================================
+
+/**
+ * Inserts the passed in audio file into the database.
+ * @param audioFile - The audio file to be written
+ * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
+ */
+int SqlWrapper::insertAudioFile(AudioFile *audioFile) {
+    sqlite3_stmt *stmt = nullptr;
+
+    std::string sql = "INSERT INTO " + SONG_TABLE + "(" +
+                      SONG_TITLE + "," +        //1
+                      SONG_ALBUM + "," +        //2
+                      SONG_ARTIST + "," +       //3
+                      SONG_YEAR + "," +         //4
+                      SONG_TRACK + "," +        //5
+                      SONG_FILEPATH + "," +     //6
+                      SONG_DURATION + "," +     //7
+                      SONG_SAMPLERATE + "," +   //8
+                      SONG_BITRATE + "," +      //9
+                      SONG_COVER_OFFSET + "," + //10
+                      SONG_COVER_SIZE + "," +   //11
+                      SONG_LAST_MODIFIED + ")" +//12
+                      "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12);";
+
+
+    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song insert prepare failed on %s: %s",
+                            audioFile->getTag()->getTitle().c_str(), sqlite3_errmsg(mDb));
+        return sqlite3_finalize(stmt);
+    } else {
+        const char *title =
+                !audioFile->getTag()->getTitle().empty() ? audioFile->getTag()->getTitle().c_str() : nullptr;
+        const char *album =
+                !audioFile->getTag()->getAlbum().empty() ? audioFile->getTag()->getAlbum().c_str() : nullptr;
+        const char *artist =
+                !audioFile->getTag()->getArtist().empty() ? audioFile->getTag()->getArtist().c_str() : nullptr;
+        const char *year =
+                !audioFile->getTag()->getYear().empty() ? audioFile->getTag()->getYear().c_str() : nullptr;
+        const char *track =
+                !audioFile->getTag()->getTrack().empty() ? audioFile->getTag()->getTrack().c_str() : nullptr;
+
+        ///Hardcoded numbers correspond to the position in values in above sql statement starting at 1
+        sqlite3_bind_text(stmt, 1, title, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, album, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, artist, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, year, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, track, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 6, audioFile->getFilePath().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(stmt, 7, audioFile->getDuration());
+        sqlite3_bind_int(stmt, 8, audioFile->getSampleRate());
+        sqlite3_bind_int(stmt, 9, audioFile->getBitrate());
+        sqlite3_bind_int(stmt, 10, audioFile->getTag()->getCoverOffset());
+        sqlite3_bind_int(stmt, 11, audioFile->getTag()->getCoverSize());
+        sqlite3_bind_int64(stmt, 12, audioFile->getLastModified());
+
+        if(sqlite3_step(stmt) != SQLITE_DONE) {
+            __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error inserting into database %d: %s",
+                                sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
+        }
+    }
+    sqlite3_clear_bindings(stmt);
+    sqlite3_reset(stmt);
+    return commitChanges(stmt);
+}
+
+/**
+ * Updates the song at the given @param ID.
+ * @param tag - The new tag associated with the audio file
+ * @param ID - The ID of the audio file to be updated
+ * @param lastModifiedTime - The new last modified time returned form writting the new @param tag
+ * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
+ */
+int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
+    sqlite3_stmt *stmt;
+    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
+                      SONG_TITLE + " = ?1, " +
+                      SONG_ALBUM + " = ?2, " +
+                      SONG_ARTIST + " = ?3, " +
+                      SONG_YEAR + " = ?4, " +
+                      SONG_TRACK + " = ?5, " +
+                      SONG_COVER_OFFSET + " = ?6, " +
+                      SONG_COVER_SIZE + " = ?7, " +
+                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
+                      SONG_ID + " = " + std::to_string(ID) + ";";
+
+
+    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song update prepare failed: %s",
+                            sqlite3_errmsg(mDb));
+        return sqlite3_finalize(stmt);
+
+    }
+    return updateSong(&stmt, tag, lastModifiedTime);
+}
+
+/**
+ * Updates the song at the given @param filePath.
+ * @param tag - The new tag associated with the audio file
+ * @param filePath - The file path of the audio file to be updated
+ * @param lastModifiedTime - The new last modified time returned form writting the new @param tag
+ * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
+ */
+int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime) {
+    sqlite3_stmt *stmt;
+    std::string sql = "UPDATE " + SONG_TABLE + " SET " +
+                      SONG_TITLE + " = ?1, " +
+                      SONG_ALBUM + " = ?2, " +
+                      SONG_ARTIST + " = ?3, " +
+                      SONG_YEAR + " = ?4, " +
+                      SONG_TRACK + " = ?5, " +
+                      SONG_COVER_OFFSET + " = ?6, " +
+                      SONG_COVER_SIZE + " = ?7, " +
+                      SONG_LAST_MODIFIED + " = ?8 WHERE " +
+                      SONG_FILEPATH + " = \'" + filePath + "\';";
+
+
+    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song update prepare failed: %s",
+                            sqlite3_errmsg(mDb));
+        return sqlite3_finalize(stmt);
+    }
+    return updateSong(&stmt, tag, lastModifiedTime);
+}
+
+/**
+ * The actual update process. This method updates the audio file found in the @param stmt
+ * @param stmt - The @typedef sqlite3_stmt created with a prepare statement
+ * @param tag - The new tag associated with the audio file
+ * @param lastModifiedTime - The new last modified time returned form writing the new @param tag
+ * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
+ */
+int SqlWrapper::updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime) {
+    sqlite3_bind_text(*stmt, 1, tag->getTitle().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(*stmt, 2, tag->getAlbum().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(*stmt, 3, tag->getArtist().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(*stmt, 4, tag->getYear().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(*stmt, 5, tag->getTrack().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(*stmt, 6, tag->getCoverOffset());
+    sqlite3_bind_int(*stmt, 7, tag->getCoverSize());
+    sqlite3_bind_int64(*stmt, 8, lastModifiedTime);
+    if(sqlite3_step(*stmt) != SQLITE_DONE) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error updating song %d: %s",
+                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
+    }
+    sqlite3_clear_bindings(*stmt);
+    return commitChanges(*stmt);
+}
+
+/**
+ * Deletes the specified audio file from the database
+ * @param filePath - The absolute file path to the audio file
+ * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
+ */
+int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
+    sqlite3_stmt *stmt = nullptr;
+    std::string sql = "DELETE FROM " + SONG_TABLE + " WHERE " + SONG_FILEPATH + " = \"" + filePath + "\";";
+
+    if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error preparing to delete from database %d: %s",
+                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
+        return sqlite3_finalize(stmt);
+    }
+    if(sqlite3_step(stmt) != SQLITE_DONE) {
+        __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Error deleting from database %d: %s",
+                            sqlite3_extended_errcode(mDb), sqlite3_errmsg(mDb));
+    }
+    return commitChanges(stmt);
+}
 
 
 #pragma clang diagnostic pop
