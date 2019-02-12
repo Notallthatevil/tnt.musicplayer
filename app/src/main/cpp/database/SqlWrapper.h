@@ -1,5 +1,5 @@
-#ifndef TAGGER_SQLHELPER_H
-#define TAGGER_SQLHELPER_H
+#ifndef TNT_MUSICPLAYER_SQLWRAPPER_H
+#define TNT_MUSICPLAYER_SQLWRAPPER_H
 
 #include "sqlite3.h"
 #include <android/log.h>
@@ -34,7 +34,6 @@ private:
     const std::string SONG_COVER_OFFSET = "COVER_OFFSET";
     const std::string SONG_COVER_SIZE = "COVER_SIZE";
 
-
     const std::string SONG_LAST_MODIFIED = "MODIFIED_DATE";
 
     enum tableColumnNumbers {
@@ -56,13 +55,12 @@ private:
 
     sqlite3 *mDb;
 
-    bool transaction = false;
-
     JNIEnv * env = nullptr;
     JavaVM *javaVM;
-
     jobject jLiveData = nullptr;
     jmethodID postValue = nullptr;
+
+    bool transaction = false;
 
     static int callback(void *count, int argc, char **argv, char **azColName) {
         int *c = (int *) count;
@@ -76,6 +74,8 @@ private:
 
     int updateSong(sqlite3_stmt **stmt, Tag *tag, long lastModifiedTime);
 
+    jobjectArray retrieveAllSongs(JNIEnv *env);
+
     SqlWrapper();
 
 public:
@@ -85,23 +85,21 @@ public:
 
     ~SqlWrapper();
 
+    int insertAudioFile(AudioFile *audioFile);
+
     int deleteTable(std::string tableName);
 
     int createTable(std::string tableName);
-
-    int insertAudioFile(AudioFile *audioFile);
-
-    int deleteAudioFileByFilePath(std::string filePath);
-
-    jobjectArray retrieveAllSongs(JNIEnv *env);
 
     int updateSong(Tag *tag, int ID, long lastModifiedTime);
 
     int updateSong(Tag *tag, std::string filePath, long lastModifiedTime);
 
-    bool tableExist(std::string tableName);
+    int deleteAudioFileByFilePath(std::string filePath);
 
     map retrieveAllFilePaths();
+
+    bool tableExist(std::string tableName);
 
     jobject getLiveData(JNIEnv*env);
 
@@ -114,7 +112,4 @@ public:
     void operator=(SqlWrapper const &) = delete;
 };
 
-
-
-
-#endif //TAGGER_SQLHELPER_H
+#endif //TNT_MUSICPLAYER_SQLWRAPPER_H

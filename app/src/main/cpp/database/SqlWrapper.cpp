@@ -254,16 +254,31 @@ int SqlWrapper::getNumberOfEntries(const std::string &tableName) {
     return numberOfItems;
 }
 
-
-void SqlWrapper::beginTransaction() {
-    transaction = true;
+/**
+ * Returns a global live data object tied the entries in the database
+ * @param env - A pointer to the Java Environment to create the live data object with.
+ * @returns a MutableLiveData object
+ */
+jobject SqlWrapper::getLiveData(JNIEnv *env) {
+    if(javaVM == nullptr) {
+        env->GetJavaVM(&javaVM);
+    }
+    if(this->jLiveData == nullptr) {
+        jclass jLiveDataClass = env->FindClass("androidx/lifecycle/MutableLiveData");
+        jmethodID jConstructor = env->GetMethodID(jLiveDataClass, "<init>", "()V");
+        jobject jLocal = env->NewObject(jLiveDataClass, jConstructor);
+        jLiveData = env->NewGlobalRef(jLocal);
+        postValue = env->GetMethodID(jLiveDataClass, "postValue", "(Ljava/lang/Object;)V");
+    }
+    return jLiveData;
 }
 
-void SqlWrapper::closeTransaction() {
-    transaction = false;
-    commitChanges(nullptr);
-}
-
+/**
+ * Commits the changes to the live data. After a transaction it posts the new value to the global live data object
+ * created in @see SqlWrapper#getLiveData
+ * @param pStmt - A pointer to the sqlite3_stmt used in a transaction. The pStmt is finalized in this method.
+ * @returns the result from @see sqlite.h#sqlite3_finalize
+ */
 int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
     if(!transaction) {
         if(jLiveData != nullptr) {
@@ -293,21 +308,56 @@ int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
     return sqlite3_finalize(pStmt);
 }
 
-jobject SqlWrapper::getLiveData(JNIEnv *env) {
-    if(javaVM == nullptr) {
-        env->GetJavaVM(&javaVM);
+/**
+ * Commits changes to @var jLiveData by getting changes to the database. This method is called anytime that a change is
+ * made using an INSERT, UPDATE, or DELETE
+ * @param pStmt - The statement associated with the latest sqlite statement. @param pStmt is finalized at the end of this
+ * method call
+ * @returns the results of sqlite3_finalize(pStmt) or 0 if pStmt is null
+ */
+int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
+    if(!transaction) {
+        if(jLiveData != nullptr) {
+            JNIEnv *env;
+            int environmentState = javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+            bool attached = false;
+            if(environmentState == JNI_EDETACHED) {
+                int rc = javaVM->AttachCurrentThread(&env, nullptr);
+                if(rc != JNI_OK) {
+                    __android_log_print(ANDROID_LOG_DEBUG, "SQL_ERROR", "Failed to attach");
+                } else {
+                    attached = true;
+                }
+            }
+            jobjectArray jAudioFileArray = retrieveAllSongs(env);
+            if(jAudioFileArray != nullptr) {
+                env->CallVoidMethod(jLiveData, postValue, jAudioFileArray);
+            }
+            if(attached) {
+                javaVM->DetachCurrentThread();
+            }
+        }
     }
-    if(this->jLiveData == nullptr) {
-        jclass jLiveDataClass = env->FindClass("androidx/lifecycle/MutableLiveData");
-        jmethodID jConstructor = env->GetMethodID(jLiveDataClass, "<init>", "()V");
-        jobject jLocal = env->NewObject(jLiveDataClass, jConstructor);
-        jLiveData = env->NewGlobalRef(jLocal);
-        postValue = env->GetMethodID(jLiveDataClass, "postValue", "(Ljava/lang/Object;)V");
+    if(pStmt == nullptr){
+        return 0;
     }
-    return jLiveData;
+    return sqlite3_finalize(pStmt);
 }
 
+/**
+ * Begins a transaction so that @var jLiveData isn't constantly being updated.
+ */
+void SqlWrapper::beginTransaction() {
+    transaction = true;
+}
 
+/**
+ * Finished a transaction and then calls #commitChanges().
+ */
+void SqlWrapper::closeTransaction() {
+    commitChanges(nullptr);
+    transaction = false;
+}
 
 ///========TABLE CHANGES ===============================================================================================
 
