@@ -1,4 +1,4 @@
-package com.trippntechnology.tntmusicplayer.activites.mainactivity
+package com.trippntechnology.tntmusicplayer.ux.activities.mainactivity
 
 import android.util.Log
 import android.view.View

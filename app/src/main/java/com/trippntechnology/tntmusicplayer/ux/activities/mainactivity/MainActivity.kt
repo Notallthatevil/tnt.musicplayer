@@ -1,4 +1,4 @@
-package com.trippntechnology.tntmusicplayer.activites.mainactivity
+package com.trippntechnology.tntmusicplayer.ux.activities.mainactivity
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.trippntechnology.tntmusicplayer.R
-import com.trippntechnology.tntmusicplayer.activites.mainactivity.adapter.AudioFileAdapter
+import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.adapter.AudioFileAdapter
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainBinding
 import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
