@@ -309,42 +309,6 @@ int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
 }
 
 /**
- * Commits changes to @var jLiveData by getting changes to the database. This method is called anytime that a change is
- * made using an INSERT, UPDATE, or DELETE
- * @param pStmt - The statement associated with the latest sqlite statement. @param pStmt is finalized at the end of this
- * method call
- * @returns the results of sqlite3_finalize(pStmt) or 0 if pStmt is null
- */
-int SqlWrapper::commitChanges(sqlite3_stmt *pStmt) {
-    if(!transaction) {
-        if(jLiveData != nullptr) {
-            JNIEnv *env;
-            int environmentState = javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
-            bool attached = false;
-            if(environmentState == JNI_EDETACHED) {
-                int rc = javaVM->AttachCurrentThread(&env, nullptr);
-                if(rc != JNI_OK) {
-                    __android_log_print(ANDROID_LOG_DEBUG, "SQL_ERROR", "Failed to attach");
-                } else {
-                    attached = true;
-                }
-            }
-            jobjectArray jAudioFileArray = retrieveAllSongs(env);
-            if(jAudioFileArray != nullptr) {
-                env->CallVoidMethod(jLiveData, postValue, jAudioFileArray);
-            }
-            if(attached) {
-                javaVM->DetachCurrentThread();
-            }
-        }
-    }
-    if(pStmt == nullptr){
-        return 0;
-    }
-    return sqlite3_finalize(pStmt);
-}
-
-/**
  * Begins a transaction so that @var jLiveData isn't constantly being updated.
  */
 void SqlWrapper::beginTransaction() {
