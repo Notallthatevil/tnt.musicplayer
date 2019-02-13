@@ -1,7 +1,7 @@
 package com.trippntechnology.tntmusicplayer.injector
 
 import android.app.Application
-import com.trippntechnology.tntmusicplayer.activites.mainactivity.MainActivity
+import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainActivity
 import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import dagger.Component
 import javax.inject.Singleton

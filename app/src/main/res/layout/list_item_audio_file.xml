@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.trippntechnology.tntmusicplayer.activites.mainactivity.MainViewModel" />
+            type="com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainViewModel" />
 
         <variable
             name="audioFile"

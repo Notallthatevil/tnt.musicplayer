@@ -2,7 +2,7 @@ package com.trippntechnology.tntmusicplayer.injector
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.trippntechnology.tntmusicplayer.activites.mainactivity.MainViewModel
+import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

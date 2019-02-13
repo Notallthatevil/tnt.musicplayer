@@ -2,23 +2,19 @@ package com.trippntechnology.tntmusicplayer.dialogs.edittagdialog
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
 import com.trippntechnology.tntmusicplayer.R
-import com.trippntechnology.tntmusicplayer.activites.mainactivity.MainViewModel
+import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainViewModel
 import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.DialogEditTagBinding
 import com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents.LiveDataObserverDialogFragment
