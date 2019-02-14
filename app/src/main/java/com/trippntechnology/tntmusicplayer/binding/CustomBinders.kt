@@ -4,8 +4,9 @@ import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
@@ -51,6 +52,20 @@ object CustomBinders {
             .into(imageView)
     }
 
+    @JvmStatic
+    @BindingAdapter("setList")
+    fun <T, VH : RecyclerView.ViewHolder> setList(recyclerView: RecyclerView, list: Array<T>?) {
+        list ?: return
+
+        @Suppress("UNCHECKED_CAST")
+        when {
+            recyclerView.adapter is ListAdapter<*, *> -> {
+                val adapter = recyclerView.adapter as ListAdapter<T, VH>
+                adapter.submitList(list.toList())
+            }
+            else -> error("Must use a ListAdapter for app:setList")
+        }
+    }
 
     @JvmStatic
     @BindingAdapter("setDuration")
