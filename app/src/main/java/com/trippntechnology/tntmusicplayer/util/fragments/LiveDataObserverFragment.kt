@@ -1,16 +1,16 @@
-package com.trippntechnology.tntmusicplayer.util
+package com.trippntechnology.tntmusicplayer.util.fragments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
-abstract class LiveDataObserverActivity : AppCompatActivity() {
+abstract class LiveDataObserverFragment : Fragment() {
     protected inline fun <T> LiveData<T>.observe(crossinline block: (T?) -> Unit) {
-        observe(this@LiveDataObserverActivity, Observer { block(it) })
+        observe(this@LiveDataObserverFragment, Observer { block(it) })
     }
 
     protected inline fun <T> LiveData<T>.observeNotNull(crossinline block: (T) -> Unit) {
-        observe(this@LiveDataObserverActivity, Observer {
+        observe(this@LiveDataObserverFragment, Observer {
             it ?: return@Observer
             block(it)
         })
