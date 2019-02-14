@@ -320,8 +320,8 @@ void SqlWrapper::beginTransaction() {
  * Finished a transaction and then calls #commitChanges().
  */
 void SqlWrapper::closeTransaction() {
-    commitChanges(nullptr);
     transaction = false;
+    commitChanges(nullptr);
 }
 
 ///========TABLE CHANGES ===============================================================================================
