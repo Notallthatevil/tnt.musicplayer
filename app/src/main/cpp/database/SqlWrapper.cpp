@@ -269,6 +269,7 @@ jobject SqlWrapper::getLiveData(JNIEnv *env) {
         jobject jLocal = env->NewObject(jLiveDataClass, jConstructor);
         jLiveData = env->NewGlobalRef(jLocal);
         postValue = env->GetMethodID(jLiveDataClass, "postValue", "(Ljava/lang/Object;)V");
+        env->CallVoidMethod(jLiveData, postValue, retrieveAllSongs(env));
     }
     return jLiveData;
 }
