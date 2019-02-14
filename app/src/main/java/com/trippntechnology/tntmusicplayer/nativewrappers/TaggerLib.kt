@@ -1,5 +1,6 @@
 package com.trippntechnology.tntmusicplayer.nativewrappers
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
@@ -13,7 +14,7 @@ object TaggerLib {
         numberOfSongs: SingleLiveEvent<ScanningDialog.IntegerWrapper>
     ): Array<String>?
 
-    external fun getAllAudioFiles(): MutableLiveData<Array<AudioFile>>
+    external fun getAllAudioFiles(): LiveData<Array<AudioFile>>
 
     external fun backgroundScan(directory: String)
 

@@ -3,6 +3,7 @@ package com.trippntechnology.tntmusicplayer.injector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainViewModel
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -18,6 +19,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     internal abstract fun bindMainViewModel(viewModel: MainViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AudioFileListSharedViewModel::class)
+    internal abstract fun bindAudioFileListSharedViewModel(viewModel: AudioFileListSharedViewModel):ViewModel
 
     /**Example*/
     /*

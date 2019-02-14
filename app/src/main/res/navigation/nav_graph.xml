@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/audioFileListFragment">
+
+    <fragment
+        android:id="@+id/audioFileListFragment"
+        android:name="com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment.AudioFileListFragment"
+        android:label="AudioFileListFragment"
+        tools:layout="@layout/fragment_audio_file_list">
+
+        <action
+            android:id="@+id/editTagAction"
+            app:destination="@id/editTagFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editTagFragment"
+        android:name="com.trippntechnology.tntmusicplayer.ux.fragments.edittagfragment.EditTagFragment"
+        android:label="EditTagFragment"
+        tools:layout="@layout/fragment_edit_tag" />
+
+</navigation>
