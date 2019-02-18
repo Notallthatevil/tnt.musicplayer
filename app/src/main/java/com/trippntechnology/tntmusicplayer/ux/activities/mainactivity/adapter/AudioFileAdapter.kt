@@ -17,7 +17,7 @@ class AudioFileAdapter(private val viewModel: MainViewModel) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioFileAdapter.ViewHolder {
         return ViewHolder(parent).apply {
-            binding.viewModel = viewModel
+//            binding.viewModel = viewModel
         }
     }
 

@@ -8,18 +8,27 @@
     <fragment
         android:id="@+id/audioFileListFragment"
         android:name="com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment.AudioFileListFragment"
-        android:label="AudioFileListFragment"
+        android:label="AudioFileList"
         tools:layout="@layout/fragment_audio_file_list">
 
         <action
             android:id="@+id/editTagAction"
-            app:destination="@id/editTagFragment" />
+            app:destination="@id/editTagFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
         android:id="@+id/editTagFragment"
         android:name="com.trippntechnology.tntmusicplayer.ux.fragments.edittagfragment.EditTagFragment"
         android:label="EditTagFragment"
-        tools:layout="@layout/fragment_edit_tag" />
+        tools:layout="@layout/fragment_edit_tag">
+        <argument
+            android:name="arrayPosition"
+            android:defaultValue="-1L" />
+    </fragment>
+
 
 </navigation>

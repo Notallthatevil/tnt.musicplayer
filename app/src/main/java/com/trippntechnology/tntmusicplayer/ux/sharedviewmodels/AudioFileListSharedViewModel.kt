@@ -1,6 +1,5 @@
 package com.trippntechnology.tntmusicplayer.ux.sharedviewmodels
 
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
@@ -19,7 +18,7 @@ class AudioFileListSharedViewModel
 
     val audioFileList = TaggerLib.getAllAudioFiles()
 
-    val audioFileSelected = SingleLiveEvent<Int>()
+    val audioFileLongClick = SingleLiveEvent<View>()
 
     val currentProgress = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val maxProgress = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
@@ -38,10 +37,8 @@ class AudioFileListSharedViewModel
         }
     }
 
-
-    fun audioFileSelected(position: Int): Boolean {
-        audioFileSelected.value = position
-        Log.d("AudioFileListShared", position.toString())
+    fun audioFileLongClick(view: View, position: Int): Boolean {
+        audioFileLongClick.value = view
         return true
     }
 

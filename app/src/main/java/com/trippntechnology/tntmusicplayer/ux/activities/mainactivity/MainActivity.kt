@@ -18,11 +18,12 @@ import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.adapter.Au
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainBinding
 import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
-import com.trippntechnology.tntmusicplayer.util.LiveDataObserverActivity
+import com.trippntechnology.tntmusicplayer.util.activities.LiveDataObserverActivity
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
+import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
 import javax.inject.Inject
 
-class MainActivity : LiveDataObserverActivity() {
+class MainActivity : BaseActivity() {
 
     private val PERMISSION_TO_WRITE_EXTERNAL_STORAGE = 1122
     private val DIALOG_TAG = "dialog"

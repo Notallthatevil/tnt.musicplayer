@@ -7,7 +7,7 @@ import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
-import com.trippntechnology.tntmusicplayer.viewmodelcomponents.BaseViewModel
+import com.trippntechnology.tntmusicplayer.util.viewmodels.BaseViewModel
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.network.coverartretriever.CoverArtRetriever
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ class MainViewModel
 ) : BaseViewModel(cc) {
 
     //Scanning data
-    val fullSongList: MutableLiveData<Array<AudioFile>> = taggerLib.getAllAudioFiles()
+    val fullSongList= MutableLiveData<Array<AudioFile>>()
 
     val parsingCurrentSong = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val numberOfSongs = SingleLiveEvent<ScanningDialog.IntegerWrapper>()

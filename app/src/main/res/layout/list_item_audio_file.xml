@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
-        android:onLongClick="@{()-> viewModel.audioFileSelected(position)}">
+        android:onLongClick="@{()-> viewModel.audioFileLongClick(imageView,position)}">
 
         <ImageView
             android:id="@+id/imageView"
@@ -33,6 +33,7 @@
             android:contentDescription="@string/albumcover"
             android:background="#00000000"
             app:setImage="@{audioFile}"
+            android:transitionName="listItemCover"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

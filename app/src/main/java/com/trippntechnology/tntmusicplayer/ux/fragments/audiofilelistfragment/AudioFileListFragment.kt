@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.FragmentAudioFileListBinding
@@ -30,7 +32,7 @@ class AudioFileListFragment : BaseFragment() {
     }
     private val adapter by lazy { AudioFileAdapter(viewModel) }
 
-    private lateinit var scanningDialog:ScanningDialog
+    private lateinit var scanningDialog: ScanningDialog
 
 
     init {
@@ -49,6 +51,7 @@ class AudioFileListFragment : BaseFragment() {
         }
         setupRecyclerView()
         setupScanningDialogObservers()
+        setupAudioFileObservers()
     }
 
     override fun onResume() {
@@ -59,12 +62,19 @@ class AudioFileListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         binding.audioFileListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.audioFileListRecyclerView.adapter = adapter
+        binding.audioFileListRecyclerView.addItemDecoration(object : DividerItemDecoration(activity, VERTICAL) {})
+    }
+
+    private fun setupAudioFileObservers() {
+        viewModel.audioFileLongClick.observe {
+            showEditTag(it!!)
+        }
     }
 
     private fun setupScanningDialogObservers() {
         scanningDialog = ScanningDialog(requireActivity())
 
-        viewModel.currentProgress.observeNotNull{
+        viewModel.currentProgress.observeNotNull {
             scanningDialog.increaseCurrentProgress(it)
         }
         viewModel.maxProgress.observeNotNull {
@@ -72,6 +82,11 @@ class AudioFileListFragment : BaseFragment() {
         }
     }
 
+    private fun showEditTag(view:View) {
+        val directions = AudioFileListFragmentDirections.editTagAction().setArrayPosition(0)
+        val extras = FragmentNavigator.Extras.Builder().addSharedElement(view, "editTagCover").build()
+        NavHostFragment.findNavController(this).navigate(directions, extras)
+    }
 
 //    private fun restoreState(bundle: Bundle) {
 //        with(SaveStateOptions) {

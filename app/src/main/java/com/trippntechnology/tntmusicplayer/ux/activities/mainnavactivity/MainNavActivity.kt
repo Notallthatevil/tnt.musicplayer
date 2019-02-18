@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainNavBinding
 import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
+import com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment.AudioFileListFragment
 
 class MainNavActivity : BaseActivity() {
 
@@ -27,15 +28,19 @@ class MainNavActivity : BaseActivity() {
                 WRITE_EXTERNAL_STORAGE
             )
         } else {
-            binding = DataBindingUtil.setContentView(this, R.layout.activity_main_nav)
+            showView()
         }
+    }
+
+    private fun showView(){
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_nav)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             WRITE_EXTERNAL_STORAGE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    binding = DataBindingUtil.setContentView(this, R.layout.activity_main_nav)
+                    showView()
                 } else {
                     ActivityCompat.requestPermissions(
                         this,
