@@ -23,6 +23,7 @@ class AudioFileAdapter(private val viewModel: AudioFileListSharedViewModel) :
     override fun onBindViewHolder(holder: AudioFileAdapter.ViewHolder, position: Int) {
         holder.binding.audioFile = getItem(position)
         holder.binding.position = position
+        holder.binding.listItemAudioFileConstraintLayout.transitionName = "listItemAudioFileConstraintLayout$position"
     }
 
 

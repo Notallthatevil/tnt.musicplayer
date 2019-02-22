@@ -18,10 +18,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/listItemAudioFileConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:onLongClick="@{()-> viewModel.audioFileLongClick(imageView,position)}">
+        android:onLongClick="@{()-> viewModel.audioFileLongClick(listItemAudioFileConstraintLayout,position)}">
 
         <ImageView
             android:id="@+id/imageView"
@@ -33,7 +33,6 @@
             android:contentDescription="@string/albumcover"
             android:background="#00000000"
             app:setImage="@{audioFile}"
-            android:transitionName="listItemCover"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -77,5 +76,14 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:setDuration="@{audioFile.duration}" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:background="#292929"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/album" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

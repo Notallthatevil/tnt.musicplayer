@@ -5,6 +5,7 @@ import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainActivi
 import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.ux.activities.mainnavactivity.MainNavActivity
 import com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment.AudioFileListFragment
+import com.trippntechnology.tntmusicplayer.ux.fragments.edittagfragment.EditTagFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -18,6 +19,7 @@ interface AppComponent {
     fun inject(target:MainActivity)
     fun inject(target:MainNavActivity)
     fun inject(target:AudioFileListFragment)
+    fun inject(target:EditTagFragment)
 
     //Dialog
     fun inject(target:EditTagDialog)

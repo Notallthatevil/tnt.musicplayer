@@ -18,7 +18,7 @@ class AudioFileListSharedViewModel
 
     val audioFileList = TaggerLib.getAllAudioFiles()
 
-    val audioFileLongClick = SingleLiveEvent<View>()
+    val audioFileLongClick = SingleLiveEvent<LongClickItem>()
 
     val currentProgress = MutableLiveData<ScanningDialog.CurrentProgressWrapper>()
     val maxProgress = SingleLiveEvent<ScanningDialog.IntegerWrapper>()
@@ -38,7 +38,7 @@ class AudioFileListSharedViewModel
     }
 
     fun audioFileLongClick(view: View, position: Int): Boolean {
-        audioFileLongClick.value = view
+        audioFileLongClick.value = LongClickItem(view,position.toLong())
         return true
     }
 
@@ -51,4 +51,6 @@ class AudioFileListSharedViewModel
             }
         }
     }
+
+    data class LongClickItem(val view: View,val position: Long)
 }

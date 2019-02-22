@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.*
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.FragmentAudioFileListBinding
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
@@ -40,6 +39,8 @@ class AudioFileListFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        enterTransition = Fade()
+        exitTransition = Fade()
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_audio_file_list, container, false)
         return binding.root
     }
@@ -62,7 +63,6 @@ class AudioFileListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         binding.audioFileListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.audioFileListRecyclerView.adapter = adapter
-        binding.audioFileListRecyclerView.addItemDecoration(object : DividerItemDecoration(activity, VERTICAL) {})
     }
 
     private fun setupAudioFileObservers() {
@@ -82,19 +82,10 @@ class AudioFileListFragment : BaseFragment() {
         }
     }
 
-    private fun showEditTag(view:View) {
-        val directions = AudioFileListFragmentDirections.editTagAction().setArrayPosition(0)
-        val extras = FragmentNavigator.Extras.Builder().addSharedElement(view, "editTagCover").build()
-        NavHostFragment.findNavController(this).navigate(directions, extras)
+    private fun showEditTag(longClickItem: AudioFileListSharedViewModel.LongClickItem) {
+        val directions = AudioFileListFragmentDirections.editTagAction().setArrayPosition(longClickItem.position)
+//        val extras = FragmentNavigatorExtras(longClickItem.view to "editTagTransitionName")
+        NavHostFragment.findNavController(this).navigate(directions)
     }
 
-//    private fun restoreState(bundle: Bundle) {
-//        with(SaveStateOptions) {
-//            binding.recyclerView.scrollToPosition(bundle.scrollPosition!!)
-//        }
-//    }
-//
-//    object SaveStateOptions {
-//        var Bundle.scrollPosition by BundleExtra.Int()
-//    }
 }
