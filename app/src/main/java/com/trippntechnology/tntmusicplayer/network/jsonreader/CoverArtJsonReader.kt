@@ -22,16 +22,6 @@ class CoverArtJsonReader {
         }
         jsonReader.beginArray()
         jsonReader.beginObject()
-//        val firstItemName = jsonReader.nextName()
-//        if (firstItemName == "release") {
-//            jsonReader.skipValue()
-//            jsonReader.nextName()
-//            jsonReader.beginArray()
-//            jsonReader.beginObject()
-//        }else{
-//            jsonReader.beginArray()
-//            jsonReader.beginObject()
-//        }
         while (jsonReader.hasNext()) {
             val name = jsonReader.nextName()
             when (name) {
