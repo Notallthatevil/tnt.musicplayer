@@ -246,14 +246,12 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
     std::string track = jstringToString(env, &jtrack);
     std::string filePath = jstringToString(env, &jfilePath);
 
-    unsigned char *cover;
+    unsigned char *cover = nullptr;
     int length = 0;
     if(jcover != nullptr) {
         length = env->GetArrayLength(jcover);
         cover = new unsigned char[length];
         env->GetByteArrayRegion(jcover, 0, length, (jbyte *) cover);
-    } else {
-        cover = nullptr;
     }
 
     Tag *tag = nullptr;

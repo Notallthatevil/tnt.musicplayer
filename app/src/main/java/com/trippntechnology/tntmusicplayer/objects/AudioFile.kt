@@ -17,12 +17,12 @@ data class AudioFile(
     val sampleRate: Int = 0,
     val bitRate: Int = 0
 ) {
-    fun tagsEqual(title: String,album: String,artist: String,year: String,track: String):Boolean{
-        if (title!= this.title)return false
-        if (album!= this.album)return false
-        if (artist!=this.artist) return false
-        if (year != this.year) return false
-        if (track!=this.track)return false
+    fun tagsEqual(title: String?, album: String?, artist: String?, year: String?, track: String?): Boolean {
+        if (title != this.title || (title.isNullOrEmpty() == this.title.isNullOrEmpty())) return false
+        if (album != this.album || (album.isNullOrEmpty() == this.album.isNullOrEmpty())) return false
+        if (artist != this.artist || (artist.isNullOrEmpty() == this.artist.isNullOrEmpty())) return false
+        if (year != this.year || (year.isNullOrEmpty() == this.year.isNullOrEmpty())) return false
+        if (track != this.track || (track.isNullOrEmpty() == this.track.isNullOrEmpty())) return false
         return true
     }
 }

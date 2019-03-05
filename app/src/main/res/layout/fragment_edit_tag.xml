@@ -5,6 +5,7 @@
     android:transitionGroup="true">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel" />
@@ -17,8 +18,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:transitionName="editTagTransitionName"
-        android:elevation="52dp">
+        android:elevation="52dp"
+        android:transitionName="editTagTransitionName">
 
         <TextView
             android:id="@+id/editTagDialogTitle"
@@ -51,12 +52,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
+            android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
             android:text="@string/save_tags"
             android:textColor="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTagTrackLayout" />
-        <!--android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"-->
-
 
         <Button
             android:id="@+id/button2"
@@ -66,11 +66,10 @@
             android:layout_marginEnd="16dp"
             android:text="@string/cancel"
             android:textColor="@color/colorAccent"
+            android:onClick="@{()->viewModel.cancel()}"
             app:layout_constraintBottom_toBottomOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/button"
             app:layout_constraintTop_toTopOf="@+id/button" />
-        <!--android:onClick="@{()->viewModel.cancel()}"-->
-
 
         <TextView
             android:id="@+id/editTagFilePathLabel"
@@ -224,7 +223,6 @@
             app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
         <!--android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"-->
 
-
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"
@@ -238,6 +236,21 @@
             app:layout_constraintStart_toEndOf="@+id/editTagCover" />
         <!--android:onClick="@{()->viewModel.selectAlbumArt()}"-->
 
+        <ProgressBar
+            android:id="@+id/spinningWheel"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
