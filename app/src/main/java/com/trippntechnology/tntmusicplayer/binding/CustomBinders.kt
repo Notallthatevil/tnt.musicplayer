@@ -42,7 +42,7 @@ object CustomBinders {
             .into(imageView)
     }
 
-    fun setImage(imageView: ImageView, bitmap: Bitmap) {
+    fun setImage(imageView: ImageView, bitmap: Bitmap?) {
         GlideApp.with(imageView)
             .load(bitmap)
             .placeholder(R.mipmap.ic_launcher)

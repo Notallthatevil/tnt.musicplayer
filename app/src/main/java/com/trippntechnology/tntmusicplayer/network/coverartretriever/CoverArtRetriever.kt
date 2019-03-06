@@ -41,8 +41,6 @@ class CoverArtRetriever {
                 count = imageStream.read(buffer)
             }
             return boas.toByteArray()
-//        Log.d("AUTO_FIND_COVER", "Creating bitmap")
-//        return BitmapFactory.decodeStream(URL(imageURL).openStream())
         } catch (e: FileNotFoundException) {
             return null
         }
@@ -163,6 +161,6 @@ class CoverArtRetriever {
         const val INCLUDE_ALBUM_SEARCH = "?inc=release-groups"
 
 
-        private val BASE_COVER_URL = "https://coverartarchive.org/release-group/"
+        private const val BASE_COVER_URL = "https://coverartarchive.org/release-group/"
     }
 }

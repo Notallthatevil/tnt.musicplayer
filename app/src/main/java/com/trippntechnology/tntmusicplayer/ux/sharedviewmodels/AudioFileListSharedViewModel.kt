@@ -1,9 +1,12 @@
 package com.trippntechnology.tntmusicplayer.ux.sharedviewmodels
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
+import com.trippntechnology.tntmusicplayer.network.coverartretriever.CoverArtRetriever
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
@@ -26,8 +29,10 @@ class AudioFileListSharedViewModel
 
     val showProgressWheel = MutableLiveData<Int>()
 
+    val updateImageView = MutableLiveData<Bitmap?>()
+
     private var syncing = false
-    private var newCover :ByteArray? = null
+    private var newCover: ByteArray? = null
 
     fun startup() {
         if (TaggerLib.songTableExist()) {
@@ -42,7 +47,7 @@ class AudioFileListSharedViewModel
     }
 
     fun audioFileLongClick(view: View, position: Int): Boolean {
-        audioFileLongClick.value = LongClickItem(view,position.toLong())
+        audioFileLongClick.value = LongClickItem(view, position.toLong())
         return true
     }
 
@@ -62,8 +67,8 @@ class AudioFileListSharedViewModel
         if (!oldAudioFile.tagsEqual(title, album, artist, year, track) || newCover != null) {
             showProgressWheel.postValue(-1)
             //FIXME this should just be done in the SQL
-            if (newCover == null){
-                newCover = TaggerLib.getCover(oldAudioFile.filePath,oldAudioFile.coverSize,oldAudioFile.coverOffset);
+            if (newCover == null) {
+                newCover = TaggerLib.getCover(oldAudioFile.filePath, oldAudioFile.coverSize, oldAudioFile.coverOffset)
             }
             launch {
                 val success = TaggerLib.updateNewTags(
@@ -82,9 +87,28 @@ class AudioFileListSharedViewModel
         }
     }
 
-    fun cancel(){
+    fun autoFindAlbumArt(
+        title: String,
+        album: String,
+        artist: String,
+        year: String,
+        track: String,
+        oldAudioFile: AudioFile) {
+        launch {
+            val newAudioFile = AudioFile(id = oldAudioFile.id, title = title, album = album, artist = artist, year = year, track = track, filePath = oldAudioFile.filePath)
+            newCover = CoverArtRetriever().autoFindAlbumArt(newAudioFile)
+            val bitmap = if (newCover != null){
+                BitmapFactory.decodeByteArray(newCover,0,newCover!!.size)
+            }else{
+                null
+            }
+            updateImageView.postValue(bitmap)
+        }
+    }
+
+    fun cancel() {
         showProgressWheel.postValue(-2)
     }
 
-    data class LongClickItem(val view: View,val position: Long)
+    data class LongClickItem(val view: View, val position: Long)
 }

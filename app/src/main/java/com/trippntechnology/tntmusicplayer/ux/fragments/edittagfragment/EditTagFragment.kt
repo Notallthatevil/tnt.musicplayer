@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.transition.*
 import com.trippntechnology.tntmusicplayer.R
+import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.FragmentEditTagBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
@@ -36,18 +37,6 @@ class EditTagFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        sharedElementEnterTransition = TransitionSet().apply {
-//            addTransition(ChangeBounds())
-//            addTransition(ChangeTransform())
-//            addTransition(ChangeClipBounds())
-//            duration = 300
-//        }
-//        sharedElementReturnTransition = TransitionSet().apply {
-//            addTransition(ChangeBounds())
-//            addTransition(ChangeTransform())
-//            addTransition(ChangeClipBounds())
-//            duration = 300
-//        }
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_tag, container, false)
         binding.audioFile =
             viewModel.audioFileList.value!![EditTagFragmentArgs.fromBundle(arguments!!).arrayPosition.toInt()]
@@ -75,6 +64,10 @@ class EditTagFragment : BaseFragment() {
                     Toast.makeText(activity, "New tags successfully saved", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        viewModel.updateImageView.observe{
+                CustomBinders.setImage(editTagCover,it)
         }
 
     }

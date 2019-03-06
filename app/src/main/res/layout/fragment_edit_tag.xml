@@ -64,9 +64,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:onClick="@{()->viewModel.cancel()}"
             android:text="@string/cancel"
             android:textColor="@color/colorAccent"
-            android:onClick="@{()->viewModel.cancel()}"
             app:layout_constraintBottom_toBottomOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/button"
             app:layout_constraintTop_toTopOf="@+id/button" />
@@ -217,11 +217,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
             android:text="Auto find"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/editTagCover"
             app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
-        <!--android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"-->
 
         <Button
             android:id="@+id/button4"
@@ -242,11 +242,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:visibility="gone"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
