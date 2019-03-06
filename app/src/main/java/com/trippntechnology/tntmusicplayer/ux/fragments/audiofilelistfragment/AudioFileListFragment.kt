@@ -39,8 +39,6 @@ class AudioFileListFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        enterTransition = Fade()
-        exitTransition = Fade()
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_audio_file_list, container, false)
         return binding.root
     }

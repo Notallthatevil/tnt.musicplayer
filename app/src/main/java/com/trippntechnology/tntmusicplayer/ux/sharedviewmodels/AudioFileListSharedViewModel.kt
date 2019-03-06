@@ -65,7 +65,7 @@ class AudioFileListSharedViewModel
     //Edit Tag Fragment=================================================================================================
     fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {
         if (!oldAudioFile.tagsEqual(title, album, artist, year, track) || newCover != null) {
-            showProgressWheel.postValue(-1)
+            showProgressWheel.postValue(SAVING_TAGS)
             //FIXME this should just be done in the SQL
             if (newCover == null) {
                 newCover = TaggerLib.getCover(oldAudioFile.filePath, oldAudioFile.coverSize, oldAudioFile.coverOffset)
@@ -94,6 +94,7 @@ class AudioFileListSharedViewModel
         year: String,
         track: String,
         oldAudioFile: AudioFile) {
+        showProgressWheel.postValue(AUTO_FIND_COVER)
         launch {
             val newAudioFile = AudioFile(id = oldAudioFile.id, title = title, album = album, artist = artist, year = year, track = track, filePath = oldAudioFile.filePath)
             newCover = CoverArtRetriever().autoFindAlbumArt(newAudioFile)
@@ -103,12 +104,21 @@ class AudioFileListSharedViewModel
                 null
             }
             updateImageView.postValue(bitmap)
+            showProgressWheel.postValue(AUTO_FIND_COVER_FINISHED)
         }
     }
 
     fun cancel() {
-        showProgressWheel.postValue(-2)
+        showProgressWheel.postValue(CANCEL)
     }
 
     data class LongClickItem(val view: View, val position: Long)
+
+    companion object {
+        const val CANCEL = 101
+        const val SAVING_TAGS = 100
+        const val TAGS_SAVED = 0
+        const val AUTO_FIND_COVER = 102
+        const val AUTO_FIND_COVER_FINISHED = 103
+    }
 }

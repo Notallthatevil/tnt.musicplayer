@@ -4,19 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.transition.*
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.FragmentEditTagBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.AUTO_FIND_COVER
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.AUTO_FIND_COVER_FINISHED
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.CANCEL
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.SAVING_TAGS
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.TAGS_SAVED
 import kotlinx.android.synthetic.main.fragment_edit_tag.*
 import javax.inject.Inject
 
@@ -52,23 +54,36 @@ class EditTagFragment : BaseFragment() {
     private fun setUpObservers() {
         viewModel.showProgressWheel.observe {
             when (it!!) {
-                -2 -> fragmentManager?.popBackStack()
-                -1 -> spinningWheel.visibility = View.VISIBLE
-                0 -> {
-                    spinningWheel.visibility = View.GONE
+                CANCEL -> fragmentManager?.popBackStack()
+                SAVING_TAGS -> savingTagWheel.visibility = View.VISIBLE
+                TAGS_SAVED -> {
+                    savingTagWheel.visibility = View.GONE
                     Toast.makeText(activity, "New tags successfully saved", Toast.LENGTH_SHORT).show()
                     fragmentManager?.popBackStack()
                 }
+                AUTO_FIND_COVER -> {
+                    coverWheel.visibility = View.VISIBLE
+                    autoFindCoverButton.isEnabled = false
+                    selectCoverButton.isEnabled = false
+                }
+                AUTO_FIND_COVER_FINISHED -> {
+                    coverWheel.visibility = View.GONE
+                    autoFindCoverButton.isEnabled = true
+                    selectCoverButton.isEnabled = true
+                }
+
                 else -> {
-                    spinningWheel.visibility = View.GONE
-                    Toast.makeText(activity, "New tags successfully saved", Toast.LENGTH_SHORT).show()
+                    savingTagWheel.visibility = View.GONE
+                    Toast.makeText(activity, "An unexpected error occurred", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        viewModel.updateImageView.observe{
-                CustomBinders.setImage(editTagCover,it)
+        viewModel.updateImageView.observe {
+            CustomBinders.setImage(editTagCover, it)
+            if (it == null) {
+                Toast.makeText(activity, "No cover found.", Toast.LENGTH_SHORT).show()
+            }
         }
-
     }
 }
