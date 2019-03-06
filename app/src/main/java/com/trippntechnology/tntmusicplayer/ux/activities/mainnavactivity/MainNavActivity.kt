@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainNavBinding
 import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
-import com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment.AudioFileListFragment
 
 class MainNavActivity : BaseActivity() {
 

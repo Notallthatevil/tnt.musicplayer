@@ -230,11 +230,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:onClick="@{()->viewModel.selectAlbumArt()}"
             android:text="Select"
             app:layout_constraintBottom_toTopOf="@+id/editTagTitleLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/editTagCover" />
-        <!--android:onClick="@{()->viewModel.selectAlbumArt()}"-->
 
         <ProgressBar
             android:id="@+id/savingTagWheel"
