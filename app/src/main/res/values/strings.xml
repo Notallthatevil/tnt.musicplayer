@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tnt.musicplayer</string>
+    <string name="app_name">Mp3 Tagger</string>
     <string name="scanning_for_music">Scanning for music files</string>
     <string name="placeholder">placeholder</string>
     <string name="unknown">&lt;unknown&gt;</string>
