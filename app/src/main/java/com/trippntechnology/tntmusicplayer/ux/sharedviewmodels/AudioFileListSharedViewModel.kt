@@ -13,6 +13,8 @@ import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
 import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
 import com.trippntechnology.tntmusicplayer.util.viewmodels.BaseViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +34,8 @@ class AudioFileListSharedViewModel
 
     val selectCover = SingleLiveEvent<Void>()
     val updateImageView = MutableLiveData<Bitmap?>()
+
+    var autoFindJob:Job?=null
 
     private var syncing = false
     var newCover: ByteArray? = null
@@ -106,6 +110,30 @@ class AudioFileListSharedViewModel
             }
             updateImageView.postValue(bitmap)
             editTagValues.postValue(AUTO_FIND_ALBUM_ART_FINISHED)
+        }
+    }
+
+    fun autoFindAllAlbumArt(){
+        Log.d("AUTO_FIND_COVER", "Not ready to implement")
+        autoFindJob = launch {
+            val list = audioFileList.value
+            if (!list.isNullOrEmpty()) {
+                list.forEachIndexed { index, audioFile ->
+                    Log.d("AUTO_FIND_COVER", "On file $index of ${list.size}")
+                    if (audioFile.coverSize < 1) {
+                        Log.d("AUTO_FIND_COVER", "Adding cover to ${audioFile.title}")
+                        val newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
+                        if (!isActive){
+                            Log.d("AUTO_FIND_COVER", "Job canceled")
+                            return@launch
+                        }
+                        if (newCover != null) {
+                            TaggerLib.updateNewTags(audioFile, newCover)
+                        }
+                    }
+
+                }
+            }
         }
     }
 
