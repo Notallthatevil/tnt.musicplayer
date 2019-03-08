@@ -119,6 +119,10 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
     }
     SqlWrapper::getInstance().closeTransaction();
     __android_log_print(ANDROID_LOG_INFO, "SCANNING", "Finished");
+
+    jobject jProgressWrapperObject = env->NewObject(jProgressWrapper, progressWrapperConstructor, -1, nullptr);
+    env->CallVoidMethod(currentSong, postCurrentSong, jProgressWrapperObject);
+
     return jDirList;
 }
 

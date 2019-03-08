@@ -41,9 +41,9 @@ class ScanningDialog(context: Activity) : Dialog(context, false, null) {
         }
         alertProgress.progress = wrapper.currentItemPosition
         alertProgressCounter.text = "${alertProgress.progress}/${alertProgress.max}"
-        setBody(wrapper.currentItem)
+        setBody(wrapper.currentItem!!)
     }
 
-    data class CurrentProgressWrapper(val currentItemPosition: Int, val currentItem: String)
+    data class CurrentProgressWrapper(val currentItemPosition: Int, val currentItem: String?)
     data class IntegerWrapper(val int: Int)
 }

@@ -70,7 +70,11 @@ class AudioFileListFragment : BaseFragment() {
         scanningDialog = ScanningDialog(requireActivity())
 
         viewModel.currentProgress.observeNotNull {
-            scanningDialog.increaseCurrentProgress(it)
+            if (it.currentItemPosition == -1) {
+                scanningDialog.dismiss()
+            } else {
+                scanningDialog.increaseCurrentProgress(it)
+            }
         }
         viewModel.maxProgress.observeNotNull {
             scanningDialog.setMaxProgress(it.int)
