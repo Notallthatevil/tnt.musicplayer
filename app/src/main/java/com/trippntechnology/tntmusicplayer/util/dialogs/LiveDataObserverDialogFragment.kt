@@ -1,4 +1,4 @@
-package com.trippntechnology.tntmusicplayer.dialogs.dialogcomponents
+package com.trippntechnology.tntmusicplayer.util.dialogs
 
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData

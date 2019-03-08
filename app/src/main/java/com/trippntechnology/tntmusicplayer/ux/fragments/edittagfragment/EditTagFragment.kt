@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.FragmentEditTagBinding
-import com.trippntechnology.tntmusicplayer.dialogs.edittagdialog.EditTagDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel

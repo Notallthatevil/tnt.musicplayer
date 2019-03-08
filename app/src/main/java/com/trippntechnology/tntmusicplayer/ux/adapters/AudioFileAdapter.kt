@@ -1,4 +1,4 @@
-package com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.adapter
+package com.trippntechnology.tntmusicplayer.ux.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,23 +7,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.trippntechnology.tntmusicplayer.R
-import com.trippntechnology.tntmusicplayer.ux.activities.mainactivity.MainViewModel
 import com.trippntechnology.tntmusicplayer.databinding.ListItemAudioFileBinding
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
+import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
 
-
-class AudioFileAdapter(private val viewModel: MainViewModel) :
+class AudioFileAdapter(private val viewModel: AudioFileListSharedViewModel) :
     ListAdapter<AudioFile, AudioFileAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioFileAdapter.ViewHolder {
         return ViewHolder(parent).apply {
-//            binding.viewModel = viewModel
+            binding.viewModel = viewModel
         }
     }
 
     override fun onBindViewHolder(holder: AudioFileAdapter.ViewHolder, position: Int) {
         holder.binding.audioFile = getItem(position)
         holder.binding.position = position
+        holder.binding.listItemAudioFileConstraintLayout.transitionName = "listItemAudioFileConstraintLayout$position"
     }
 
 

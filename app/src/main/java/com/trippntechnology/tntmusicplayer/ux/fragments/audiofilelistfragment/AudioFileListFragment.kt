@@ -7,13 +7,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.*
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.FragmentAudioFileListBinding
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
-import com.trippntechnology.tntmusicplayer.ux.listadapters.AudioFileAdapter
+import com.trippntechnology.tntmusicplayer.ux.adapters.AudioFileAdapter
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
 import javax.inject.Inject
 

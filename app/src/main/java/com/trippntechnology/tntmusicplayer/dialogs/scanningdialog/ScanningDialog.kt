@@ -7,7 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import com.trippntechnology.tntmusicplayer.R
-import kotlinx.android.synthetic.main.dialog_directory_scanning.*
+import kotlinx.android.synthetic.main.dialog_progress_indicator.*
 
 @SuppressLint("SetTextI18n")
 class ScanningDialog(context: Activity) : Dialog(context, false, null) {
@@ -15,7 +15,7 @@ class ScanningDialog(context: Activity) : Dialog(context, false, null) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_directory_scanning)
+        setContentView(R.layout.dialog_progress_indicator)
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
