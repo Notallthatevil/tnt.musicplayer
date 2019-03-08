@@ -408,7 +408,7 @@ int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
                       SONG_COVER_OFFSET + " = ?6, " +
                       SONG_COVER_SIZE + " = ?7, " +
                       SONG_LAST_MODIFIED + " = ?8 WHERE " +
-                      SONG_ID + " = " + std::to_string(ID) + ";";
+                      SONG_ID + " = ?9;";
 
 
     if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -417,6 +417,7 @@ int SqlWrapper::updateSong(Tag *tag, int ID, long lastModifiedTime) {
         return sqlite3_finalize(stmt);
 
     }
+    sqlite3_bind_int(stmt,9,ID);
     return updateSong(&stmt, tag, lastModifiedTime);
 }
 
@@ -438,7 +439,7 @@ int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime
                       SONG_COVER_OFFSET + " = ?6, " +
                       SONG_COVER_SIZE + " = ?7, " +
                       SONG_LAST_MODIFIED + " = ?8 WHERE " +
-                      SONG_FILEPATH + " = \'" + filePath + "\';";
+                      SONG_FILEPATH + " = ?9;";
 
 
     if(sqlite3_prepare_v2(mDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -446,6 +447,7 @@ int SqlWrapper::updateSong(Tag *tag, std::string filePath, long lastModifiedTime
                             sqlite3_errmsg(mDb));
         return sqlite3_finalize(stmt);
     }
+    sqlite3_bind_text(stmt,9,filePath.c_str(),-1,SQLITE_TRANSIENT);
     return updateSong(&stmt, tag, lastModifiedTime);
 }
 
