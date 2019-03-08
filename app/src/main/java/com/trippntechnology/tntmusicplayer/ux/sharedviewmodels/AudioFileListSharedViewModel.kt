@@ -46,7 +46,7 @@ class AudioFileListSharedViewModel
         } else {
             launch(Dispatchers.IO) {
                 syncing = true
-                TaggerLib.scanDirectory("/storage/emulated/0/Music/", currentProgress, maxProgress)
+                TaggerLib.scanDirectory("/storage/emulated/0/", currentProgress, maxProgress)
                 syncing = false
             }
         }
