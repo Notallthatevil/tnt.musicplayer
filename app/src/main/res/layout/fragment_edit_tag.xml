@@ -15,256 +15,260 @@
             type="com.trippntechnology.tntmusicplayer.objects.AudioFile" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="52dp"
-        android:transitionName="editTagTransitionName">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/editTagDialogTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/edit_tags"
-            android:textColor="@color/primaryTextDark"
-            android:textSize="@dimen/alert_dialog_title"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="52dp"
+            android:transitionName="editTagTransitionName">
 
-        <ImageView
-            android:id="@+id/editTagCover"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/albumcover"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagFilePath"
-            app:setImage="@{audioFile}" />
-
-        <Button
-            android:id="@+id/button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
-            android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
-            android:text="@string/save_tags"
-            android:textColor="@color/colorAccent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagTrackLayout" />
-
-        <Button
-            android:id="@+id/button2"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:onClick="@{()->viewModel.cancel()}"
-            android:text="@string/cancel"
-            android:textColor="@color/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/button"
-            app:layout_constraintEnd_toStartOf="@+id/button"
-            app:layout_constraintTop_toTopOf="@+id/button" />
-
-        <TextView
-            android:id="@+id/editTagFilePathLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/filepathLabel"
-            android:textColor="@color/primaryTextDark"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagDialogTitle" />
-
-        <TextView
-            android:id="@+id/editTagFilePath"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:singleLine="true"
-            android:text="@{audioFile.filePath}"
-            android:textColor="@color/primaryTextDark"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagFilePathLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTagFilePathLabel"
-            app:layout_constraintTop_toTopOf="@+id/editTagFilePathLabel" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editTagTitleLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTagCover">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTagTitle"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/editTagDialogTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/title"
-                android:inputType="text"
-                android:maxLength="127"
-                android:text="@{audioFile.title}"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/edit_tags"
                 android:textColor="@color/primaryTextDark"
-                tools:ignore="Autofill,LabelFor" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:textSize="@dimen/alert_dialog_title"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editTagAlbumLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/editTagTitleLayout"
-            app:layout_constraintTop_toBottomOf="@+id/editTagTitleLayout">
+            <ImageView
+                android:id="@+id/editTagCover"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/albumcover"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTagFilePath"
+                app:setImage="@{audioFile}" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTagAlbum"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/album"
-                android:inputType="text"
-                android:maxLength="127"
-                android:text="@{audioFile.Album}"
-                android:textColor="@color/primaryTextDark"
-                tools:ignore="Autofill,LabelFor" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="@{()->viewModel.saveTags(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
+                android:text="@string/save_tags"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTagTrackLayout" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editTagArtistLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/editTagAlbumLayout"
-            app:layout_constraintTop_toBottomOf="@+id/editTagAlbumLayout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTagArtist"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/button2"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/artist"
-                android:inputType="text"
-                android:maxLength="127"
-                android:text="@{audioFile.Artist}"
-                android:textColor="@color/primaryTextDark"
-                tools:ignore="Autofill,LabelFor" />
+                android:layout_marginEnd="16dp"
+                android:onClick="@{()->viewModel.cancel()}"
+                android:text="@string/cancel"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="@+id/button"
+                app:layout_constraintEnd_toStartOf="@+id/button"
+                app:layout_constraintTop_toTopOf="@+id/button" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editTagYearLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/editTagArtistLayout"
-            app:layout_constraintTop_toBottomOf="@+id/editTagArtistLayout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTagYear"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/editTagFilePathLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/year"
-                android:inputType="number"
-                android:maxLength="4"
-                android:text="@{audioFile.Year}"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/filepathLabel"
                 android:textColor="@color/primaryTextDark"
-                tools:ignore="Autofill,LabelFor" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTagDialogTitle" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editTagTrackLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/editTagYearLayout"
-            app:layout_constraintTop_toBottomOf="@+id/editTagYearLayout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTagTrack"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/editTagFilePath"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/track"
-                android:inputType="number"
-                android:maxLength="3"
-                android:text="@{audioFile.Track}"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:singleLine="true"
+                android:text="@{audioFile.filePath}"
                 android:textColor="@color/primaryTextDark"
-                tools:ignore="Autofill,LabelFor" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintBottom_toBottomOf="@+id/editTagFilePathLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editTagFilePathLabel"
+                app:layout_constraintTop_toTopOf="@+id/editTagFilePathLabel" />
 
-        <Button
-            android:id="@+id/autoFindCoverButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
-            android:text="Auto find"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTagCover"
-            app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTagTitleLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTagCover">
 
-        <Button
-            android:id="@+id/selectCoverButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:onClick="@{()->viewModel.selectAlbumArt()}"
-            android:text="Select"
-            app:layout_constraintBottom_toTopOf="@+id/editTagTitleLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTagCover" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTagTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title"
+                    android:inputType="text"
+                    android:maxLength="127"
+                    android:text="@{audioFile.title}"
+                    android:textColor="@color/primaryTextDark"
+                    tools:ignore="Autofill,LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <ProgressBar
-            android:id="@+id/savingTagWheel"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTagAlbumLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/editTagTitleLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editTagTitleLayout">
 
-        <ProgressBar
-            android:id="@+id/coverWheel"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/editTagCover"
-            app:layout_constraintEnd_toEndOf="@+id/editTagCover"
-            app:layout_constraintStart_toStartOf="@+id/editTagCover"
-            app:layout_constraintTop_toTopOf="@+id/editTagCover" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTagAlbum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/album"
+                    android:inputType="text"
+                    android:maxLength="127"
+                    android:text="@{audioFile.Album}"
+                    android:textColor="@color/primaryTextDark"
+                    tools:ignore="Autofill,LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTagArtistLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/editTagAlbumLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editTagAlbumLayout">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTagArtist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/artist"
+                    android:inputType="text"
+                    android:maxLength="127"
+                    android:text="@{audioFile.Artist}"
+                    android:textColor="@color/primaryTextDark"
+                    tools:ignore="Autofill,LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTagYearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/editTagArtistLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editTagArtistLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTagYear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/year"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:text="@{audioFile.Year}"
+                    android:textColor="@color/primaryTextDark"
+                    tools:ignore="Autofill,LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTagTrackLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/editTagYearLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editTagYearLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTagTrack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/track"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:text="@{audioFile.Track}"
+                    android:textColor="@color/primaryTextDark"
+                    tools:ignore="Autofill,LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/autoFindCoverButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
+                android:text="Auto find"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editTagCover"
+                app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
+
+            <Button
+                android:id="@+id/selectCoverButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{()->viewModel.selectAlbumArt()}"
+                android:text="Select"
+                app:layout_constraintBottom_toTopOf="@+id/editTagTitleLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editTagCover" />
+
+            <ProgressBar
+                android:id="@+id/savingTagWheel"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/coverWheel"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/editTagCover"
+                app:layout_constraintEnd_toEndOf="@+id/editTagCover"
+                app:layout_constraintStart_toStartOf="@+id/editTagCover"
+                app:layout_constraintTop_toTopOf="@+id/editTagCover" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>
