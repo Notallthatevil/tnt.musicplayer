@@ -222,7 +222,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:onClick="@{()->viewModel.autoFindAlbumArt(editTagTitle.getText().toString(),editTagAlbum.getText().toString(),editTagArtist.getText().toString(),editTagYear.getText().toString(),editTagTrack.getText().toString(),audioFile)}"
-                android:text="Auto find"
+                android:text="@string/auto_find"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/editTagCover"
                 app:layout_constraintTop_toBottomOf="@+id/editTagFilePath" />
@@ -235,7 +235,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:onClick="@{()->viewModel.selectAlbumArt()}"
-                android:text="Select"
+                android:text="@string/select"
                 app:layout_constraintBottom_toTopOf="@+id/editTagTitleLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/editTagCover" />

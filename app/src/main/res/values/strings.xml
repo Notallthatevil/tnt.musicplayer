@@ -13,5 +13,7 @@
     <string name="save_tags">Save tags</string>
     <string name="cancel">Cancel</string>
     <string name="edit_tags">Edit tags</string>
+    <string name="auto_find">Auto find</string>
+    <string name="select">Select</string>
 
 </resources>
