@@ -5,13 +5,18 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
 android {
+    def releaseNumber = 2
+    def versionMajor = "0"
+    def versionMinor = "1"
+    def versionPatch = "0"
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.trippntechnology.tntmusicplayer"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode releaseNumber
+        versionName = versionMajor + "." + versionMinor + "." + versionPatch
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -19,10 +24,19 @@ android {
             }
         }
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def buildType = variant.variantData.variantConfiguration.buildType.name
+            outputFileName = "tnt.musicplayer_" + versionName + "_" + buildType + ".apk"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable = true
         }
     }
     externalNativeBuild {
@@ -30,7 +44,7 @@ android {
             path "CMakeLists.txt"
         }
     }
-    dataBinding{
+    dataBinding {
         enabled = true
     }
 }
@@ -45,8 +59,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     //Nav Graph
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-rc02'
-    implementation 'android.arch.navigation:navigation-ui:1.0.0-rc02'
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0'
+    implementation 'android.arch.navigation:navigation-ui:1.0.0'
 
     //RecycleView
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
