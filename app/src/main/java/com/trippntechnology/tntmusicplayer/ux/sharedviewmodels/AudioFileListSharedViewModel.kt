@@ -61,7 +61,7 @@ class AudioFileListSharedViewModel
         if (!syncing) {
             launch(Dispatchers.IO) {
                 syncing = true
-                TaggerLib.backgroundScan("/storage/emulated/0/Music/")
+                TaggerLib.backgroundScan("/storage/emulated/0/")
                 syncing = false
             }
         }

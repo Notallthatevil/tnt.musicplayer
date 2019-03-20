@@ -332,8 +332,11 @@ void SqlWrapper::closeTransaction() {
  * @returns a value based on the success of the database. Expecting 0 for success otherwise an error occurred
  */
 int SqlWrapper::insertAudioFile(AudioFile *audioFile) {
+    //If audio file is less then #MINIMUM_AUDIO_FILE_DURATION long, skip it
+    if(audioFile->getDuration() < MINIMUM_AUDIO_FILE_DURATION){
+        return 0;
+    }
     sqlite3_stmt *stmt = nullptr;
-
     std::string sql = "INSERT INTO " + SONG_TABLE + "(" +
                       SONG_TITLE + "," +        //1
                       SONG_ALBUM + "," +        //2
@@ -354,7 +357,7 @@ int SqlWrapper::insertAudioFile(AudioFile *audioFile) {
         __android_log_print(ANDROID_LOG_ERROR, "SQL_ERROR", "Song insert prepare failed on %s: %s",
                             audioFile->getTag()->getTitle().c_str(), sqlite3_errmsg(mDb));
         return sqlite3_finalize(stmt);
-    } else {
+    }else {
         const char *title =
                 !audioFile->getTag()->getTitle().empty() ? audioFile->getTag()->getTitle().c_str() : nullptr;
         const char *album =

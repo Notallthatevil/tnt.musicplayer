@@ -36,6 +36,8 @@ private:
 
     const std::string SONG_LAST_MODIFIED = "MODIFIED_DATE";
 
+    const int MINIMUM_AUDIO_FILE_DURATION = 10000;
+
     enum tableColumnNumbers {
         SONG_ID_COLUMN = 0,
         SONG_TITLE_COLUMN = 1,
