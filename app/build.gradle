@@ -5,10 +5,10 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
 android {
-    def releaseNumber = 2
+    def releaseNumber = 3
     def versionMajor = "0"
     def versionMinor = "1"
-    def versionPatch = "0"
+    def versionPatch = "1"
 
     compileSdkVersion 28
     defaultConfig {
