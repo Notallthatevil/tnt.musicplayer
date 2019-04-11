@@ -10,20 +10,34 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+#add_library(
+#        base-file-lib
+#        SHARED
+#        tagger/files/AudioFile.cpp
+#        tagger/tags/Tag.cpp
+#)
 add_library( # Sets the name of the library.
         tagger-lib
-
-        # Sets the library as a shared library.
         SHARED
+        tagger/files/Mp3File.cpp
+        tagger/tags/ID3Tag.cpp
+        tagger/tagger.cpp
+        database/sqlite3.c
+        database/SqlWrapper.cpp
+        tagger/files/AudioFile.cpp
+        tagger/tags/Tag.cpp
+        )
 
-        # Provides a relative path to your source file(s).
-        src/main/cpp/tagger/files/AudioFile.cpp
-        src/main/cpp/tagger/files/Mp3File.cpp
-        src/main/cpp/database/SqlWrapper.cpp
-        src/main/cpp/database/sqlite3.c
-        src/main/cpp/tagger/tags/Tag.cpp
-        src/main/cpp/tagger/tags/ID3Tag.cpp
-        src/main/cpp/tagger/tagger.cpp)
+add_library(
+        player-lib
+        SHARED
+        tntplayer/TNTAudioPlayer.cpp)
+
+#add_library(
+#        sqlite-lib
+#        SHARED
+#        database/sqlite3.c
+#        database/SqlWrapper.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -31,20 +45,31 @@ add_library( # Sets the name of the library.
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-find_library( # Sets the name of the path variable.
-        log-lib
-
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log)
+#find_library( # Sets the name of the path variable.
+#        log-lib
+#
+#        # Specifies the name of the NDK library that
+#        # you want CMake to locate.
+#        log)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries( # Specifies the target library.
+target_link_libraries(
         tagger-lib
+#        sqlite-lib
+#        base-file-lib
+        log
+)
 
-        # Links the target library to the log library
-        # included in the NDK.
-        ${log-lib})
+#target_link_libraries(
+#        sqlite-lib
+#        base-file-lib
+##        log
+#)
+#
+#target_link_libraries(
+#        base-file-lib
+#        log
+#)
