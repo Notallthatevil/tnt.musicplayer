@@ -1,3 +1,5 @@
+#include <alloca.h>
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "hicpp-signed-bitwise"
 //
@@ -110,7 +112,7 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
                 setYear(getTextFrame(tagBuffer, pos + 10, frameSize));
             } else if(frameHeader == COVER_TAG) {
                 mCoverOffset = findCover(tagBuffer, pos + 10) + 10;
-                mCoverSize = frameSize-((mCoverOffset-10)-(pos+10));
+                mCoverSize = frameSize - ((mCoverOffset - 10) - (pos + 10));
 //                setCover(tagBuffer, frameSize - imageOffset, imageOffset);
             }
             if(pos + frameSize + 12 > mTagSize - mHeaderSize) {
@@ -297,7 +299,8 @@ unsigned char *ID3Tag::generateTags(long padding) {
     return mGeneratedTag;
 }
 
-unsigned char *ID3Tag::generateTags() {
+
+unsigned char __unused *ID3Tag::generateTags() {
     return generateTags(0);
 }
 
@@ -305,6 +308,9 @@ unsigned char *ID3Tag::generateTags() {
 int ID3Tag::createID3Header(unsigned char *dest) {
     return createID3Header(dest, false, 0, false, false);
 }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
 
 int ID3Tag::createID3Header(unsigned char *dest, bool unsynch, int extendedHeaderSize, bool experimental, bool footer) {
 
@@ -350,10 +356,12 @@ int ID3Tag::createID3Header(unsigned char *dest, bool unsynch, int extendedHeade
     return frameStartingPosition + extendedHeaderSize;
 }
 
+#pragma clang diagnostic pop
+
 
 //Adding extended header needs to be done post tag creation.
 //TODO create method
-int ID3Tag::insertExtendedHeader(int extendedHeaderSize, bool flag) {
+int __unused ID3Tag::insertExtendedHeader(int __unused extendedHeaderSize, bool __unused flag) {
     return -1;
 }
 
@@ -459,7 +467,7 @@ int ID3Tag::calculateTagSize(bool footerPresent, int extendedHeaderSize) {
     } else if(tagSize > 0xFFFFFFF) {
         return -2;
     } else {
-        return tagSize += 10;
+        return tagSize + 10;
     }
 }
 

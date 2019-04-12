@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 
-typedef std::map<std::string, int> map;
+typedef std::map<std::string, long> map;
 
 class SqlWrapper {
 private:
@@ -38,6 +38,8 @@ private:
 
     const int MINIMUM_AUDIO_FILE_DURATION = 10000;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     enum tableColumnNumbers {
         SONG_ID_COLUMN = 0,
         SONG_TITLE_COLUMN = 1,
@@ -51,9 +53,11 @@ private:
         SONG_BITRATE_COLUMN = 9,
         SONG_COVER_OFFSET_COLUMN = 10,
         SONG_COVER_SIZE_COLUMN = 11,
-        SONG_LAST_MODIFIED_COLUMN = 12
 
+        SONG_LAST_MODIFIED_COLUMN = 12
     };
+#pragma clang diagnostic pop
+
 
     sqlite3 *mDb;
 

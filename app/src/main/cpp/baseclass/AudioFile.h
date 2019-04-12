@@ -67,13 +67,13 @@ public:
      */
     virtual long saveNewTag(Tag *newTag) = 0;
 
-    unsigned long getFileSize() const;
+    unsigned long __unused getFileSize() const;
 
     long getDuration() const;
 
-    long getID() const;
+    long __unused getID() const;
 
-    void setID(long ID);
+    void __unused setID(long ID);
 
     int getBitrate() const;
     int getSampleRate()const;

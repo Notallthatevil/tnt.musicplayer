@@ -1,7 +1,8 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "hicpp-signed-bitwise"
 
 #include "SqlWrapper.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
 
 const std::string SqlWrapper::SONG_TABLE = "SONGS";
 
@@ -498,6 +499,5 @@ int SqlWrapper::deleteAudioFileByFilePath(std::string filePath) {
     }
     return commitChanges(stmt);
 }
-
 
 #pragma clang diagnostic pop

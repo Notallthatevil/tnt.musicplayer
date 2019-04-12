@@ -66,7 +66,7 @@ public:
 
     virtual ~Mp3File();
 
-    /*
+    /**
      * Parses the Mp3File for relevant data.
      * If findTags is set then the file will try and parse an ID3 tag if it exists.
      * Otherwise mp3 file information is parsed and that's it.
@@ -79,7 +79,7 @@ public:
      */
     int parse(bool findTags);
 
-    /*
+    /**
      * Adds the new ID3Tag to the file and replaces the old one if it existed
      * Returns
      * -2 if an output stream couldn't be opened

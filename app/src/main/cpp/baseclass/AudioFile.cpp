@@ -39,15 +39,15 @@ std::string AudioFile::getFilePath() const {
     return mFilePath;
 }
 
-unsigned long AudioFile::getFileSize() const {
+unsigned long __unused AudioFile::getFileSize() const {
     return mFileSize;
 }
 
-long AudioFile::getID() const {
+long __unused AudioFile::getID() const {
     return mSqlID;
 }
 
-void AudioFile::setID(long ID) {
+void __unused AudioFile::setID(long ID) {
     mSqlID = ID;
 }
 

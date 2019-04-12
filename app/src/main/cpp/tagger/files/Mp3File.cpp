@@ -1,4 +1,5 @@
-#pragma ide diagnostic ignored "hicpp-signed-bitwise"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
 //
 // Created by Nate on 5/21/2018.
 //

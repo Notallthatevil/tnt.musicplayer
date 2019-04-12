@@ -47,7 +47,7 @@ public:
 
     const std::string &getYear() const;
 
-    unsigned char *getCover(std::ifstream *mStream);
+    unsigned char __unused *getCover(std::ifstream *mStream);
 
     void setTitle(const std::string &Title);
 

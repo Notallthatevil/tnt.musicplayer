@@ -1,3 +1,4 @@
+#include <alloca.h>
 //
 // Created by Nate on 5/21/2018.
 //
@@ -31,8 +32,12 @@ private:
     const std::string COVER_TAG = "APIC";
 
 
-    char mMajorVersion = 0xFF;
-    char mMinorVersion = 0xFF;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+    char __unused mMajorVersion = 0xFF;
+    char __unused mMinorVersion = 0xFF;
+#pragma clang diagnostic pop
+
 
     char mApicBinaryHeader[19] = {0x03, 'i', 'm', 'a', 'g', 'e', '/', 'j', 'p', 'e', 'g', 0x00, 0x03, 'C', 'o',
                                   'v', 'e', 'r', 0x00};
@@ -60,7 +65,7 @@ protected:
 
     int createID3Header(unsigned char *dest, bool unsynch, int extendedHeaderSize, bool experimental, bool footer);
 
-    int insertExtendedHeader(int extendedHeaderSize, bool flag);
+    int __unused insertExtendedHeader(int extendedHeaderSize, bool flag);
 
     int createID3Header(unsigned char *dest);
 
@@ -106,7 +111,7 @@ public:
      *
      * Returns the new array
      */
-    unsigned char *generateTags();
+    unsigned char __unused *generateTags();
 
 
     /*

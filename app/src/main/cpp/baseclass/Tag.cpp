@@ -31,7 +31,7 @@ const std::string &Tag::getYear() const {
     return mYear;
 }
 
-unsigned char *Tag::getCover(std::ifstream *stream) {
+unsigned char __unused *Tag::getCover(std::ifstream *stream) {
     if(mCover != nullptr) {
         return mCover;
     } else if(stream != nullptr) {

@@ -56,12 +56,15 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
     }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-conversion"
 std::string jstringToString(JNIEnv *env, jstring *jstr) {
     int length = env->GetStringLength(*jstr);
     char str[255];
     env->GetStringUTFRegion(*jstr, 0, length, str);
     return std::string(str, length);
 }
+#pragma clang diagnostic pop
 
 extern "C"
 JNIEXPORT jobjectArray
@@ -225,7 +228,9 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getCover(JNIEn
     return jCover;
 }
 
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wconversion"
 extern "C"
 JNIEXPORT jboolean
 JNICALL
@@ -233,6 +238,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist
     jboolean jbool = SqlWrapper::getInstance().tableExist(SqlWrapper::SONG_TABLE) ? JNI_TRUE : JNI_FALSE;
     return jbool;
 }
+#pragma clang diagnostic pop
 
 
 extern "C"
