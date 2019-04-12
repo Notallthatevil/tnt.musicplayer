@@ -6,7 +6,7 @@
 #include <jni.h>
 #include <sys/stat.h>
 #include <sstream>
-#include "../tagger/files/AudioFile.h"
+#include "../baseclass/AudioFile.h"
 #include <string>
 #include <map>
 #include <vector>

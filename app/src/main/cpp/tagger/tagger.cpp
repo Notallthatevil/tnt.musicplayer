@@ -3,9 +3,12 @@
 #include <dirent.h>
 #include <string>
 #include <vector>
-#include "files/AudioFile.h"
+#include "../baseclass/AudioFile.h"
 #include "files/Mp3File.h"
 #include "../database/SqlWrapper.h"
+
+
+//TODO update to use c++ 17 features along with smart pointers
 
 struct FileAccessException : public std::exception {
     const char *what() const noexcept override {

@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "../tags/Tag.h"
+#include "Tag.h"
 #ifndef WIN32
 #include <unistd.h>
 #endif

@@ -6,7 +6,7 @@
 #define TAGGER_ID3Tag_H
 
 
-#include "Tag.h"
+#include "../../baseclass/Tag.h"
 
 
 class ID3Tag : public Tag {

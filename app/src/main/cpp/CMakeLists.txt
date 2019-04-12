@@ -10,22 +10,25 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-#add_library(
-#        base-file-lib
-#        SHARED
-#        tagger/files/AudioFile.cpp
-#        tagger/tags/Tag.cpp
-#)
+add_library(
+        baseclass-lib
+        SHARED
+        baseclass/AudioFile.cpp
+        baseclass/Tag.cpp
+)
+
+add_library(
+        database-lib
+        SHARED
+        database/sqlite3.c
+        database/SqlWrapper.cpp
+)
 add_library( # Sets the name of the library.
         tagger-lib
         SHARED
         tagger/files/Mp3File.cpp
         tagger/tags/ID3Tag.cpp
         tagger/tagger.cpp
-        database/sqlite3.c
-        database/SqlWrapper.cpp
-        tagger/files/AudioFile.cpp
-        tagger/tags/Tag.cpp
         )
 
 add_library(
@@ -33,11 +36,25 @@ add_library(
         SHARED
         tntplayer/TNTAudioPlayer.cpp)
 
-#add_library(
-#        sqlite-lib
-#        SHARED
-#        database/sqlite3.c
-#        database/SqlWrapper.cpp)
+target_link_libraries(
+        baseclass-lib
+        log
+)
+
+target_link_libraries(
+        database-lib
+        baseclass-lib
+)
+
+target_link_libraries(
+        tagger-lib
+        database-lib
+)
+
+target_link_libraries(
+        player-lib
+        database-lib
+)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -56,12 +73,12 @@ add_library(
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries(
-        tagger-lib
-#        sqlite-lib
-#        base-file-lib
-        log
-)
+#target_link_libraries(
+#        tagger-lib
+#        #        sqlite-lib
+#        #        base-file-lib
+#        log
+#)
 
 #target_link_libraries(
 #        sqlite-lib

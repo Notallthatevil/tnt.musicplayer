@@ -6,7 +6,7 @@
 #define TAGGER_Mp3File_H
 
 
-#include "AudioFile.h"
+#include "../../baseclass/AudioFile.h"
 #include "../tags/ID3Tag.h"
 
 class Mp3File : public AudioFile {
