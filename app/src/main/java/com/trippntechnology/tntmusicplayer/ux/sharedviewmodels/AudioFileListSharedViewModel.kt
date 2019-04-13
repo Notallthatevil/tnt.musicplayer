@@ -2,7 +2,6 @@ package com.trippntechnology.tntmusicplayer.ux.sharedviewmodels
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
@@ -17,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class AudioFileListSharedViewModel
@@ -59,7 +59,7 @@ class AudioFileListSharedViewModel
     }
 
     fun audioFileShortClick(id:Int){
-        Log.i("PLAYER",PlayerLib.play(id).toString())
+        Timber.i(PlayerLib.play(id).toString())
     }
 
     private fun syncAudioFiles() {
@@ -119,17 +119,17 @@ class AudioFileListSharedViewModel
     }
 
     fun autoFindAllAlbumArt(){
-        Log.d("AUTO_FIND_COVER", "Not ready to implement")
+        Timber.d("Not ready to implement")
         autoFindJob = launch {
             val list = audioFileList.value
             if (!list.isNullOrEmpty()) {
                 list.forEachIndexed { index, audioFile ->
-                    Log.d("AUTO_FIND_COVER", "On file $index of ${list.size}")
+                    Timber.d( "On file $index of ${list.size}")
                     if (audioFile.coverSize < 1) {
-                        Log.d("AUTO_FIND_COVER", "Adding cover to ${audioFile.title}")
+                        Timber.d( "Adding cover to ${audioFile.title}")
                         val newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
                         if (!isActive){
-                            Log.d("AUTO_FIND_COVER", "Job canceled")
+                            Timber.d( "Job canceled")
                             return@launch
                         }
                         if (newCover != null) {

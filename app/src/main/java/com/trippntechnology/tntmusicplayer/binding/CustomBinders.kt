@@ -6,13 +6,13 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.trippntechnology.tntmusicplayer.R
+import com.trippntechnology.tntmusicplayer.glideutils.GlideApp
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import java.util.concurrent.TimeUnit
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.trippntechnology.tntmusicplayer.glideutils.GlideApp
 
 object CustomBinders {
 

@@ -1,11 +1,11 @@
 package com.trippntechnology.tntmusicplayer.network.xmlparser
 
-import android.util.Log
 import android.util.Xml
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.objects.XMLAlbum
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 
@@ -38,7 +38,7 @@ class CoverArtParser {
             if (parser.eventType != XmlPullParser.START_TAG) {
                 continue
             }
-            Log.d("XML", parser.name)
+            Timber.d(parser.name)
             when (parser.name) {
                 "release-group" -> if (audioFile.album != null) {
                     val xmlAlbum = readAlbum(parser)
@@ -67,7 +67,7 @@ class CoverArtParser {
     private fun readAlbum(parser: XmlPullParser): XMLAlbum? {
         parser.require(XmlPullParser.START_TAG, null, "release-group")
         val albumID = parser.getAttributeValue(null, "id")
-        Log.d("XML", albumID)
+        Timber.d(albumID)
         val type = parser.getAttributeValue(null, "type")
         skip(parser)
         if (type.equals("single", true) || type.equals("album", true)) {
@@ -80,7 +80,7 @@ class CoverArtParser {
     private fun readArtist(parser: XmlPullParser): XMLAlbum? {
         parser.require(XmlPullParser.START_TAG, null, "artist")
         val artistID = parser.getAttributeValue(null, "id")
-        Log.d("XML", artistID)
+        Timber.d(artistID)
         return XMLAlbum(artistID)
     }
 

@@ -1,7 +1,6 @@
 package com.trippntechnology.tntmusicplayer.util
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.newSingleThreadContext
 import kotlin.coroutines.CoroutineContext
 
 interface CoroutineContextProvider {

@@ -1,6 +1,7 @@
 package com.trippntechnology.tntmusicplayer.ux.fragments.edittagfragment
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -23,15 +24,12 @@ import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListShar
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.SELECT_ALBUM_ART
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.TAGS_SAVED
 import kotlinx.android.synthetic.main.fragment_edit_tag.*
-import javax.inject.Inject
-import android.graphics.Bitmap
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import javax.inject.Inject
 
 
 class EditTagFragment : BaseFragment() {
-
-    private val GALLERY_INTENT = 3845
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -125,5 +123,9 @@ class EditTagFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val GALLERY_INTENT = 3845
     }
 }

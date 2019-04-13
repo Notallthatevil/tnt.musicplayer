@@ -1,15 +1,15 @@
 package com.trippntechnology.tntmusicplayer.network.coverartretriever
 
-import android.util.Log
 import com.trippntechnology.tntmusicplayer.network.jsonreader.CoverArtJsonReader
 import com.trippntechnology.tntmusicplayer.network.xmlparser.CoverArtParser
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
 import com.trippntechnology.tntmusicplayer.objects.XMLAlbum
 import org.xmlpull.v1.XmlPullParserException
-import java.io.IOException
-import java.net.URL
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
+import java.io.IOException
+import java.net.URL
 
 
 class CoverArtRetriever {
@@ -28,7 +28,7 @@ class CoverArtRetriever {
             albumIds ?: return null
             val coverArtURL = URL("$BASE_COVER_URL${albumIds[0].xmlID}")
 
-            Log.d("AUTO_FIND_COVER", "Cover art URL: $BASE_COVER_URL${albumIds[0].xmlID}")
+            Timber.d("Cover art URL: $BASE_COVER_URL${albumIds[0].xmlID}")
             val imageURL = CoverArtJsonReader().getCoverArtUrl(coverArtURL.openStream())
 
 
@@ -51,26 +51,26 @@ class CoverArtRetriever {
     private fun retrieveAlbumIDs(audioFile: AudioFile): List<XMLAlbum>? {
         val urlStream = URL(createSearchQuery(audioFile)).openStream()
         val list = CoverArtParser().parse(urlStream, audioFile)
-        Log.d("XML", "list has returned")
+        Timber.d("list has returned")
         if (list != null) {
             return list
         }
         val albumSearch = albumSearch(audioFile)
         if (albumSearch != null) {
-            Log.d("XML", "album has returned")
+            Timber.d("album has returned")
             return albumSearch
         }
         val songTitleSearch = songTitleSearch(audioFile)
         if (songTitleSearch != null) {
-            Log.d("XML", "title has returned")
+            Timber.d( "title has returned")
             return songTitleSearch
         }
         val artistSearch = artistSearch(audioFile)
         if (artistSearch != null) {
-            Log.d("XML", "artist has returned")
+            Timber.d( "artist has returned")
             return artistSearch
         }
-        Log.d("XML", "returning null")
+        Timber.d("returning null")
         return null
     }
 

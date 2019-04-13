@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,7 +15,6 @@ import com.trippntechnology.tntmusicplayer.databinding.ActivityMainNavBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
-import kotlinx.coroutines.cancelAndJoin
 import javax.inject.Inject
 
 class MainNavActivity : BaseActivity() {

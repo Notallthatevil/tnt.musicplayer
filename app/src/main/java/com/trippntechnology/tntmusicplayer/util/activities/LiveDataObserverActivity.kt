@@ -1,8 +1,8 @@
 package com.trippntechnology.tntmusicplayer.util.activities
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.appcompat.app.AppCompatActivity
 
 abstract class LiveDataObserverActivity : AppCompatActivity() {
     protected inline fun <T> LiveData<T>.observe(crossinline block: (T?) -> Unit) {

@@ -1,7 +1,7 @@
 package com.trippntechnology.tntmusicplayer.network.jsonreader
 
 import android.util.JsonReader
-import android.util.Log
+import timber.log.Timber
 import java.io.InputStream
 import java.io.InputStreamReader
 
@@ -55,7 +55,7 @@ class CoverArtJsonReader {
         if (imageURL[4] != 's') {
             imageURL = imageURL.substring(0, 4) + 's' + imageURL.substring(4, imageURL.length)
         }
-        Log.d("AUTO_FIND_COVER", imageURL)
+        Timber.d(imageURL)
         return imageURL
     }
 }

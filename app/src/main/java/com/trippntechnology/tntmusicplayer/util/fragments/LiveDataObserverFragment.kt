@@ -1,8 +1,8 @@
 package com.trippntechnology.tntmusicplayer.util.fragments
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.fragment.app.Fragment
 
 abstract class LiveDataObserverFragment : Fragment() {
     protected inline fun <T> LiveData<T>.observe(crossinline block: (T?) -> Unit) {

@@ -1,11 +1,11 @@
 package com.trippntechnology.tntmusicplayer.util
 
-import android.util.Log
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -27,7 +27,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         if (hasActiveObservers()) {
-            Log.e("SingleLiveEvent","Multiple observers registered but only one will be notified of changes.")
+            Timber.e("Multiple observers registered but only one will be notified of changes.")
         }
 
         // Observe the internal MutableLiveData
