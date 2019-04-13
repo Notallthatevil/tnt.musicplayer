@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
+import com.trippntechnology.tntmusicplayer.nativewrappers.PlayerLib
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.network.coverartretriever.CoverArtRetriever
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
@@ -55,6 +56,10 @@ class AudioFileListSharedViewModel
     fun audioFileLongClick(view: View, position: Int): Boolean {
         audioFileLongClick.value = LongClickItem(view, position.toLong())
         return true
+    }
+
+    fun audioFileShortClick(id:Int){
+        Log.i("PLAYER",PlayerLib.play(id).toString())
     }
 
     private fun syncAudioFiles() {

@@ -34,7 +34,8 @@ add_library( # Sets the name of the library.
 add_library(
         player-lib
         SHARED
-        tntplayer/TNTAudioPlayer.cpp)
+        tntplayer/TNTAudioPlayer.cpp
+        tntplayer/player.cpp)
 
 target_link_libraries(
         baseclass-lib
