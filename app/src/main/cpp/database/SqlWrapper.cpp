@@ -1,4 +1,3 @@
-
 #include "SqlWrapper.h"
 
 #pragma clang diagnostic push
@@ -27,6 +26,7 @@ inline bool file_exists(const std::string &fileName) {
  * This constructor also creates a sqlite3 object and sets @param mDb to it
  */
 SqlWrapper::SqlWrapper() {
+
     //Warning setting this is deprecated but have no choice as no TMPDIR global variable available for android
     sqlite3_temp_directory = (char *) "/data/user/0/com.trippntechnology.tntmusicplayer/cache";
     if(!file_exists(DATABASE_DIRECTORY)) {

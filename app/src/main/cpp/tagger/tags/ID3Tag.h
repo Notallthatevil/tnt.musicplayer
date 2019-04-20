@@ -1,4 +1,3 @@
-#include <alloca.h>
 //
 // Created by Nate on 5/21/2018.
 //
@@ -8,6 +7,7 @@
 
 
 #include "../../baseclass/Tag.h"
+#include <alloca.h>
 
 
 class ID3Tag : public Tag {

@@ -10,11 +10,14 @@
 
 //TODO update to use c++ 17 features along with smart pointers
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 struct FileAccessException : public std::exception {
     const char *what() const noexcept override {
         return "Unable to access storage. Were permissions requested?";
     }
 };
+#pragma clang diagnostic pop
 
 /*
  * directory must look like /storage/emulated/0/Music/
@@ -24,8 +27,6 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
     std::vector<std::string> dirFileList;
 
     if(d) {
-
-//        __android_log_print(ANDROID_LOG_INFO, "scanDirectoryForAudio", "%s", directory.c_str());
 
         struct dirent *dir;
         while((dir = readdir(d)) != nullptr) {

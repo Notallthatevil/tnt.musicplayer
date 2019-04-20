@@ -1,6 +1,5 @@
-#include <alloca.h>
-
 #pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-avoid-magic-numbers"
 #pragma ide diagnostic ignored "hicpp-signed-bitwise"
 //
 // Created by Nate on 5/21/2018.
@@ -150,6 +149,8 @@ int ID3Tag::readTags(unsigned char *tagBuffer) {
  * @param frameSize - The size of the text data including the encoding
  * @return - The string contained within the buffer
  */
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "-Wunused-value"
 std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSize) {
     std::string frameData;
     int i;
@@ -220,7 +221,7 @@ std::string ID3Tag::getTextFrame(unsigned char *buffer, int offset, int frameSiz
     }
     return frameData;
 }
-
+#pragma clang diagnostic pop
 
 
 //Needs to be redone to improve reliability 
