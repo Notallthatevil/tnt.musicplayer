@@ -187,8 +187,10 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         if(newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
-            int rc = SqlWrapper::getInstance().insertAudioFile(&mp3);
-            __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
+            if(mp3.getDuration()>10000 /**Minimum file duration*/){
+                int rc = SqlWrapper::getInstance().insertAudioFile(&mp3);
+                __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
+            }
         }
     }
     SqlWrapper::getInstance().closeTransaction();
