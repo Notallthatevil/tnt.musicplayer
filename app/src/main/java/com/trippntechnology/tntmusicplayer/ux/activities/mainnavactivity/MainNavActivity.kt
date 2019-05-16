@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainNavBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
+import com.trippntechnology.tntmusicplayer.nativewrappers.PlayerLib
 import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
 import javax.inject.Inject
@@ -49,7 +50,13 @@ class MainNavActivity : BaseActivity() {
         }
     }
 
+    override fun onDestroy() {
+        PlayerLib.deleteEngine()
+        super.onDestroy()
+    }
+
     private fun showView(){
+        PlayerLib.createEngine()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_nav)
     }
 

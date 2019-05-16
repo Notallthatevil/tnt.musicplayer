@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(oboe_sources
+set (oboe_sources
         src/aaudio/AAudioLoader.cpp
         src/aaudio/AudioStreamAAudio.cpp
         src/common/LatencyTuner.cpp
@@ -19,21 +19,21 @@ set(oboe_sources
         src/opensles/OpenSLESUtilities.cpp
         src/opensles/OutputMixerOpenSLES.cpp
         src/common/StabilizedCallback.cpp
-        src/common/Trace.cpp
+		src/common/Trace.cpp
         )
 
 add_library(oboe STATIC ${oboe_sources})
 
 # Specify directories which the compiler should look for headers
 target_include_directories(oboe
-        PRIVATE src
-        PUBLIC include)
+                           PRIVATE src 
+                           PUBLIC include)
 
 # Compile Flags:
 #     Enable -Werror when building debug config
 #     Enable -Ofast
 target_compile_options(oboe
-        PRIVATE -std=c++11 -Wall "$<$<CONFIG:DEBUG>:-Werror>" -Ofast)
+    PRIVATE -std=c++11 -Wall "$<$<CONFIG:DEBUG>:-Werror>" -Ofast)
 
 # Enable logging for debug builds
 target_compile_definitions(oboe PUBLIC "$<$<CONFIG:DEBUG>:OBOE_ENABLE_LOGGING=1>")

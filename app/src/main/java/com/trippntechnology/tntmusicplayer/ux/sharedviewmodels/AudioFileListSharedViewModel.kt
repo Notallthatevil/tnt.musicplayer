@@ -3,6 +3,7 @@ package com.trippntechnology.tntmusicplayer.ux.sharedviewmodels
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.nativewrappers.PlayerLib

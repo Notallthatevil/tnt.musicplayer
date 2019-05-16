@@ -6,17 +6,21 @@
 #include "../baseclass/AudioFile.h"
 #include "files/Mp3File.h"
 #include "../database/SqlWrapper.h"
+#include <logging_macros.h>
+
 
 
 //TODO update to use c++ 17 features along with smart pointers
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
+
 struct FileAccessException : public std::exception {
     const char *what() const noexcept override {
         return "Unable to access storage. Were permissions requested?";
     }
 };
+
 #pragma clang diagnostic pop
 
 /*
@@ -59,12 +63,14 @@ std::vector<std::string> scanDirectoryForAudio(const std::string &directory) {
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wsign-conversion"
+
 std::string jstringToString(JNIEnv *env, jstring *jstr) {
     int length = env->GetStringLength(*jstr);
     char str[255];
     env->GetStringUTFRegion(*jstr, 0, length, str);
     return std::string(str, length);
 }
+
 #pragma clang diagnostic pop
 
 extern "C"
@@ -163,7 +169,8 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
                     if(newList[i].substr(newList[i].find_last_of('.') + 1) == "mp3") {
                         Mp3File mp3(&newList[i]);
                         mp3.parse(true);
-                        int rc = SqlWrapper::getInstance().updateSong(mp3.getTag(), mp3.getFilePath(), mp3.getLastModified());
+                        int rc = SqlWrapper::getInstance().updateSong(mp3.getTag(), mp3.getFilePath(),
+                                                                      mp3.getLastModified());
                         __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Updated %s with code %d", newList[i].c_str(),
                                             rc);
                     }
@@ -187,7 +194,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
         if(newAudioFile.substr(newAudioFile.find_last_of('.') + 1) == "mp3") {
             Mp3File mp3(&newAudioFile);
             mp3.parse(true);
-            if(mp3.getDuration()>10000 /**Minimum file duration*/){
+            if(mp3.getDuration() > 10000 /**Minimum file duration*/) {
                 int rc = SqlWrapper::getInstance().insertAudioFile(&mp3);
                 __android_log_print(ANDROID_LOG_DEBUG, "SYNCING", "Added %s with code %d", newAudioFile.c_str(), rc);
             }

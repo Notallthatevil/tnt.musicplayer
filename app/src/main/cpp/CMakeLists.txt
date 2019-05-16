@@ -34,7 +34,8 @@ add_library( # Sets the name of the library.
 add_library(
         player-lib
         SHARED
-        tntplayer/TNTAudioPlayer.cpp
+        tntplayer/TNTAudioEngine.cpp
+        tntplayer/SineGenerator.cpp
         tntplayer/player.cpp)
 
 target_link_libraries(
@@ -61,3 +62,4 @@ target_link_libraries(
 set(OBOE_DIR ../../../../oboe ABSOLUTE)
 add_subdirectory(${OBOE_DIR})
 include_directories(${OBOE_DIR}/include)
+include_directories(utils)
