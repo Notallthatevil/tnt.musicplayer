@@ -10,7 +10,6 @@ constexpr int32_t kDefaultChannelCount = 2; // Stereo
 TNTAudioEngine::TNTAudioEngine() {
     // Initialize the trace functions, this enables you to output trace statements without
     // blocking. See https://developer.android.com/studio/profile/systrace-commandline.html
-    Trace::initialize();
 
     mChannelCount = kDefaultChannelCount;
     createPlaybackStream();
@@ -66,9 +65,9 @@ void TNTAudioEngine::createPlaybackStream() {
 
 void TNTAudioEngine::prepareOscillators() {
 
-    double frequency = 440.0;
-    constexpr double interval = 110.0;
-    constexpr float amplitude = 0.25;
+    double frequency = 500.0;
+    constexpr double interval = M_PI;
+    constexpr float amplitude = 3;
 
     for(SineGenerator &osc : mOscillators) {
         osc.setup(frequency, mSampleRate, amplitude);
@@ -81,9 +80,9 @@ void TNTAudioEngine::setupPlaybackStreamParameters(oboe::AudioStreamBuilder *bui
     builder->setDeviceId(mDeviceId);
     builder->setChannelCount(mChannelCount);
 
-    // We request EXCLUSIVE mode since this will give us the lowest possible latency.
+    // We request SHARED mode since this will allow use to mix audio.
     // If EXCLUSIVE mode isn't available the builder will fall back to SHARED mode.
-    builder->setSharingMode(oboe::SharingMode::Exclusive);
+    builder->setSharingMode(oboe::SharingMode::Shared);
     builder->setPerformanceMode(oboe::PerformanceMode::LowLatency);
     builder->setCallback(this);
 }
@@ -102,8 +101,7 @@ void TNTAudioEngine::closeOutputStream() {
     }
 }
 
-oboe::DataCallbackResult
-TNTAudioEngine::onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
+oboe::DataCallbackResult TNTAudioEngine::onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
     int32_t bufferSize = audioStream->getBufferSizeInFrames();
 
     if(mBufferSizeSelection == kBufferSizeAutomatic) {
@@ -120,9 +118,6 @@ TNTAudioEngine::onAudioReady(oboe::AudioStream *audioStream, void *audioData, in
      * See https://developer.android.com/studio/profile/systrace-commandline.html
      */
     auto underrunCountResult = audioStream->getXRunCount();
-
-    Trace::beginSection("numFrames %d, Underruns %d, buffer size %d",
-                        numFrames, underrunCountResult.value(), bufferSize);
 
     int32_t channelCount = audioStream->getChannelCount();
 
@@ -151,7 +146,6 @@ TNTAudioEngine::onAudioReady(oboe::AudioStream *audioStream, void *audioData, in
         calculateCurrentOutputLatencyMillis(audioStream, &mCurrentOutputLatencyMillis);
     }
 
-    Trace::endSection();
     return oboe::DataCallbackResult::Continue;
 }
 

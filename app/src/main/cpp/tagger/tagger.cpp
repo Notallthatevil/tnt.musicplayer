@@ -3,8 +3,7 @@
 #include <dirent.h>
 #include <string>
 #include <vector>
-#include "../baseclass/AudioFile.h"
-#include "files/Mp3File.h"
+#include "../audioclasses/mp3/files/Mp3File.h"
 #include "../database/SqlWrapper.h"
 #include <logging_macros.h>
 
@@ -73,7 +72,7 @@ std::string jstringToString(JNIEnv *env, jstring *jstr) {
 
 #pragma clang diagnostic pop
 
-extern "C"
+extern "C" {
 JNIEXPORT jobjectArray
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(JNIEnv *env, jobject /*this*/,
@@ -139,7 +138,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_scanDirectory(
     return jDirList;
 }
 
-extern "C"
 JNIEXPORT void
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan(JNIEnv *env, jobject /*this*/,
@@ -205,14 +203,12 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_backgroundScan
 }
 
 
-extern "C"
 JNIEXPORT jobject //java audio file
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getAllAudioFiles(JNIEnv *env, jobject /*this*/) {
     return SqlWrapper::getInstance().getLiveData(env);
 }
 
-extern "C"
 JNIEXPORT jbyteArray
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getCover(JNIEnv *env, jobject /*this*/,
@@ -241,7 +237,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_getCover(JNIEn
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wconversion"
-extern "C"
 JNIEXPORT jboolean
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist(JNIEnv *env, jobject /*this*/) {
@@ -251,7 +246,6 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_songTableExist
 #pragma clang diagnostic pop
 
 
-extern "C"
 JNIEXPORT jint
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(JNIEnv *env, jobject /*this*/,
@@ -311,4 +305,5 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
     }
 
     return jsuccess;
+}
 }

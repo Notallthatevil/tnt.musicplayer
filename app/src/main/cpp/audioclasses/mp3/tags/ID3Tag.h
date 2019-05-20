@@ -6,7 +6,7 @@
 #define TAGGER_ID3Tag_H
 
 
-#include "../../baseclass/Tag.h"
+#include "../../base/Tag.h"
 #include <alloca.h>
 
 

@@ -2,11 +2,12 @@
 #define TNT_MUSICPLAYER_SQLWRAPPER_H
 
 #include "sqlite3.h"
+#include "../audioclasses/base/Tag.h"
+#include "../audioclasses/base/AudioFile.h"
 #include <android/log.h>
 #include <jni.h>
 #include <sys/stat.h>
 #include <sstream>
-#include "../baseclass/AudioFile.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -61,7 +62,7 @@ private:
 
     sqlite3 *mDb;
 
-    JNIEnv * env = nullptr;
+    JNIEnv *env = nullptr;
     JavaVM *javaVM;
     jobject jLiveData = nullptr;
     jmethodID postValue = nullptr;
@@ -87,7 +88,7 @@ private:
 public:
     static const std::string SONG_TABLE;
 
-    static SqlWrapper& getInstance();
+    static SqlWrapper &getInstance();
 
     ~SqlWrapper();
 
@@ -107,7 +108,7 @@ public:
 
     bool tableExist(std::string tableName);
 
-    jobject getLiveData(JNIEnv*env);
+    jobject getLiveData(JNIEnv *env);
 
     void beginTransaction();
 

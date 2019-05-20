@@ -11,10 +11,14 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library(
-        baseclass-lib
+        audiofiles-lib
         SHARED
-        baseclass/AudioFile.cpp
-        baseclass/Tag.cpp
+        audioclasses/base/AudioFile.cpp
+        audioclasses/base/Tag.cpp
+
+        #mp3
+        audioclasses/mp3/files/Mp3File.cpp
+        audioclasses/mp3/tags/ID3Tag.cpp
 )
 
 add_library(
@@ -26,8 +30,6 @@ add_library(
 add_library( # Sets the name of the library.
         tagger-lib
         SHARED
-        tagger/files/Mp3File.cpp
-        tagger/tags/ID3Tag.cpp
         tagger/tagger.cpp
         )
 
@@ -39,13 +41,13 @@ add_library(
         tntplayer/player.cpp)
 
 target_link_libraries(
-        baseclass-lib
+        audiofiles-lib
         log
 )
 
 target_link_libraries(
         database-lib
-        baseclass-lib
+        audiofiles-lib
 )
 
 target_link_libraries(

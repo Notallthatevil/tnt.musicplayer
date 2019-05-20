@@ -8,7 +8,6 @@
 
 #include <stdint.h>
 #include <oboe/Oboe.h>
-#include <trace.h>
 #include <logging_macros.h>
 #include <array>
 #include "SineGenerator.h"
