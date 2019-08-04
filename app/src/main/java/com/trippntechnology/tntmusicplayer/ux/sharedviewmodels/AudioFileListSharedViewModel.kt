@@ -3,27 +3,22 @@ package com.trippntechnology.tntmusicplayer.ux.sharedviewmodels
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import com.trippntechnology.tnt.tntbaseutils.livedata.SingleLiveEvent
+import com.trippntechnology.tnt.tntbaseutils.viewmodels.BaseViewModel
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.nativewrappers.PlayerLib
 import com.trippntechnology.tntmusicplayer.nativewrappers.TaggerLib
 import com.trippntechnology.tntmusicplayer.network.coverartretriever.CoverArtRetriever
 import com.trippntechnology.tntmusicplayer.objects.AudioFile
-import com.trippntechnology.tntmusicplayer.util.CoroutineContextProvider
-import com.trippntechnology.tntmusicplayer.util.SingleLiveEvent
-import com.trippntechnology.tntmusicplayer.util.viewmodels.BaseViewModel
+import com.vikingsen.inject.viewmodel.ViewModelInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class AudioFileListSharedViewModel
-@Inject constructor(
-    cc: CoroutineContextProvider
-) : BaseViewModel(cc) {
+class AudioFileListSharedViewModel @ViewModelInject constructor()  : BaseViewModel() {
 
     val audioFileList = TaggerLib.getAllAudioFiles()
 
@@ -37,7 +32,7 @@ class AudioFileListSharedViewModel
     val selectCover = SingleLiveEvent<Void>()
     val updateImageView = MutableLiveData<Bitmap?>()
 
-    var autoFindJob:Job?=null
+    var autoFindJob: Job? = null
 
     private var syncing = false
     var newCover: ByteArray? = null
@@ -59,7 +54,7 @@ class AudioFileListSharedViewModel
         return true
     }
 
-    fun audioFileShortClick(id:Int){
+    fun audioFileShortClick(id: Int) {
         Timber.i(PlayerLib.play(id).toString())
     }
 
@@ -75,12 +70,23 @@ class AudioFileListSharedViewModel
 
 
     //Edit Tag Fragment=================================================================================================
-    fun saveTags(title: String, album: String, artist: String, year: String, track: String, oldAudioFile: AudioFile) {
+    fun saveTags(
+        title: String,
+        album: String,
+        artist: String,
+        year: String,
+        track: String,
+        oldAudioFile: AudioFile
+    ) {
         if (!oldAudioFile.tagsEqual(title, album, artist, year, track) || newCover != null) {
             editTagValues.postValue(SAVING_TAGS)
             //FIXME this should just be done in the SQL
             if (newCover == null) {
-                newCover = TaggerLib.getCover(oldAudioFile.filePath, oldAudioFile.coverSize, oldAudioFile.coverOffset)
+                newCover = TaggerLib.getCover(
+                    oldAudioFile.filePath,
+                    oldAudioFile.coverSize,
+                    oldAudioFile.coverOffset
+                )
             }
             launch {
                 val success = TaggerLib.updateNewTags(
@@ -99,19 +105,34 @@ class AudioFileListSharedViewModel
         }
     }
 
-    fun selectAlbumArt(){
+    fun selectAlbumArt() {
 //        editTagValues.value = SELECT_ALBUM_ART
         selectCover.call()
     }
 
-    fun autoFindAlbumArt(title: String,album: String,artist: String,year: String, track: String, oldAudioFile: AudioFile) {
+    fun autoFindAlbumArt(
+        title: String,
+        album: String,
+        artist: String,
+        year: String,
+        track: String,
+        oldAudioFile: AudioFile
+    ) {
         editTagValues.postValue(AUTO_FIND_ALBUM_ART)
         launch {
-            val newAudioFile = AudioFile(id = oldAudioFile.id, title = title, album = album, artist = artist, year = year, track = track, filePath = oldAudioFile.filePath)
+            val newAudioFile = AudioFile(
+                id = oldAudioFile.id,
+                title = title,
+                album = album,
+                artist = artist,
+                year = year,
+                track = track,
+                filePath = oldAudioFile.filePath
+            )
             newCover = CoverArtRetriever().autoFindAlbumArt(newAudioFile)
-            val bitmap = if (newCover != null){
-                BitmapFactory.decodeByteArray(newCover,0,newCover!!.size)
-            }else{
+            val bitmap = if (newCover != null) {
+                BitmapFactory.decodeByteArray(newCover, 0, newCover!!.size)
+            } else {
                 null
             }
             updateImageView.postValue(bitmap)
@@ -119,18 +140,18 @@ class AudioFileListSharedViewModel
         }
     }
 
-    fun autoFindAllAlbumArt(){
+    fun autoFindAllAlbumArt() {
         Timber.d("Not ready to implement")
+        val list = audioFileList.value
         autoFindJob = launch {
-            val list = audioFileList.value
             if (!list.isNullOrEmpty()) {
                 list.forEachIndexed { index, audioFile ->
-                    Timber.d( "On file $index of ${list.size}")
+                    Timber.d("On file $index of ${list.size}")
                     if (audioFile.coverSize < 1) {
-                        Timber.d( "Adding cover to ${audioFile.title}")
+                        Timber.d("Adding cover to ${audioFile.title}")
                         val newCover = CoverArtRetriever().autoFindAlbumArt(audioFile)
-                        if (!isActive){
-                            Timber.d( "Job canceled")
+                        if (!isActive) {
+                            Timber.d("Job canceled")
                             return@launch
                         }
                         if (newCover != null) {

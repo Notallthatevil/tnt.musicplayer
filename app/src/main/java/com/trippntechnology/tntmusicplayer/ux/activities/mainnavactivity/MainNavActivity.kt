@@ -3,19 +3,18 @@ package com.trippntechnology.tntmusicplayer.ux.activities.mainnavactivity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.trippntechnology.tnt.tntbaseutils.activities.BaseActivity
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.ActivityMainNavBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
 import com.trippntechnology.tntmusicplayer.nativewrappers.PlayerLib
-import com.trippntechnology.tntmusicplayer.util.activities.BaseActivity
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
+import com.vikingsen.inject.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 class MainNavActivity : BaseActivity() {
@@ -23,7 +22,7 @@ class MainNavActivity : BaseActivity() {
     private var binding: ActivityMainNavBinding? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(AudioFileListSharedViewModel::class.java)
@@ -65,17 +64,7 @@ class MainNavActivity : BaseActivity() {
         viewModel.autoFindJob?.cancel()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main,menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.autoTag->viewModel.autoFindAllAlbumArt()
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {

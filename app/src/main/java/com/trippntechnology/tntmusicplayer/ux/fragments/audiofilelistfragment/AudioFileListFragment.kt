@@ -1,27 +1,31 @@
 package com.trippntechnology.tntmusicplayer.ux.fragments.audiofilelistfragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.trippntechnology.tnt.tntbaseutils.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.databinding.FragmentAudioFileListBinding
 import com.trippntechnology.tntmusicplayer.dialogs.scanningdialog.ScanningDialog
 import com.trippntechnology.tntmusicplayer.injector.Injector
-import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.ux.adapters.AudioFileAdapter
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
+import com.vikingsen.inject.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 class AudioFileListFragment : BaseFragment() {
 
+
+    override fun setUpObservers() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentAudioFileListBinding
 
@@ -83,9 +87,20 @@ class AudioFileListFragment : BaseFragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main,menu)
+        return super.onCreateOptionsMenu(menu,inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.autoTag->viewModel.autoFindAllAlbumArt()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun showEditTag(longClickItem: AudioFileListSharedViewModel.LongClickItem) {
         val directions = AudioFileListFragmentDirections.editTagAction().setArrayPosition(longClickItem.position)
-//        val extras = FragmentNavigatorExtras(longClickItem.view to "editTagTransitionName")
         NavHostFragment.findNavController(this).navigate(directions)
     }
 

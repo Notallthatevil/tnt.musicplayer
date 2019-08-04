@@ -8,12 +8,10 @@ object Injector {
 
     fun init(app: Application) {
         if (appComponent == null) {
-            appComponent = DaggerAppComponent
-                .builder()
-                .appModule(AppModule(app))
-                .build()
+            appComponent = DaggerAppComponent.builder().appModule(AppModule(app)).build()
         }
     }
+
     fun get(): AppComponent {
         appComponent?.let { return it }
         throw IllegalStateException("appComponent is null. Call init() prior to calling get()")

@@ -11,11 +11,11 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.trippntechnology.tnt.tntbaseutils.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.R
 import com.trippntechnology.tntmusicplayer.binding.CustomBinders
 import com.trippntechnology.tntmusicplayer.databinding.FragmentEditTagBinding
 import com.trippntechnology.tntmusicplayer.injector.Injector
-import com.trippntechnology.tntmusicplayer.util.fragments.BaseFragment
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.AUTO_FIND_ALBUM_ART
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.AUTO_FIND_ALBUM_ART_FINISHED
@@ -23,6 +23,7 @@ import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListShar
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.SAVING_TAGS
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.SELECT_ALBUM_ART
 import com.trippntechnology.tntmusicplayer.ux.sharedviewmodels.AudioFileListSharedViewModel.Companion.TAGS_SAVED
+import com.vikingsen.inject.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_edit_tag.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -32,13 +33,13 @@ import javax.inject.Inject
 class EditTagFragment : BaseFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentEditTagBinding
 
 
     private val viewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(AudioFileListSharedViewModel::class.java)
+        ViewModelProviders.of(requireActivity(), viewModelFactory).get(AudioFileListSharedViewModel::class.java)
     }
 
     init {
@@ -53,12 +54,7 @@ class EditTagFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        setUpObservers()
-    }
-
-    private fun setUpObservers() {
+    override fun setUpObservers() {
         viewModel.editTagValues.observe {
             when (it!!) {
                 CANCEL -> fragmentManager?.popBackStack()

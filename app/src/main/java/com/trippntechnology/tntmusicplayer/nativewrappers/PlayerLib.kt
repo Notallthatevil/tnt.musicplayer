@@ -8,18 +8,19 @@ object PlayerLib {
 
 
     fun createEngine(/*context:Context*/):Boolean{
-        if (mEngineHandle == 0L){
-//            setDefaultStreamValues(context)
-            mEngineHandle = nativeCreateEngine()
-        }
-        return mEngineHandle != 0L
+//        if (mEngineHandle == 0L){
+////            setDefaultStreamValues(context)
+//            mEngineHandle = nativeCreateEngine()
+//        }
+//        return mEngineHandle != 0L
+        return false
     }
 
     fun deleteEngine(){
-        if (mEngineHandle != 0L) {
-            nativeDeleteEngine(mEngineHandle)
-        }
-        mEngineHandle = 0
+//        if (mEngineHandle != 0L) {
+//            nativeDeleteEngine(mEngineHandle)
+//        }
+//        mEngineHandle = 0
     }
 
     /**
@@ -31,7 +32,7 @@ object PlayerLib {
     /**
      * Destroys the TNTAudioEngine and frees the memory.
      */
-    external fun nativeDeleteEngine(mEngineHandle:Long)
+//    external fun nativeDeleteEngine(mEngineHandle:Long)
 
     external fun play(audioFileId: Int)
 

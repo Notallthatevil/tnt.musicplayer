@@ -31,7 +31,7 @@ const std::string &Tag::getYear() const {
     return mYear;
 }
 
-unsigned char __unused *Tag::getCover(std::ifstream *stream) {
+char *Tag::getCover(std::ifstream *stream) {
     if(mCover != nullptr) {
         return mCover;
     } else if(stream != nullptr) {
@@ -39,7 +39,7 @@ unsigned char __unused *Tag::getCover(std::ifstream *stream) {
             __android_log_print(ANDROID_LOG_DEBUG, "Tag.cpp", "mStream was not open so unable to return cover");
             return nullptr;
         } else {
-            mCover = new unsigned char[mCoverSize];
+            mCover = new char[mCoverSize];
             stream->seekg(mCoverOffset, std::ios::beg);
             stream->read((char *) mCover, mCoverSize);
             return mCover;
@@ -69,16 +69,15 @@ void Tag::setYear(const std::string &Year) {
     mYear = Year;
 }
 
-void Tag::setCover(unsigned char *coverBuffer, int lengthInBytes, int offset) {
-    if(coverBuffer == nullptr) {
-        if(mCover != nullptr) {
-            delete[] mCover;
-            mCover = nullptr;
-            mCoverSize = 0;
-        }
-    } else {
+void Tag::setCover(char *coverBuffer, int lengthInBytes, int offset) {
+    if(mCover != nullptr) {
+        delete[] mCover;
+        mCover = nullptr;
+        mCoverSize = 0;
+    }
+    if(coverBuffer != nullptr) {
         mCoverSize = lengthInBytes;
-        mCover = new unsigned char[lengthInBytes];
+        mCover = new char[lengthInBytes];
 
         for(int i = 0; i < lengthInBytes; i++) {
             mCover[i] = coverBuffer[i + offset];

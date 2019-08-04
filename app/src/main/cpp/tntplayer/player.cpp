@@ -11,8 +11,9 @@ extern "C" {
 JNIEXPORT jlong
 JNICALL
 Java_com_trippntechnology_tntmusicplayer_nativewrappers_PlayerLib_nativeCreateEngine(JNIEnv *env, jobject/*this*/) {
-    TNTAudioEngine *engine = new(std::nothrow) TNTAudioEngine();
-    return reinterpret_cast<jlong>(engine);
+//    TNTAudioEngine *engine = new(std::nothrow) TNTAudioEngine();
+//    return reinterpret_cast<jlong>(engine);
+    return 0L;
 }
 
 /**
@@ -24,7 +25,8 @@ Java_com_google_sample_oboe_hellooboe_PlaybackEngine_native_nativeDeleteEngine(
         JNIEnv *env,
         jclass,
         jlong engineHandle) {
-    delete reinterpret_cast<TNTAudioEngine *>(engineHandle);
+//    delete reinterpret_cast<TNTAudioEngine *>(engineHandle);
+    return;
 }
 
 

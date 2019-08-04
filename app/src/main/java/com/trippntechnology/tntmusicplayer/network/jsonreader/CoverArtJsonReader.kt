@@ -33,8 +33,7 @@ class CoverArtJsonReader {
             if (name == "thumbnails") {
                 jsonReader.beginObject()
                 while (jsonReader.hasNext()) {
-                    val innerName = jsonReader.nextName()
-                    when (innerName) {
+                    when (jsonReader.nextName()) {
                         "1200" -> size1200 = getURL(jsonReader)
                         "500" -> size500 = getURL(jsonReader)
                         "250" -> size250 = getURL(jsonReader)

@@ -287,7 +287,7 @@ Java_com_trippntechnology_tntmusicplayer_nativewrappers_TaggerLib_updateNewTags(
         tag->setArtist(artist);
         tag->setYear(year);
         tag->setTrack(track);
-        tag->setCover(cover, length, 0);
+        tag->setCover(reinterpret_cast<char *>(cover), length, 0);
 
 
         int rc = audioFile->saveNewTag(tag);
